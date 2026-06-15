@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,15 +51,6 @@
   
   <div id="app" class="h-full w-full flex flex-col" v-cloak>
     
-    <!-- Notification Banner -->
-    <div v-if="showNotificationBanner && isProfileComplete" class="bg-blue-600 px-4 py-2 flex items-center justify-between z-20 shrink-0 shadow-md">
-      <span class="text-sm font-medium text-white">Turn on notifications to get alerts for new messages.</span>
-      <div class="flex gap-3">
-        <button @click="enableNotifications" class="bg-white text-blue-600 px-3 py-1 rounded text-xs font-bold hover:bg-slate-100 transition-colors">Enable</button>
-        <button @click="dismissBanner" class="text-white/80 hover:text-white text-xs transition-colors">Dismiss</button>
-      </div>
-    </div>
-
     <!-- Toast Notification -->
     <div v-if="toast.show" 
          class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg font-medium transition-all text-sm flex items-center gap-2"
@@ -136,14 +128,30 @@
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Display Name</label>
           <input v-model="setupFlowName" type="text" placeholder="e.g. Ms. Smith or John Doe" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 mb-6 transition-all" required>
           <button type="submit" :disabled="!setupFlowName.trim()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50">
-            Complete Setup
+            Continue
           </button>
         </form>
       </div>
     </div>
 
-    <!-- 3. Main Application -->
-    <div v-else-if="user && isProfileComplete === true" class="h-full w-full flex flex-1 overflow-hidden">
+    <!-- 3. Mandatory Notifications Screen -->
+    <div v-else-if="user && isProfileComplete === true && !notificationsResolved" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200">
+      <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md text-center">
+        <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+        </div>
+        <h2 class="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Enable Notifications</h2>
+        <p class="text-slate-500 dark:text-slate-400 mb-8 text-sm">To ensure you don't miss important messages and announcements, you must enable push notifications to use Tether.</p>
+        
+        <button @click="handleMandatoryNotifications" :disabled="notifLoading" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center h-12">
+          <span v-if="!notifLoading">Enable & Continue</span>
+          <div v-else class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. Main Application -->
+    <div v-else-if="user && isProfileComplete === true && notificationsResolved" class="h-full w-full flex flex-1 overflow-hidden">
       
       <!-- Sidebar / List -->
       <div :class="['w-full md:w-80 bg-slate-50 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform z-10', 
@@ -165,7 +173,7 @@
           </div>
         </div>
 
-        <div class="p-4 flex gap-2">
+        <div class="p-4 flex gap-2 shrink-0">
           <button @click="modals.join = true" class="flex-1 bg-white hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-200 dark:border-transparent py-2 rounded-lg text-sm font-medium transition-colors text-slate-800 dark:text-white shadow-sm">Join</button>
           <button @click="modals.create = true" class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 rounded-lg text-sm font-medium transition-colors text-white shadow-sm">Create</button>
         </div>
@@ -206,7 +214,8 @@
 
       <!-- Main Chat Area -->
       <div :class="['flex-1 bg-white dark:bg-slate-900 flex flex-col relative transition-colors', 
-                    !isMobileChatOpen ? 'hidden md:flex' : 'flex']">
+                    !isMobileChatOpen ? 'hidden md:flex' : 'flex']"
+           @click="activeMessageMenuId = null"> <!-- Click anywhere in chat to close msg menus -->
         
         <template v-if="activeChat">
           <!-- Chat Header -->
@@ -235,32 +244,84 @@
           </div>
 
           <!-- Messages -->
-          <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col bg-slate-50/50 dark:bg-transparent">
+          <div id="messages-container" class="flex-1 overflow-y-auto p-4 flex flex-col bg-slate-50/50 dark:bg-transparent relative pb-8">
             <div v-if="messages.length === 0" class="m-auto text-slate-400 dark:text-slate-500 text-sm text-center">
               No messages yet.<br>
               <button v-if="currentChatType === 'group' && activeGroup" @click="modals.shareCode = true" class="mt-2 text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 px-3 py-1.5 rounded-full font-bold hover:bg-blue-200 dark:hover:bg-blue-800/60 transition-colors">
                 Invite members to join!
               </button>
             </div>
+
+            <!-- Messages Loop -->
             <div v-for="msg in messages" :key="msg.id" 
-                 class="max-w-[85%] rounded-2xl px-4 py-2 flex flex-col shadow-sm"
-                 :class="msg.senderId === user.uid ? 'bg-blue-600 text-white self-end rounded-br-sm' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 self-start rounded-bl-sm'">
+                 class="max-w-[85%] rounded-2xl px-4 py-2 flex flex-col shadow-sm mb-4 cursor-pointer relative group/msg"
+                 :class="msg.senderId === user.uid ? 'bg-blue-600 text-white self-end rounded-br-sm' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 self-start rounded-bl-sm'"
+                 @click.stop="toggleMessageMenu(msg.id)">
+              
+              <!-- Reply Reference Bubble -->
+              <div v-if="msg.replyToId" class="text-xs mb-1 p-1.5 rounded bg-black/10 dark:bg-white/10 border-l-2 border-white/40 dark:border-slate-500 flex flex-col overflow-hidden max-w-full text-ellipsis whitespace-nowrap">
+                 <span class="font-bold opacity-80">{{ msg.replyToSender }}</span>
+                 <span class="opacity-75 italic truncate">{{ msg.replyToText }}</span>
+              </div>
+
+              <!-- Sender Name -->
               <span v-if="msg.senderId !== user.uid" class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-0.5">{{ msg.senderName }}</span>
-              <span class="leading-relaxed whitespace-pre-wrap break-words">{{ msg.text }}</span>
+              
+              <!-- Message Text (Handling Deleted State) -->
+              <span v-if="msg.isDeleted" class="italic opacity-60 flex items-center gap-1 text-sm">
+                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                 This message was deleted.
+              </span>
+              <span v-else class="leading-relaxed whitespace-pre-wrap break-words">
+                 {{ msg.text }}
+                 <span v-if="msg.isEdited" class="text-[10px] opacity-60 ml-1 italic">(edited)</span>
+              </span>
+
+              <!-- Action Menu (Edit/Delete/Reply) -->
+              <div v-if="activeMessageMenuId === msg.id && !msg.isDeleted" 
+                   class="absolute z-10 bottom-full mb-1 flex gap-1 bg-slate-800 text-white rounded-lg shadow-xl px-2 py-1 text-xs font-medium"
+                   :class="msg.senderId === user.uid ? 'right-0' : 'left-0'">
+                 <button @click.stop="initReply(msg)" class="px-2 py-1 hover:bg-slate-700 rounded transition-colors whitespace-nowrap">Reply</button>
+                 <template v-if="msg.senderId === user.uid">
+                   <button @click.stop="initEdit(msg)" class="px-2 py-1 hover:bg-slate-700 rounded transition-colors whitespace-nowrap">Edit</button>
+                   <button @click.stop="deleteMessage(msg)" class="px-2 py-1 text-red-400 hover:bg-slate-700 rounded transition-colors whitespace-nowrap">Delete</button>
+                 </template>
+              </div>
             </div>
           </div>
 
           <!-- Input Area -->
-          <div class="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-colors">
-            <form @submit.prevent="sendMessage" class="flex gap-2 items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-full border border-slate-200 dark:border-slate-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-inner">
-              <button type="button" @click="handleAttachmentClick" class="p-2 text-slate-400 hover:text-blue-500 rounded-full transition-colors" title="Attach File">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
-              </button>
-              <input v-model="newMessage" type="text" class="flex-1 bg-transparent border-none focus:outline-none text-sm px-2 text-slate-900 dark:text-slate-100 placeholder-slate-500" placeholder="Type a message...">
-              <button type="submit" :disabled="!newMessage.trim()" class="p-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 rounded-full text-white transition-colors shadow-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-              </button>
-            </form>
+          <div class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-colors shrink-0">
+            
+            <!-- Context Banner (Replying or Editing) -->
+            <div v-if="replyingTo || editingMessage" class="px-4 py-2 flex justify-between items-center text-xs"
+                 :class="editingMessage ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-b border-blue-100 dark:border-blue-800/50' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700'">
+               <div class="flex items-center gap-2 truncate">
+                  <svg v-if="replyingTo" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                  <svg v-else class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <span class="truncate">
+                    <strong v-if="replyingTo">Replying to {{ replyingTo.senderName }}: </strong>
+                    <strong v-else>Editing message: </strong>
+                    {{ replyingTo ? replyingTo.text : editingMessage.text }}
+                  </span>
+               </div>
+               <button @click="cancelInputContext" class="p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-colors shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+               </button>
+            </div>
+
+            <div class="p-4 pt-3">
+              <form @submit.prevent="submitMessage" class="flex gap-2 items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-full border border-slate-200 dark:border-slate-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-inner">
+                <button type="button" @click="handleAttachmentClick" class="p-2 text-slate-400 hover:text-blue-500 rounded-full transition-colors" title="Attach File">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                </button>
+                <input id="chat-input" v-model="newMessage" type="text" class="flex-1 bg-transparent border-none focus:outline-none text-sm px-2 text-slate-900 dark:text-slate-100 placeholder-slate-500" placeholder="Type a message...">
+                <button type="submit" :disabled="!newMessage.trim()" class="p-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 rounded-full text-white transition-colors shadow-sm">
+                  <svg v-if="editingMessage" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                  <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+              </form>
+            </div>
           </div>
         </template>
 
@@ -520,7 +581,7 @@
     import { createApp, ref, computed, watch, nextTick, onMounted } from 'vue';
     import { initializeApp } from 'firebase/app';
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+    import { getFirestore, collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
     import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
     const VAPID_KEY = "BBZAUePsEq6JeUWx25-_FOMCIxHvlNZ3TtJK9dRzOPqxAcE5EpDVI1s6xODHMa3j7YugzOuf8k8PLH4VmSVq9BU";
@@ -557,6 +618,9 @@
         const hasCanvasToken = typeof __initial_auth_token !== 'undefined' && __initial_auth_token;
         
         const isProfileComplete = ref(null);
+        const notificationsResolved = ref(false);
+        const notifLoading = ref(false);
+
         const userProfileName = ref('');
         const themePreference = ref('system');
         const setupFlowName = ref('');
@@ -573,6 +637,11 @@
         const selectedMemberInfo = ref(null);
         let groupInfoUnsub = null;
         
+        // Chat Action State
+        const activeMessageMenuId = ref(null);
+        const replyingTo = ref(null);
+        const editingMessage = ref(null);
+
         const currentChatId = ref(null);
         const currentChatType = ref('group'); // 'group' or 'dm'
         const isMobileChatOpen = ref(false);
@@ -633,7 +702,6 @@
 
         const joinLink = computed(() => {
            if (!activeGroup.value) return '';
-           // Build a clean URL without any existing search params, then add the join param
            const url = new URL(window.location.origin + window.location.pathname);
            url.searchParams.set('join', activeGroup.value.code);
            return url.toString();
@@ -683,7 +751,92 @@
           currentChatId.value = id;
           currentChatType.value = type;
           isMobileChatOpen.value = true;
+          activeMessageMenuId.value = null;
+          cancelInputContext();
         };
+
+        // --- CHAT ACTIONS (Edit / Reply / Delete) ---
+        const toggleMessageMenu = (id) => {
+           if (activeMessageMenuId.value === id) activeMessageMenuId.value = null;
+           else activeMessageMenuId.value = id;
+        };
+
+        const initReply = (msg) => {
+           replyingTo.value = msg;
+           editingMessage.value = null;
+           activeMessageMenuId.value = null;
+           document.getElementById('chat-input')?.focus();
+        };
+
+        const initEdit = (msg) => {
+           editingMessage.value = msg;
+           replyingTo.value = null;
+           newMessage.value = msg.text;
+           activeMessageMenuId.value = null;
+           document.getElementById('chat-input')?.focus();
+        };
+
+        const cancelInputContext = () => {
+           replyingTo.value = null;
+           editingMessage.value = null;
+           newMessage.value = '';
+        };
+
+        const deleteMessage = async (msg) => {
+           activeMessageMenuId.value = null;
+           try {
+              await updateDoc(doc(db, dbPath(`messages_${currentChatId.value}`), msg.id), {
+                 isDeleted: true,
+                 text: "",
+                 updatedAt: serverTimestamp()
+              });
+           } catch (e) {
+              showToast('Failed to delete message', 'error');
+           }
+        };
+
+        const sendMessage = async () => {
+          if (!newMessage.value.trim() || !currentChatId.value) return;
+          
+          if (currentChatType.value === 'group' && !myMemberships.value.some(m => m.groupId === currentChatId.value)) {
+             return showToast('You are no longer a member of this group.', 'error');
+          }
+
+          const text = newMessage.value;
+          const isEdit = !!editingMessage.value;
+          const editId = editingMessage.value?.id;
+          const isReply = !!replyingTo.value;
+          const replyData = isReply ? {
+             replyToId: replyingTo.value.id,
+             replyToText: replyingTo.value.text,
+             replyToSender: replyingTo.value.senderName
+          } : {};
+
+          cancelInputContext();
+
+          try {
+            if (isEdit) {
+               await updateDoc(doc(db, dbPath(`messages_${currentChatId.value}`), editId), {
+                  text,
+                  isEdited: true,
+                  updatedAt: serverTimestamp()
+               });
+            } else {
+               const messageRef = doc(collection(db, dbPath(`messages_${currentChatId.value}`)));
+               await setDoc(messageRef, {
+                 id: messageRef.id,
+                 text,
+                 senderId: user.value.uid,
+                 senderName: userProfileName.value || 'Anonymous Student',
+                 timestamp: serverTimestamp(),
+                 ...replyData
+               });
+            }
+          } catch (e) {
+            showToast('Failed to send', 'error');
+          }
+        };
+
 
         // --- GROUP INFO & DM CREATION ---
         const openGroupInfo = () => {
@@ -691,7 +844,7 @@
            modals.value.groupInfo = true;
            
            if (groupInfoUnsub) groupInfoUnsub();
-           groupInfoUnsub = onSnapshot(collection(db, dbPath(`groupMembers_${currentChatId.value}`)), (snap) => {
+           groupInfoUnsub = onSnapshot(collection(db, dbPath(`messages_roster_${currentChatId.value}`)), (snap) => {
               activeGroupMembers.value = snap.docs.map(d => d.data());
            }, (e) => showToast('Failed to load members', 'error'));
         };
@@ -716,7 +869,7 @@
         const executeRemoveMember = async () => {
            if (!memberToRemove.value || !currentChatId.value) return;
            try {
-              await deleteDoc(doc(db, dbPath(`groupMembers_${currentChatId.value}`), memberToRemove.value.userId));
+              await deleteDoc(doc(db, dbPath(`messages_roster_${currentChatId.value}`), memberToRemove.value.userId));
               showToast(`${memberToRemove.value.name} removed from the group.`);
               memberToRemove.value = null;
            } catch (e) {
@@ -727,19 +880,21 @@
         const startDM = async (member) => {
            modals.value.groupInfo = false; 
            const uids = [user.value.uid, member.userId].sort();
-           const dmId = `dm_${uids[0]}_${uids[1]}`;
+           const dmId = `messages_dm_${uids[0]}_${uids[1]}`;
 
            if (!myDms.value.find(d => d.id === dmId)) {
+             myDms.value.push({ id: dmId, peerId: member.userId, peerName: member.name });
              try {
-                await setDoc(doc(db, dbPath(`dms_${user.value.uid}`), dmId), {
+                await setDoc(doc(db, dbPath(`messages_dms_${user.value.uid}`), dmId), {
                    id: dmId, peerId: member.userId, peerName: member.name, updatedAt: serverTimestamp()
                 });
-                await setDoc(doc(db, dbPath(`dms_${member.userId}`), dmId), {
+                await setDoc(doc(db, dbPath(`messages_dms_${member.userId}`), dmId), {
                    id: dmId, peerId: user.value.uid, peerName: userProfileName.value, updatedAt: serverTimestamp()
                 });
              } catch (e) {
                 console.error(e);
                 showToast('Error starting private chat', 'error');
+                myDms.value = myDms.value.filter(d => d.id !== dmId);
                 return;
              }
            }
@@ -753,10 +908,8 @@
           try {
             if (authForm.value.isLogin) {
               await signInWithEmailAndPassword(auth, authForm.value.email, authForm.value.password);
-              showToast('Successfully signed in!');
             } else {
               await createUserWithEmailAndPassword(auth, authForm.value.email, authForm.value.password);
-              showToast('Account created!');
             }
           } catch (e) {
             if (e.code === 'auth/invalid-credential') authForm.value.error = 'Invalid email or password.';
@@ -774,7 +927,6 @@
           try {
             const provider = new GoogleAuthProvider();
             await signInWithPopup(auth, provider);
-            showToast('Successfully signed in with Google!');
           } catch (e) {
             if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
               authForm.value.error = 'Google sign-in failed: ' + e.message;
@@ -800,6 +952,7 @@
             modals.value.settings = false;
             if(groupInfoUnsub) groupInfoUnsub();
             isProfileComplete.value = null;
+            notificationsResolved.value = false;
             userProfileName.value = '';
             groups.value = [];
             myMemberships.value = [];
@@ -812,66 +965,45 @@
           }
         };
 
-        // --- FIREBASE MESSAGING SETUP ---
-        const checkNotificationStatus = () => {
-          if (!('Notification' in window)) return;
-          if (Notification.permission === 'default') {
-            showNotificationBanner.value = true;
-          } else if (Notification.permission === 'granted') {
-            setupMessagingListener(); 
-          }
-        };
+        // --- MANDATORY FIREBASE MESSAGING SETUP ---
+        const handleMandatoryNotifications = async () => {
+           notifLoading.value = true;
+           try {
+             const permission = await Notification.requestPermission();
+             if (permission === 'granted') {
+                const fcmSwCode = `
+                  importScripts('https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js');
+                  importScripts('https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js');
+                  firebase.initializeApp(${JSON.stringify(firebaseConfig)});
+                  const messaging = firebase.messaging();
+                  messaging.onBackgroundMessage((payload) => {
+                    self.registration.showNotification(
+                      payload.notification?.title || "Tether", 
+                      { body: payload.notification?.body || "You received a new message.", icon: '/favicon.ico' }
+                    );
+                  });
+                `;
+                const blob = new Blob([fcmSwCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                const registration = await navigator.serviceWorker.register(swUrl);
+                const messaging = getMessaging(app);
+                const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration });
 
-        const dismissBanner = () => {
-          showNotificationBanner.value = false;
-        };
-
-        const enableNotifications = async () => {
-          try {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-              showNotificationBanner.value = false;
-              showToast('Registering notifications...', 'info');
-
-              const fcmSwCode = `
-                importScripts('https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js');
-                importScripts('https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js');
-                firebase.initializeApp(${JSON.stringify(firebaseConfig)});
-                const messaging = firebase.messaging();
-                messaging.onBackgroundMessage((payload) => {
-                  self.registration.showNotification(
-                    payload.notification?.title || "Tether", 
-                    { body: payload.notification?.body || "You received a new message.", icon: '/favicon.ico' }
-                  );
-                });
-              `;
-              
-              const blob = new Blob([fcmSwCode], { type: 'application/javascript' });
-              const swUrl = URL.createObjectURL(blob);
-              
-              const registration = await navigator.serviceWorker.register(swUrl);
-              const messaging = getMessaging(app);
-              
-              const token = await getToken(messaging, { 
-                vapidKey: VAPID_KEY,
-                serviceWorkerRegistration: registration 
-              });
-
-              if (token) {
-                await setDoc(doc(db, dbPath('fcmTokens', false, user.value.uid), 'current'), {
-                  token, updatedAt: serverTimestamp()
-                });
-                showToast('Notifications Enabled!', 'success');
-                setupMessagingListener();
-              }
-            } else {
-              showToast('Notification permission denied.', 'error');
-              showNotificationBanner.value = false;
-            }
-          } catch (e) {
-            console.error(e);
-            showToast('Failed to enable notifications.', 'error');
-          }
+                if (token) {
+                  await setDoc(doc(db, dbPath('fcmTokens', false, user.value.uid), 'current'), {
+                    token, updatedAt: serverTimestamp()
+                  });
+                  setupMessagingListener();
+                }
+             } else {
+                showToast('Notification permission denied, but continuing securely.', 'error');
+             }
+           } catch (e) {
+             console.warn("Notifications strictly blocked by browser env. Bypassing.", e);
+           } finally {
+             notifLoading.value = false;
+             notificationsResolved.value = true;
+           }
         };
 
         const setupMessagingListener = () => {
@@ -880,9 +1012,7 @@
             onMessage(messaging, (payload) => {
               showToast(`New Message: ${payload.notification?.body}`, 'message');
             });
-          } catch (e) {
-            console.warn("Messaging initialization failed", e);
-          }
+          } catch (e) {}
         };
 
         // Actions
@@ -894,9 +1024,7 @@
               theme: 'system',
               createdAt: serverTimestamp()
             }, { merge: true });
-            showToast('Welcome to Tether!');
-            // If they signed up through a join link, trigger the join modal immediately
-            checkUrlForJoinCode();
+            checkUrlForJoinCode(); 
           } catch (e) {
             showToast('Failed to save profile', 'error');
           }
@@ -933,7 +1061,7 @@
               groupId, role: 'owner', joinedAt: serverTimestamp()
             });
 
-            await setDoc(doc(db, dbPath(`groupMembers_${groupId}`), user.value.uid), {
+            await setDoc(doc(db, dbPath(`messages_roster_${groupId}`), user.value.uid), {
               userId: user.value.uid, role: 'owner', name: userProfileName.value, joinedAt: serverTimestamp()
             });
 
@@ -964,16 +1092,14 @@
               groupId, role: 'member', answers: joinFlow.value.answers, joinedAt: serverTimestamp()
             });
 
-            await setDoc(doc(db, dbPath(`groupMembers_${groupId}`), user.value.uid), {
+            await setDoc(doc(db, dbPath(`messages_roster_${groupId}`), user.value.uid), {
               userId: user.value.uid, role: 'member', name: userProfileName.value, answers: joinFlow.value.answers, joinedAt: serverTimestamp()
             });
 
             modals.value.join = false;
             joinFlow.value = { code: '', group: null, answers: {} };
             
-            // Clean URL after joining
             window.history.replaceState({}, document.title, window.location.pathname);
-            
             selectChat(groupId, 'group');
             showToast('Successfully joined group!');
           } catch (e) {
@@ -987,34 +1113,10 @@
            if (code && isProfileComplete.value === true) {
               modals.value.join = true;
               joinFlow.value.code = code;
-              // Add a slight delay to allow Global Groups List to load from Firebase before searching
               setTimeout(() => {
                  if (groups.value.length > 0) findGroupToJoin();
               }, 1000);
            }
-        };
-
-        const sendMessage = async () => {
-          if (!newMessage.value.trim() || !currentChatId.value) return;
-          const text = newMessage.value;
-          newMessage.value = ''; 
-          
-          if (currentChatType.value === 'group' && !myMemberships.value.some(m => m.groupId === currentChatId.value)) {
-             return showToast('You are no longer a member of this group.', 'error');
-          }
-
-          try {
-            const messageRef = doc(collection(db, dbPath(`messages_${currentChatId.value}`)));
-            await setDoc(messageRef, {
-              id: messageRef.id,
-              text,
-              senderId: user.value.uid,
-              senderName: userProfileName.value || 'Anonymous Student',
-              timestamp: serverTimestamp()
-            });
-          } catch (e) {
-            showToast('Failed to send', 'error');
-          }
         };
 
         // Listeners Setup
@@ -1030,7 +1132,7 @@
               userProfileName.value = docSnap.data().name;
               themePreference.value = docSnap.data().theme || 'system';
               isProfileComplete.value = true;
-              checkUrlForJoinCode(); // Check for invite links
+              checkUrlForJoinCode(); 
             } else {
               isProfileComplete.value = false;
             }
@@ -1050,7 +1152,7 @@
           }, (e) => console.error(e)));
 
           // 4. My Direct Messages Inbox
-          listeners.push(onSnapshot(collection(db, dbPath(`dms_${uid}`)), (snap) => {
+          listeners.push(onSnapshot(collection(db, dbPath(`messages_dms_${uid}`)), (snap) => {
             myDms.value = snap.docs.map(d => d.data());
           }, (e) => console.error(e)));
         };
@@ -1083,8 +1185,11 @@
             if (u.displayName && !isProfileComplete.value) {
               setupFlowName.value = u.displayName;
             }
+            if ('Notification' in window && Notification.permission === 'granted') {
+               notificationsResolved.value = true;
+               setupMessagingListener();
+            }
             setupDataListeners();
-            checkNotificationStatus();
           } else {
             listeners.forEach(unsub => unsub());
             listeners = [];
@@ -1096,15 +1201,18 @@
         return {
           loading, user, isProfileComplete, userProfileName, showNotificationBanner,
           authForm, hasCanvasToken, setupFlowName, settingsForm,
+          notificationsResolved, notifLoading, handleMandatoryNotifications,
           groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo,
           currentChatId, currentChatType, activeGroup, activeChat, isMobileChatOpen, joinLink,
+          activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, initReply, initEdit, cancelInputContext, deleteMessage,
           toast, newMessage, modals, createFlow, joinFlow,
           showToast, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
           submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, 
-          saveInitialProfile, saveSettings, openGroupInfo, closeGroupInfo, viewMemberInfo, promptRemoveMember, executeRemoveMember, handleAttachmentClick, enableNotifications, dismissBanner, copyText, nativeShare
+          saveInitialProfile, saveSettings, openGroupInfo, closeGroupInfo, viewMemberInfo, promptRemoveMember, executeRemoveMember, handleAttachmentClick, dismissBanner, copyText, nativeShare
         };
       }
     }).mount('#app');
   </script>
 </body>
 </html>
+
