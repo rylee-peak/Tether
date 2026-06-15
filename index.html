@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,9 +61,9 @@
 
     <!-- Toast Notification -->
     <div v-if="toast.show" 
-         class="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full shadow-lg font-medium transition-all text-sm flex items-center gap-2"
+         class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg font-medium transition-all text-sm flex items-center gap-2"
          :class="toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-slate-800 dark:bg-blue-500 text-white'">
-      <svg v-if="toast.type === 'message'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+      <svg v-if="toast.type === 'message' || toast.type === 'success'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
       {{ toast.msg }}
     </div>
 
@@ -74,22 +73,19 @@
       <p class="mt-4 text-slate-500 dark:text-slate-400 font-medium">Connecting to Tether...</p>
     </div>
 
-    <!-- 1. Authentication Screen (Email/Password & Google) -->
+    <!-- 1. Authentication Screen -->
     <div v-else-if="!user" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200 overflow-y-auto">
       <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md my-auto">
-        
         <div class="flex items-center gap-2 justify-center text-blue-600 dark:text-blue-400 font-bold text-3xl tracking-tight mb-2">
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
           Tether
         </div>
         <p class="text-slate-500 dark:text-slate-400 text-center text-sm mb-8">Secure communications platform.</p>
 
-        <!-- Error Message Box -->
         <div v-if="authForm.error" class="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs rounded-lg border border-red-200 dark:border-red-800">
           {{ authForm.error }}
         </div>
 
-        <!-- Google Sign-In Button -->
         <button type="button" @click="loginWithGoogle" :disabled="authForm.loading" class="w-full bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:opacity-50 flex justify-center items-center h-12 gap-3 shadow-sm mb-4">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
           Continue with Google
@@ -104,10 +100,8 @@
         <form @submit.prevent="submitAuth" class="text-left mt-2">
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Email Address</label>
           <input v-model="authForm.email" type="email" placeholder="you@example.com" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 mb-4 transition-all" required>
-          
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Password</label>
           <input v-model="authForm.password" type="password" placeholder="••••••••" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 mb-6 transition-all" required>
-          
           <button type="submit" :disabled="authForm.loading || !authForm.email || !authForm.password" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 flex justify-center items-center h-12">
             <span v-if="!authForm.loading">{{ authForm.isLogin ? 'Sign In' : 'Create Account' }}</span>
             <div v-else class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -151,7 +145,7 @@
     <!-- 3. Main Application -->
     <div v-else-if="user && isProfileComplete === true" class="h-full w-full flex flex-1 overflow-hidden">
       
-      <!-- Sidebar / Group List -->
+      <!-- Sidebar / List -->
       <div :class="['w-full md:w-80 bg-slate-50 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform z-10', 
                     isMobileChatOpen ? 'hidden md:flex' : 'flex']">
         
@@ -162,11 +156,9 @@
             Tether
           </div>
           <div class="flex gap-2">
-            <!-- Settings Button -->
             <button @click="modals.settings = true" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors" title="Settings">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             </button>
-            <!-- Profile Avatar Initials -->
             <button @click="modals.settings = true" class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center text-sm font-bold uppercase transition-colors">
               {{ userProfileName.charAt(0) || '?' }}
             </button>
@@ -178,16 +170,37 @@
           <button @click="modals.create = true" class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 rounded-lg text-sm font-medium transition-colors text-white shadow-sm">Create</button>
         </div>
 
-        <div class="flex-1 overflow-y-auto px-2 pb-4 space-y-1">
-          <p v-if="myGroups.length === 0" class="text-slate-500 dark:text-slate-400 text-center text-sm mt-6 px-4">You aren't in any groups yet. Join or create one above.</p>
-          <button 
-            v-for="group in myGroups" :key="group.id"
-            @click="selectGroup(group)"
-            :class="['w-full text-left p-3 rounded-xl transition-all flex flex-col border border-transparent', 
-                     currentGroupId === group.id ? 'bg-blue-50 dark:bg-blue-600/20 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-500/30' : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300']">
-            <span class="font-bold truncate">{{ group.name }}</span>
-            <span class="text-xs opacity-70">Code: {{ group.code }}</span>
-          </button>
+        <div class="flex-1 overflow-y-auto pb-4 flex flex-col">
+          
+          <!-- Groups Section -->
+          <div class="px-4 pt-2 pb-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Groups</div>
+          <div class="space-y-1 px-2 mb-4">
+            <p v-if="myGroups.length === 0" class="text-slate-400 dark:text-slate-500 text-xs px-2 italic">No groups yet.</p>
+            <button 
+              v-for="group in myGroups" :key="group.id"
+              @click="selectChat(group.id, 'group')"
+              :class="['w-full text-left p-3 rounded-xl transition-all flex flex-col border border-transparent', 
+                       currentChatId === group.id ? 'bg-blue-50 dark:bg-blue-600/20 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-500/30' : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300']">
+              <span class="font-bold truncate text-sm">{{ group.name }}</span>
+            </button>
+          </div>
+
+          <!-- Direct Messages Section -->
+          <div class="px-4 pt-2 pb-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Direct Messages</div>
+          <div class="space-y-1 px-2 mb-4">
+            <p v-if="myDms.length === 0" class="text-slate-400 dark:text-slate-500 text-xs px-2 italic">No messages yet. Open a Group's Info to message members.</p>
+            <button 
+              v-for="dm in myDms" :key="dm.id"
+              @click="selectChat(dm.id, 'dm')"
+              :class="['w-full text-left p-3 rounded-xl transition-all flex items-center gap-3 border border-transparent', 
+                       currentChatId === dm.id ? 'bg-blue-50 dark:bg-blue-600/20 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-500/30' : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300']">
+              <div class="w-8 h-8 shrink-0 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs font-bold uppercase">
+                {{ dm.peerName.charAt(0) || '?' }}
+              </div>
+              <span class="font-bold truncate text-sm flex-1">{{ dm.peerName }}</span>
+            </button>
+          </div>
+
         </div>
       </div>
 
@@ -195,7 +208,7 @@
       <div :class="['flex-1 bg-white dark:bg-slate-900 flex flex-col relative transition-colors', 
                     !isMobileChatOpen ? 'hidden md:flex' : 'flex']">
         
-        <template v-if="activeGroup">
+        <template v-if="activeChat">
           <!-- Chat Header -->
           <div class="h-16 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur shrink-0 z-10 transition-colors">
             <div class="flex items-center gap-3">
@@ -203,22 +216,31 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
               </button>
               <div>
-                <h2 class="font-bold text-lg text-slate-900 dark:text-slate-100 leading-tight">{{ activeGroup.name }}</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Code: <span class="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-blue-600 dark:text-blue-300 font-mono select-all">{{ activeGroup.code }}</span></p>
+                <h2 class="font-bold text-lg text-slate-900 dark:text-slate-100 leading-tight">{{ activeChat.name }}</h2>
+                <div v-if="currentChatType === 'group' && activeGroup" class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                  Code: 
+                  <button @click="modals.shareCode = true" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-1.5 py-0.5 rounded text-blue-600 dark:text-blue-300 font-mono transition-colors font-bold cursor-pointer" title="Click to share">
+                    {{ activeGroup.code }}
+                  </button>
+                </div>
+                <p v-else class="text-xs text-slate-500 dark:text-slate-400">Direct Message</p>
               </div>
             </div>
             
-            <!-- Manage Group Button (Owners Only) -->
-            <button v-if="activeGroup.ownerId === user.uid" @click="openGroupSettings" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors border border-slate-200 dark:border-slate-700">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-              Manage
+            <!-- Group Info Button -->
+            <button v-if="currentChatType === 'group'" @click="openGroupInfo" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors border border-slate-200 dark:border-slate-700">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Info
             </button>
           </div>
 
           <!-- Messages -->
           <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col bg-slate-50/50 dark:bg-transparent">
             <div v-if="messages.length === 0" class="m-auto text-slate-400 dark:text-slate-500 text-sm text-center">
-              No messages yet.<br><span v-if="activeGroup.ownerId === user.uid" class="text-xs">Share the code <b>{{ activeGroup.code }}</b> with others to join!</span>
+              No messages yet.<br>
+              <button v-if="currentChatType === 'group' && activeGroup" @click="modals.shareCode = true" class="mt-2 text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 px-3 py-1.5 rounded-full font-bold hover:bg-blue-200 dark:hover:bg-blue-800/60 transition-colors">
+                Invite members to join!
+              </button>
             </div>
             <div v-for="msg in messages" :key="msg.id" 
                  class="max-w-[85%] rounded-2xl px-4 py-2 flex flex-col shadow-sm"
@@ -244,34 +266,77 @@
 
         <div v-else class="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-transparent transition-colors">
           <svg class="w-16 h-16 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
-          <p>Select a group or create one to start</p>
+          <p>Select a chat to start</p>
         </div>
       </div>
     </div>
 
     <!-- Modals -->
 
-    <!-- Group Settings Modal (Admins Only) -->
-    <div v-if="modals.groupSettings" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[50] flex items-center justify-center p-4 transition-all">
+    <!-- Group Share Modal -->
+    <div v-if="modals.shareCode && activeGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl text-center">
+        <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Share Group</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Invite members to {{ activeGroup.name }}</p>
+
+        <!-- QR Code -->
+        <div class="bg-white p-3 rounded-xl border border-slate-200 inline-block mb-6 shadow-sm mx-auto">
+          <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(joinLink)}&margin=0`" alt="QR Code" class="w-40 h-40 object-contain">
+        </div>
+
+        <div class="space-y-3 mb-6 text-left">
+          <!-- Code -->
+          <div>
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase">Group Code</label>
+            <div @click="copyText(activeGroup.code)" class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors group">
+              <span class="font-mono text-lg font-bold text-slate-900 dark:text-white tracking-widest">{{ activeGroup.code }}</span>
+              <span class="text-blue-600 dark:text-blue-400 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">COPY</span>
+            </div>
+          </div>
+          <!-- Link -->
+          <div>
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase">Join Link</label>
+            <div @click="copyText(joinLink)" class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors group">
+              <span class="text-sm text-slate-600 dark:text-slate-300 truncate mr-2">{{ joinLink }}</span>
+              <span class="text-blue-600 dark:text-blue-400 text-xs font-bold shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">COPY</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <button @click="modals.shareCode = false" class="flex-1 px-4 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg">Close</button>
+          <button @click="nativeShare" class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+            Share
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group Info Modal -->
+    <div v-if="modals.groupInfo && activeGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[50] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-2xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh]">
         
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-            Manage Group
+            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Group Info
           </h3>
-          <button @click="closeGroupSettings" class="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+          <button @click="closeGroupInfo" class="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
         </div>
 
         <div class="overflow-y-auto flex-1 pr-2 space-y-6">
-          <!-- Group Info Card -->
-          <div class="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 p-4 rounded-xl">
-             <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-1">{{ activeGroup.name }}</h4>
-             <p class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
-               Share Code: <span class="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-mono px-2 py-0.5 rounded font-bold select-all">{{ activeGroup.code }}</span>
-             </p>
+          <!-- Group Header Card -->
+          <div class="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 p-4 rounded-xl flex justify-between items-center">
+             <div>
+               <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-1">{{ activeGroup.name }}</h4>
+               <p class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                 Code: <span @click="modals.shareCode = true" class="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-mono px-2 py-0.5 rounded font-bold cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors" title="Share">{{ activeGroup.code }}</span>
+               </p>
+             </div>
+             <div v-if="activeGroup.ownerId === user.uid" class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase shadow-sm">Owner</div>
           </div>
 
           <!-- Member List -->
@@ -283,27 +348,35 @@
             </div>
 
             <div v-else class="space-y-3">
-               <div v-for="member in activeGroupMembers" :key="member.userId" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl flex flex-col sm:flex-row gap-4 justify-between items-start">
-                  <div class="flex-1">
-                     <div class="flex items-center gap-2 mb-1">
-                        <span class="font-bold text-slate-900 dark:text-slate-100">{{ member.name }}</span>
-                        <span v-if="member.role === 'owner'" class="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 px-2 py-0.5 rounded-full">Owner</span>
-                     </div>
-                     
-                     <!-- Member Answers -->
-                     <div v-if="member.answers && Object.keys(member.answers).length > 0" class="mt-3 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg text-sm text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/50">
-                        <p class="font-bold text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Sign-up Responses:</p>
-                        <ul class="space-y-1.5">
-                           <li v-for="(answer, idx) in member.answers" :key="idx" class="flex flex-col">
-                              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">{{ activeGroup.questions[idx] || `Question ${parseInt(idx)+1}` }}</span> 
-                              <span class="font-medium">{{ answer || 'No response' }}</span>
-                           </li>
-                        </ul>
-                     </div>
+               <div v-for="member in activeGroupMembers" :key="member.userId" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 sm:p-4 rounded-xl flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-start sm:items-center">
+                  
+                  <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <div class="w-10 h-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-bold uppercase">
+                      {{ member.name.charAt(0) || '?' }}
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                         <span class="font-bold text-slate-900 dark:text-slate-100">{{ member.name }}</span>
+                         <span v-if="member.role === 'owner'" class="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 px-2 py-0.5 rounded-full">Owner</span>
+                      </div>
+                      <span v-if="member.userId === user.uid" class="text-xs text-slate-500 dark:text-slate-400">(You)</span>
+                    </div>
                   </div>
                   
-                  <div v-if="member.role !== 'owner'" class="shrink-0">
-                     <button @click="promptRemoveMember(member)" class="text-red-500 hover:text-white border border-red-200 dark:border-red-900/50 hover:bg-red-500 hover:border-red-500 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">Remove</button>
+                  <!-- Actions (Message / View Info / Remove) -->
+                  <div class="shrink-0 flex flex-wrap gap-2 w-full sm:w-auto justify-end">
+                     
+                     <button v-if="activeGroup.ownerId === user.uid && member.role !== 'owner' && member.answers" @click="viewMemberInfo(member)" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">
+                       Info
+                     </button>
+                     
+                     <button v-if="member.userId !== user.uid" @click="startDM(member)" class="text-blue-600 dark:text-blue-400 hover:text-white dark:hover:text-white border border-blue-200 dark:border-blue-800/60 hover:bg-blue-600 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider shadow-sm">
+                       Message
+                     </button>
+                     
+                     <button v-if="activeGroup.ownerId === user.uid && member.userId !== user.uid" @click="promptRemoveMember(member)" class="text-red-500 hover:text-white border border-red-200 dark:border-red-900/50 hover:bg-red-500 hover:border-red-500 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">
+                       Remove
+                     </button>
                   </div>
                </div>
             </div>
@@ -312,14 +385,38 @@
       </div>
     </div>
 
-    <!-- Confirm Member Removal Modal (Security Custom Confirmation) -->
+    <!-- Member Responses Modal (Admin only) -->
+    <div v-if="modals.memberInfo && selectedMemberInfo" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
+        <h3 class="font-bold text-xl mb-1 text-slate-900 dark:text-white flex items-center gap-2">
+          {{ selectedMemberInfo.name }}
+        </h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 uppercase tracking-wider">Sign-up Responses</p>
+        
+        <div class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
+           <div v-for="(answer, idx) in selectedMemberInfo.answers" :key="idx" class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700/50">
+              <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">{{ activeGroup.questions[idx] || `Question ${parseInt(idx)+1}` }}</p>
+              <p class="text-sm font-medium text-slate-900 dark:text-slate-200">{{ answer || 'No response provided.' }}</p>
+           </div>
+           <div v-if="!selectedMemberInfo.answers || Object.keys(selectedMemberInfo.answers).length === 0" class="text-sm text-slate-500 italic text-center">
+             No responses recorded.
+           </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button @click="modals.memberInfo = false" class="px-6 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-lg font-medium transition-colors shadow-sm">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm Member Removal Modal -->
     <div v-if="memberToRemove" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-2 text-slate-900 dark:text-white">Remove {{ memberToRemove.name }}?</h3>
         <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">They will be permanently removed from this group and will lose access to all messages immediately.</p>
         <div class="flex justify-end gap-3">
           <button @click="memberToRemove = null" class="px-4 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors">Cancel</button>
-          <button @click="executeRemoveMember" class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium transition-colors shadow-sm">Remove Member</button>
+          <button @click="executeRemoveMember" class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium transition-colors shadow-sm">Remove</button>
         </div>
       </div>
     </div>
@@ -380,13 +477,11 @@
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-6 text-slate-900 dark:text-white">Settings</h3>
         
-        <!-- Profile Settings -->
         <div class="mb-6">
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Display Name</label>
           <input v-model="settingsForm.name" type="text" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm transition-all">
         </div>
 
-        <!-- Theme Settings -->
         <div class="mb-8">
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Appearance</label>
           <div class="grid grid-cols-3 gap-2">
@@ -428,7 +523,6 @@
     import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
     import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
-    // Public VAPID Key for Notifications
     const VAPID_KEY = "BBZAUePsEq6JeUWx25-_FOMCIxHvlNZ3TtJK9dRzOPqxAcE5EpDVI1s6xODHMa3j7YugzOuf8k8PLH4VmSVq9BU";
 
     const firebaseConfig = typeof __firebase_config !== 'undefined' 
@@ -446,7 +540,6 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     
-    // Strict Path Rules Handler
     const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'tether-production';
     const dbPath = (colName, isPublic = true, userId = null) => {
       if (typeof __app_id !== 'undefined') {
@@ -460,37 +553,35 @@
         const loading = ref(true);
         const user = ref(null);
         
-        // Authentication Form State
         const authForm = ref({ email: '', password: '', isLogin: true, loading: false, error: '' });
         const hasCanvasToken = typeof __initial_auth_token !== 'undefined' && __initial_auth_token;
         
-        // Profile & Settings
         const isProfileComplete = ref(null);
         const userProfileName = ref('');
         const themePreference = ref('system');
         const setupFlowName = ref('');
         const settingsForm = ref({ name: '', theme: 'system' });
-        
         const showNotificationBanner = ref(false);
         
-        // Data State
         const groups = ref([]); 
         const myMemberships = ref([]);
+        const myDms = ref([]);
         const messages = ref([]);
         
-        // Group Admin State
         const activeGroupMembers = ref([]);
         const memberToRemove = ref(null);
-        let groupSettingsUnsub = null;
+        const selectedMemberInfo = ref(null);
+        let groupInfoUnsub = null;
         
-        // UI State
-        const currentGroupId = ref(null);
+        const currentChatId = ref(null);
+        const currentChatType = ref('group'); // 'group' or 'dm'
         const isMobileChatOpen = ref(false);
         const toast = ref({ show: false, msg: '', type: 'info' });
         const newMessage = ref('');
         
-        // Modals
-        const modals = ref({ join: false, create: false, settings: false, groupSettings: false });
+        const modals = ref({ 
+          join: false, create: false, settings: false, groupInfo: false, shareCode: false, memberInfo: false 
+        });
         const createFlow = ref({ name: '', questions: '' });
         const joinFlow = ref({ code: '', group: null, answers: {} });
 
@@ -525,7 +616,28 @@
           const joinedIds = myMemberships.value.map(m => m.groupId);
           return groups.value.filter(g => joinedIds.includes(g.id));
         });
-        const activeGroup = computed(() => groups.value.find(g => g.id === currentGroupId.value));
+        
+        const activeGroup = computed(() => {
+          if (currentChatType.value !== 'group') return null;
+          return groups.value.find(g => g.id === currentChatId.value);
+        });
+
+        const activeChat = computed(() => {
+          if (currentChatType.value === 'group') {
+             return groups.value.find(g => g.id === currentChatId.value);
+          } else {
+             const dm = myDms.value.find(d => d.id === currentChatId.value);
+             return dm ? { id: dm.id, name: dm.peerName, isDM: true } : null;
+          }
+        });
+
+        const joinLink = computed(() => {
+           if (!activeGroup.value) return '';
+           // Build a clean URL without any existing search params, then add the join param
+           const url = new URL(window.location.origin + window.location.pathname);
+           url.searchParams.set('join', activeGroup.value.code);
+           return url.toString();
+        });
 
         const showToast = (msg, type = 'info') => {
           toast.value = { show: true, msg, type };
@@ -540,28 +652,61 @@
           if (container) container.scrollTop = container.scrollHeight;
         };
 
-        const handleAttachmentClick = () => {
-          showToast('Security Alert: R2 uploads are disabled in this prototype.', 'error');
+        // --- CLIPBOARD & SHARE ---
+        const copyText = (text) => {
+           const el = document.createElement('textarea');
+           el.value = text;
+           document.body.appendChild(el);
+           el.select();
+           document.execCommand('copy');
+           document.body.removeChild(el);
+           showToast('Copied to clipboard!', 'success');
         };
 
-        // --- GROUP ADMIN FUNCTIONS ---
-        const openGroupSettings = () => {
-           if (!activeGroup.value || activeGroup.value.ownerId !== user.value.uid) return;
-           modals.value.groupSettings = true;
+        const nativeShare = () => {
+           if (navigator.share) {
+             navigator.share({
+               title: `Join ${activeGroup.value.name}`,
+               text: `Join my group "${activeGroup.value.name}" on Tether using code: ${activeGroup.value.code}`,
+               url: joinLink.value
+             }).catch(console.warn);
+           } else {
+             showToast('Native sharing not supported on this device.', 'error');
+           }
+        };
+
+        const handleAttachmentClick = () => {
+          showToast('Security Alert: File uploads are disabled in this prototype.', 'error');
+        };
+
+        const selectChat = (id, type) => {
+          currentChatId.value = id;
+          currentChatType.value = type;
+          isMobileChatOpen.value = true;
+        };
+
+        // --- GROUP INFO & DM CREATION ---
+        const openGroupInfo = () => {
+           if (!activeGroup.value) return;
+           modals.value.groupInfo = true;
            
-           // Fetch public member list for this group
-           if (groupSettingsUnsub) groupSettingsUnsub();
-           groupSettingsUnsub = onSnapshot(collection(db, dbPath(`groupMembers_${currentGroupId.value}`)), (snap) => {
+           if (groupInfoUnsub) groupInfoUnsub();
+           groupInfoUnsub = onSnapshot(collection(db, dbPath(`groupMembers_${currentChatId.value}`)), (snap) => {
               activeGroupMembers.value = snap.docs.map(d => d.data());
            }, (e) => showToast('Failed to load members', 'error'));
         };
 
-        const closeGroupSettings = () => {
-           modals.value.groupSettings = false;
-           if (groupSettingsUnsub) {
-              groupSettingsUnsub();
-              groupSettingsUnsub = null;
+        const closeGroupInfo = () => {
+           modals.value.groupInfo = false;
+           if (groupInfoUnsub) {
+              groupInfoUnsub();
+              groupInfoUnsub = null;
            }
+        };
+
+        const viewMemberInfo = (member) => {
+           selectedMemberInfo.value = member;
+           modals.value.memberInfo = true;
         };
 
         const promptRemoveMember = (member) => {
@@ -569,15 +714,36 @@
         };
 
         const executeRemoveMember = async () => {
-           if (!memberToRemove.value || !currentGroupId.value) return;
+           if (!memberToRemove.value || !currentChatId.value) return;
            try {
-              // Delete their public record from the group
-              await deleteDoc(doc(db, dbPath(`groupMembers_${currentGroupId.value}`), memberToRemove.value.userId));
-              showToast(`${memberToRemove.value.name} was removed from the group.`);
+              await deleteDoc(doc(db, dbPath(`groupMembers_${currentChatId.value}`), memberToRemove.value.userId));
+              showToast(`${memberToRemove.value.name} removed from the group.`);
               memberToRemove.value = null;
            } catch (e) {
               showToast('Error removing member', 'error');
            }
+        };
+
+        const startDM = async (member) => {
+           modals.value.groupInfo = false; 
+           const uids = [user.value.uid, member.userId].sort();
+           const dmId = `dm_${uids[0]}_${uids[1]}`;
+
+           if (!myDms.value.find(d => d.id === dmId)) {
+             try {
+                await setDoc(doc(db, dbPath(`dms_${user.value.uid}`), dmId), {
+                   id: dmId, peerId: member.userId, peerName: member.name, updatedAt: serverTimestamp()
+                });
+                await setDoc(doc(db, dbPath(`dms_${member.userId}`), dmId), {
+                   id: dmId, peerId: user.value.uid, peerName: userProfileName.value, updatedAt: serverTimestamp()
+                });
+             } catch (e) {
+                console.error(e);
+                showToast('Error starting private chat', 'error');
+                return;
+             }
+           }
+           selectChat(dmId, 'dm');
         };
 
         // --- AUTHENTICATION ---
@@ -632,13 +798,14 @@
           try {
             await signOut(auth);
             modals.value.settings = false;
-            if(groupSettingsUnsub) groupSettingsUnsub();
+            if(groupInfoUnsub) groupInfoUnsub();
             isProfileComplete.value = null;
             userProfileName.value = '';
             groups.value = [];
             myMemberships.value = [];
+            myDms.value = [];
             messages.value = [];
-            currentGroupId.value = null;
+            currentChatId.value = null;
             showToast('Signed out safely.');
           } catch (e) {
             showToast('Failed to sign out.', 'error');
@@ -728,6 +895,8 @@
               createdAt: serverTimestamp()
             }, { merge: true });
             showToast('Welcome to Tether!');
+            // If they signed up through a join link, trigger the join modal immediately
+            checkUrlForJoinCode();
           } catch (e) {
             showToast('Failed to save profile', 'error');
           }
@@ -756,25 +925,21 @@
             const code = generateCode();
             const questions = createFlow.value.questions.split(',').map(q => q.trim()).filter(Boolean);
             
-            // 1. Create Group Object
             await setDoc(doc(db, dbPath('groups'), groupId), {
               id: groupId, name: createFlow.value.name, code, ownerId: user.value.uid, questions, createdAt: serverTimestamp()
             });
 
-            // 2. Add to Personal Membership list (Private)
             await setDoc(doc(db, dbPath('memberships', false, user.value.uid), groupId), {
               groupId, role: 'owner', joinedAt: serverTimestamp()
             });
 
-            // 3. Add to Shared Member list (For Admin Viewing)
             await setDoc(doc(db, dbPath(`groupMembers_${groupId}`), user.value.uid), {
               userId: user.value.uid, role: 'owner', name: userProfileName.value, joinedAt: serverTimestamp()
             });
 
             modals.value.create = false;
             createFlow.value = { name: '', questions: '' };
-            currentGroupId.value = groupId;
-            isMobileChatOpen.value = true;
+            selectChat(groupId, 'group');
             showToast('Group created!');
           } catch (e) {
             showToast('Error creating group', 'error');
@@ -795,43 +960,51 @@
           try {
             const groupId = joinFlow.value.group.id;
             
-            // 1. Add to Personal Membership list
             await setDoc(doc(db, dbPath('memberships', false, user.value.uid), groupId), {
               groupId, role: 'member', answers: joinFlow.value.answers, joinedAt: serverTimestamp()
             });
 
-            // 2. Add to Shared Member List with answers (For Admin)
             await setDoc(doc(db, dbPath(`groupMembers_${groupId}`), user.value.uid), {
               userId: user.value.uid, role: 'member', name: userProfileName.value, answers: joinFlow.value.answers, joinedAt: serverTimestamp()
             });
 
             modals.value.join = false;
             joinFlow.value = { code: '', group: null, answers: {} };
-            currentGroupId.value = groupId;
-            isMobileChatOpen.value = true;
+            
+            // Clean URL after joining
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            selectChat(groupId, 'group');
             showToast('Successfully joined group!');
           } catch (e) {
             showToast('Error joining group', 'error');
           }
         };
 
-        const selectGroup = (group) => {
-          currentGroupId.value = group.id;
-          isMobileChatOpen.value = true;
+        const checkUrlForJoinCode = () => {
+           const params = new URLSearchParams(window.location.search);
+           const code = params.get('join');
+           if (code && isProfileComplete.value === true) {
+              modals.value.join = true;
+              joinFlow.value.code = code;
+              // Add a slight delay to allow Global Groups List to load from Firebase before searching
+              setTimeout(() => {
+                 if (groups.value.length > 0) findGroupToJoin();
+              }, 1000);
+           }
         };
 
         const sendMessage = async () => {
-          if (!newMessage.value.trim() || !currentGroupId.value) return;
+          if (!newMessage.value.trim() || !currentChatId.value) return;
           const text = newMessage.value;
           newMessage.value = ''; 
           
-          // Verify they haven't been removed by checking if they are in myMemberships
-          if (!myMemberships.value.some(m => m.groupId === currentGroupId.value)) {
+          if (currentChatType.value === 'group' && !myMemberships.value.some(m => m.groupId === currentChatId.value)) {
              return showToast('You are no longer a member of this group.', 'error');
           }
 
           try {
-            const messageRef = doc(collection(db, dbPath(`messages_${currentGroupId.value}`)));
+            const messageRef = doc(collection(db, dbPath(`messages_${currentChatId.value}`)));
             await setDoc(messageRef, {
               id: messageRef.id,
               text,
@@ -851,11 +1024,13 @@
 
           const uid = user.value.uid;
 
+          // 1. Profile
           listeners.push(onSnapshot(doc(db, dbPath('profile', false, uid), 'data'), (docSnap) => {
             if (docSnap.exists() && docSnap.data().name) {
               userProfileName.value = docSnap.data().name;
               themePreference.value = docSnap.data().theme || 'system';
               isProfileComplete.value = true;
+              checkUrlForJoinCode(); // Check for invite links
             } else {
               isProfileComplete.value = false;
             }
@@ -864,16 +1039,24 @@
             loading.value = false;
           }));
 
+          // 2. Global Groups List
           listeners.push(onSnapshot(collection(db, dbPath('groups')), (snap) => {
             groups.value = snap.docs.map(d => d.data());
           }, (e) => console.error(e)));
 
+          // 3. My Group Memberships
           listeners.push(onSnapshot(collection(db, dbPath('memberships', false, uid)), (snap) => {
             myMemberships.value = snap.docs.map(d => d.data());
           }, (e) => console.error(e)));
+
+          // 4. My Direct Messages Inbox
+          listeners.push(onSnapshot(collection(db, dbPath(`dms_${uid}`)), (snap) => {
+            myDms.value = snap.docs.map(d => d.data());
+          }, (e) => console.error(e)));
         };
 
-        watch(currentGroupId, (newId) => {
+        // Watch for Chat Swapping
+        watch(currentChatId, (newId) => {
           if (!newId) return;
           messages.value = [];
           
@@ -905,7 +1088,7 @@
           } else {
             listeners.forEach(unsub => unsub());
             listeners = [];
-            if(groupSettingsUnsub) groupSettingsUnsub();
+            if(groupInfoUnsub) groupInfoUnsub();
           }
           loading.value = false;
         });
@@ -913,16 +1096,15 @@
         return {
           loading, user, isProfileComplete, userProfileName, showNotificationBanner,
           authForm, hasCanvasToken, setupFlowName, settingsForm,
-          groups, myGroups, myMemberships, messages, activeGroupMembers, memberToRemove,
-          currentGroupId, activeGroup, isMobileChatOpen,
+          groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo,
+          currentChatId, currentChatType, activeGroup, activeChat, isMobileChatOpen, joinLink,
           toast, newMessage, modals, createFlow, joinFlow,
           showToast, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
-          submitCreate, submitJoin, findGroupToJoin, selectGroup, sendMessage, 
-          saveInitialProfile, saveSettings, openGroupSettings, closeGroupSettings, promptRemoveMember, executeRemoveMember, handleAttachmentClick, enableNotifications, dismissBanner
+          submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, 
+          saveInitialProfile, saveSettings, openGroupInfo, closeGroupInfo, viewMemberInfo, promptRemoveMember, executeRemoveMember, handleAttachmentClick, enableNotifications, dismissBanner, copyText, nativeShare
         };
       }
     }).mount('#app');
   </script>
 </body>
 </html>
-
