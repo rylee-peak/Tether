@@ -907,7 +907,9 @@
     // Explicitly use standard paths to adhere perfectly to User's security rules
     const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'tether-production';
     const dbPath = (colName, isPublic = true, userId = null) => {
-      return isPublic ? colName : `users/${userId}/${colName}`;
+      return isPublic 
+        ? `artifacts/${APP_ID}/public/data/${colName}` 
+        : `artifacts/${APP_ID}/users/${userId}/${colName}`;
     };
 
     const svgIcons = {
@@ -1569,17 +1571,14 @@
 
              const permission = await Notification.requestPermission();
              if (permission === 'granted') {
-                const fcmSwCode = `
-                  importScripts('https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js');
-                  importScripts('https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js');
-                  firebase.initializeApp(${JSON.stringify(firebaseConfig)});
-                  const messaging = firebase.messaging();
-                `;
-                const blob = new Blob([fcmSwCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                const registration = await navigator.serviceWorker.register(swUrl);
+                // iOS BUG FIX: Apple blocks Blob-generated Service Workers. 
+                // We must register the physical file natively.
+                const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
                 const messaging = getMessaging(app);
-                const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration });
+                const token = await getToken(messaging, { 
+                  vapidKey: VAPID_KEY, 
+                  serviceWorkerRegistration: registration 
+                });
 
                 if (token) {
                   await setDoc(doc(db, dbPath('fcmTokens', false, user.value.uid), 'current'), {
