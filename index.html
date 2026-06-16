@@ -184,10 +184,14 @@
               @click="selectChat(group.id, 'group')"
               :class="['w-full text-left p-3 rounded-xl transition-all flex flex-col border border-transparent', 
                        currentChatId === group.id ? 'bg-blue-50 dark:bg-blue-600/20 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-500/30' : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300']">
-              <span class="font-bold truncate text-sm">{{ group.name }}</span>
+              <div class="flex justify-between items-center w-full">
+                 <span class="font-bold truncate text-sm">{{ group.name }}</span>
+                 <span v-if="unreadCounts[group.id]" class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0">{{ unreadCounts[group.id] }}</span>
+              </div>
             </button>
           </div>
 
+          <!-- Direct Messages Section -->
           <div class="px-4 pt-2 pb-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Direct Messages</div>
           <div class="space-y-1 px-2 mb-4">
             <p v-if="myDms.length === 0" class="text-slate-400 dark:text-slate-500 text-xs px-2 italic">No messages yet. Open a Group's Info to message members.</p>
@@ -199,7 +203,10 @@
               <div class="w-8 h-8 shrink-0 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs font-bold uppercase">
                 {{ dm.peerName.charAt(0) || '?' }}
               </div>
-              <span class="font-bold truncate text-sm flex-1">{{ dm.peerName }}</span>
+              <div class="flex justify-between items-center w-full overflow-hidden">
+                 <span class="font-bold truncate text-sm flex-1">{{ dm.peerName }}</span>
+                 <span v-if="unreadCounts[dm.id]" class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ml-2">{{ unreadCounts[dm.id] }}</span>
+              </div>
             </button>
           </div>
 
@@ -628,7 +635,10 @@
         const groups = ref([]); 
         const myMemberships = ref([]);
         const myDms = ref([]);
-        const messages = ref([]);
+        const allMessages = ref({}); // Replaces single array for fast local cache
+        const unreadCounts = ref({});
+        const appInitTime = Date.now();
+        let messageListeners = {}; // Track background chat listeners
         
         const activeGroupMembers = ref([]);
         const isLoadingMembers = ref(false);
@@ -701,6 +711,10 @@
           }
         });
 
+        const messages = computed(() => {
+           return allMessages.value[currentChatId.value] || [];
+        });
+
         const joinLink = computed(() => {
            if (!activeGroup.value) return '';
            try {
@@ -756,12 +770,19 @@
           showToast('Security Alert: File uploads are disabled in this prototype.', 'error');
         };
 
+        const markAsRead = (id) => {
+           localStorage.setItem(`lastRead_${id}`, Date.now());
+           unreadCounts.value[id] = 0;
+        };
+
         const selectChat = (id, type) => {
           currentChatId.value = id;
           currentChatType.value = type;
           isMobileChatOpen.value = true;
           activeMessageMenuId.value = null;
+          markAsRead(id);
           cancelInputContext();
+          scrollToBottom();
         };
 
         // --- CHAT ACTIONS (Edit / Reply / Delete) ---
@@ -1054,6 +1075,37 @@
           } catch (e) {}
         };
 
+        const getChatName = (id) => {
+           const grp = groups.value.find(g => g.id === id);
+           if (grp) return grp.name;
+           const dm = myDms.value.find(d => d.id === id);
+           if (dm) return dm.peerName;
+           return "New Message";
+        };
+
+        const triggerNotification = async (msg, chatId) => {
+           const chatName = getChatName(chatId);
+           showToast(`New from ${msg.senderName}: ${msg.text}`, 'message');
+           
+           if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
+              try {
+                 const regs = await navigator.serviceWorker.getRegistrations();
+                 if (regs.length > 0) {
+                    regs[0].showNotification(`Tether: ${chatName}`, {
+                       body: `${msg.senderName}: ${msg.text}`,
+                       icon: '/favicon.ico',
+                       tag: `chat_${chatId}` 
+                    });
+                 } else {
+                    new Notification(`Tether: ${chatName}`, {
+                       body: `${msg.senderName}: ${msg.text}`,
+                       icon: '/favicon.ico'
+                    });
+                 }
+              } catch (e) { console.warn('Native notif failed', e); }
+           }
+        };
+
         const testNotification = async () => {
           if (!('Notification' in window) || Notification.permission !== 'granted') {
             return showToast('Please enable notifications first.', 'error');
@@ -1240,25 +1292,63 @@
           }, (e) => console.error(e)));
         };
 
+        const syncChatListeners = () => {
+           const allChatIds = [...myGroups.value.map(g => g.id), ...myDms.value.map(d => d.id)];
+           
+           // Cleanup removed group listeners
+           for(let id in messageListeners) {
+              if(!allChatIds.includes(id)) {
+                 messageListeners[id]();
+                 delete messageListeners[id];
+              }
+           }
+
+           // Setup active background listeners for unread & native notifications
+           allChatIds.forEach(id => {
+              if(!messageListeners[id]) {
+                 messageListeners[id] = onSnapshot(collection(db, dbPath(`messages_${id}`)), (snap) => {
+                    const msgs = snap.docs.map(d => ({...d.data(), ts: d.data().timestamp?.toMillis() || Date.now()}));
+                    msgs.sort((a, b) => a.ts - b.ts);
+                    allMessages.value[id] = msgs;
+
+                    snap.docChanges().forEach(change => {
+                       if (change.type === 'added') {
+                          const msg = change.doc.data();
+                          const msgTime = msg.timestamp?.toMillis() || Date.now();
+                          const lastRead = Number(localStorage.getItem(`lastRead_${id}`) || 0);
+
+                          if (msg.senderId !== user.value?.uid) {
+                             if (msgTime > lastRead && id !== currentChatId.value) {
+                                unreadCounts.value[id] = (unreadCounts.value[id] || 0) + 1;
+                             }
+                             // Prevent notification spam on page load
+                             if (msgTime > appInitTime) {
+                                if (id !== currentChatId.value || document.hidden) {
+                                   triggerNotification(msg, id);
+                                }
+                             }
+                          }
+                       }
+                    });
+
+                    if (id === currentChatId.value) {
+                       markAsRead(id);
+                       scrollToBottom();
+                    }
+                 }, (e) => console.error('Chat connection error', e));
+              }
+           });
+        };
+
+        watch(() => [myGroups.value.length, myDms.value.length], () => {
+           syncChatListeners();
+        });
+
         // Watch for Chat Swapping
         watch(currentChatId, (newId) => {
           if (!newId) return;
-          messages.value = [];
-          
-          listeners = listeners.filter(fn => {
-             if (fn._isMessageListener) { fn(); return false; }
-             return true;
-          });
-
-          const unsub = onSnapshot(collection(db, dbPath(`messages_${newId}`)), (snap) => {
-            const msgs = snap.docs.map(d => ({...d.data(), ts: d.data().timestamp?.toMillis() || Date.now()}));
-            msgs.sort((a, b) => a.ts - b.ts);
-            messages.value = msgs;
-            scrollToBottom();
-          }, (e) => showToast('Chat connection error', 'error'));
-          
-          unsub._isMessageListener = true;
-          listeners.push(unsub);
+          markAsRead(newId);
+          scrollToBottom();
         });
 
         // Initialize App State based on Auth
@@ -1285,7 +1375,7 @@
           loading, user, isProfileComplete, userProfileName, showNotificationBanner,
           authForm, hasCanvasToken, setupFlowName, settingsForm,
           notificationsResolved, notifLoading, handleMandatoryNotifications,
-          groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo,
+          groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo, unreadCounts,
           currentChatId, currentChatType, activeGroup, activeChat, isMobileChatOpen, joinLink,
           activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, isReplyDeleted, initReply, initEdit, cancelInputContext, deleteMessage,
           toast, newMessage, modals, createFlow, joinFlow, isLoadingMembers,
