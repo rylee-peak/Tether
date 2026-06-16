@@ -26,11 +26,11 @@
   "protocol_handlers": [
     {
       "protocol": "web+pwa",
-      "url": "https://tether.rpeak.org/?launchedfrom=homescreen&pwaprotocolredirect=%s"
+      "url": "https://tether.rpeak.org/?launchedfrom=homescreen&amp;pwaprotocolredirect=%s"
     },
     {
       "protocol": "web+tether",
-      "url": "https://tether.rpeak.org/?launchedfrom=homescreen&pwaprotocolredirect=%s"
+      "url": "https://tether.rpeak.org/?launchedfrom=homescreen&amp;pwaprotocolredirect=%s"
     }
   ],
   "lang": "en",
@@ -40,5 +40,6 @@
   "categories": [
     "education",
     "government"
-  ]
+  ],
+  "description": "Tether is designed to provide users with an easy communication tool. Users can also issue awards/credentials that are verifiable. Tether is offered by the Office of Commissioner Rylee Peak."
 }
