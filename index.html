@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Tether - Secure Communications</title>
+  <title>Tether - Class Communications</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -18,14 +18,14 @@
   <link rel="manifest" id="pwa-manifest">
   <script>
     const manifest = {
-      name: "Tether Communications",
+      name: "Tether Classes",
       short_name: "Tether",
       start_url: ".",
       display: "standalone",
       background_color: "#ffffff",
-      theme_color: "#3b82f6",
+      theme_color: "#2563eb",
       icons: [{ 
-        src: "data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><circle cx='12' cy='12' r='10' fill='%233b82f6'/></svg>", 
+        src: "data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><circle cx='12' cy='12' r='10' fill='%232563eb'/></svg>", 
         sizes: "192x192", 
         type: "image/svg+xml" 
       }]
@@ -41,6 +41,7 @@
         "firebase/app": "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js",
         "firebase/auth": "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js",
         "firebase/firestore": "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js",
+        "firebase/storage": "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js",
         "firebase/messaging": "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js"
       }
     }
@@ -65,11 +66,8 @@
            @click="handleToastClick"
            class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
            :class="toast.type === 'error' ? 'bg-red-50/95 dark:bg-red-900/90 border-red-200 dark:border-red-800' : 'bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700'">
-        
-        <!-- Header -->
         <div class="flex items-center justify-between px-4 py-2 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5">
           <div class="flex items-center gap-2">
-            <!-- Dynamic Icon -->
             <div v-if="toast.type === 'error'" class="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center text-white shadow-sm">
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
             </div>
@@ -90,8 +88,6 @@
              </button>
           </div>
         </div>
-
-        <!-- Body -->
         <div class="px-4 py-3 flex items-start gap-3">
           <div class="flex-1 text-sm font-medium leading-relaxed" :class="toast.type === 'error' ? 'text-red-900 dark:text-red-100' : 'text-slate-800 dark:text-slate-100'">
             <p class="line-clamp-2">{{ toast.msg }}</p>
@@ -113,7 +109,7 @@
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
           Tether
         </div>
-        <p class="text-slate-500 dark:text-slate-400 text-center text-sm mb-8">Secure communications platform.</p>
+        <p class="text-slate-500 dark:text-slate-400 text-center text-sm mb-8">Secure class communications.</p>
 
         <div v-if="authForm.error" class="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs rounded-lg border border-red-200 dark:border-red-800">
           {{ authForm.error }}
@@ -166,7 +162,7 @@
         <p class="text-slate-500 dark:text-slate-400 mb-8 text-sm">Please enter your display name to start communicating securely.</p>
         
         <form @submit.prevent="saveInitialProfile" class="text-left">
-          <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Display Name</label>
+          <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Full Name</label>
           <input v-model="setupFlowName" type="text" placeholder="e.g. Ms. Smith or John Doe" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 mb-6 transition-all" required>
           <button type="submit" :disabled="!setupFlowName.trim()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50">
             Continue
@@ -182,7 +178,7 @@
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
         </div>
         <h2 class="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Enable Notifications</h2>
-        <p class="text-slate-500 dark:text-slate-400 mb-8 text-sm">To ensure you don't miss important messages and announcements, you must enable push notifications to use Tether.</p>
+        <p class="text-slate-500 dark:text-slate-400 mb-8 text-sm">To ensure you don't miss important messages and class announcements, you must enable push notifications.</p>
         
         <button @click="handleMandatoryNotifications" :disabled="notifLoading" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center h-12">
           <span v-if="!notifLoading">Enable & Continue</span>
@@ -195,63 +191,74 @@
     <div v-else-if="user && isProfileComplete === true && notificationsResolved" class="h-full w-full flex flex-1 overflow-hidden">
       
       <!-- Sidebar / List -->
-      <div :class="['w-full md:w-80 bg-slate-50 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform z-10', 
+      <div :class="['w-full md:w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform z-10 shadow-sm', 
                     isMobileChatOpen ? 'hidden md:flex' : 'flex']">
         
         <!-- Sidebar Header -->
-        <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800/50 transition-colors">
-          <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-xl tracking-tight">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+        <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 transition-colors shrink-0">
+          <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-2xl tracking-tight">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
             Tether
           </div>
           <div class="flex gap-2">
-            <button @click="modals.settings = true" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors" title="Settings">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <button @click="modals.settings = true" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors" title="Settings">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             </button>
-            <button @click="modals.settings = true" class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center text-sm font-bold uppercase transition-colors">
+            <button @click="modals.settings = true" class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center text-sm font-bold uppercase transition-colors shadow-sm">
               {{ userProfileName.charAt(0) || '?' }}
             </button>
           </div>
         </div>
 
-        <div class="p-4 flex gap-2 shrink-0">
-          <button @click="modals.join = true" class="flex-1 bg-white hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-200 dark:border-transparent py-2 rounded-lg text-sm font-medium transition-colors text-slate-800 dark:text-white shadow-sm">Join</button>
-          <button @click="modals.create = true" class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 rounded-lg text-sm font-medium transition-colors text-white shadow-sm">Create</button>
-        </div>
-
-        <div class="flex-1 overflow-y-auto pb-4 flex flex-col">
+        <div class="flex-1 overflow-y-auto pb-4 flex flex-col bg-slate-50 dark:bg-slate-900/50">
           
-          <!-- Groups Section -->
-          <div class="px-4 pt-2 pb-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Groups</div>
-          <div class="space-y-1 px-2 mb-4">
-            <p v-if="myGroups.length === 0" class="text-slate-400 dark:text-slate-500 text-xs px-2 italic">No groups yet.</p>
+          <!-- Classes Section -->
+          <div class="px-5 pt-4 pb-2 flex justify-between items-center">
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Classes</span>
+            <div class="flex gap-1">
+              <button @click="modals.join = true" class="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-2 py-1 rounded text-xs font-bold transition-colors">Join</button>
+              <button @click="modals.create = true" class="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-2 py-1 rounded text-xs font-bold transition-colors">Create</button>
+            </div>
+          </div>
+          <div class="space-y-1 px-3 mb-6">
+            <p v-if="myGroups.length === 0" class="text-slate-400 dark:text-slate-500 text-xs px-2 italic py-2">No classes yet.</p>
             <button 
               v-for="group in myGroups" :key="group.id"
               @click="selectChat(group.id, 'group')"
-              :class="['w-full text-left p-3 rounded-xl transition-all flex flex-col border border-transparent', 
-                       currentChatId === group.id ? 'bg-blue-50 dark:bg-blue-600/20 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-500/30' : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300']">
-              <div class="flex justify-between items-center w-full">
-                 <span class="font-bold truncate text-sm">{{ group.name }}</span>
-                 <span v-if="unreadCounts[group.id]" class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0">{{ unreadCounts[group.id] }}</span>
+              :class="['w-full text-left p-2.5 rounded-xl transition-all flex items-center gap-3 border border-transparent', 
+                       currentChatId === group.id ? 'bg-blue-100/50 dark:bg-blue-600/20 text-blue-800 dark:text-blue-300' : 'hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:shadow-sm']">
+              <div class="w-10 h-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-lg shadow-sm border border-slate-300/50 dark:border-slate-600">
+                {{ group.avatar || '🏫' }}
+              </div>
+              <div class="flex-1 overflow-hidden">
+                 <div class="flex justify-between items-center w-full">
+                    <span class="font-bold truncate text-sm">{{ group.name }}</span>
+                    <span v-if="unreadCounts[group.id]" class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 shadow-sm">{{ unreadCounts[group.id] }}</span>
+                 </div>
               </div>
             </button>
           </div>
 
           <!-- Direct Messages Section -->
-          <div class="px-4 pt-2 pb-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Direct Messages</div>
-          <div class="space-y-1 px-2 mb-4">
-            <p v-if="myDms.length === 0" class="text-slate-400 dark:text-slate-500 text-xs px-2 italic">No messages yet. Open a Group's Info to message members.</p>
+          <div class="px-5 pt-2 pb-2 flex justify-between items-center">
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Conversations</span>
+          </div>
+          <div class="space-y-1 px-3 mb-4">
+            <p v-if="myDms.length === 0" class="text-slate-400 dark:text-slate-500 text-xs px-2 italic py-2">No messages yet. Open a Class's People tab to message members.</p>
             <button 
               v-for="dm in myDms" :key="dm.id"
               @click="selectChat(dm.id, 'dm')"
-              :class="['w-full text-left p-3 rounded-xl transition-all flex items-center gap-3 border border-transparent', 
-                       currentChatId === dm.id ? 'bg-blue-50 dark:bg-blue-600/20 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-500/30' : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300']">
-              <div class="w-8 h-8 shrink-0 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs font-bold uppercase">
-                {{ dm.peerName.charAt(0) || '?' }}
+              :class="['w-full text-left p-2.5 rounded-xl transition-all flex items-center gap-3 border border-transparent', 
+                       currentChatId === dm.id ? 'bg-blue-100/50 dark:bg-blue-600/20 text-blue-800 dark:text-blue-300' : 'hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:shadow-sm']">
+              <div class="w-10 h-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-bold uppercase shadow-sm border border-slate-300/50 dark:border-slate-600">
+                <span v-if="dm.isGroupChat">👥</span>
+                <span v-else>{{ dm.peerName.charAt(0) || '?' }}</span>
               </div>
-              <div class="flex justify-between items-center w-full overflow-hidden">
-                 <span class="font-bold truncate text-sm flex-1">{{ dm.peerName }}</span>
-                 <span v-if="unreadCounts[dm.id]" class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ml-2">{{ unreadCounts[dm.id] }}</span>
+              <div class="flex-1 overflow-hidden">
+                 <div class="flex justify-between items-center w-full">
+                    <span class="font-bold truncate text-sm flex-1">{{ dm.peerName }}</span>
+                    <span v-if="unreadCounts[dm.id]" class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ml-2 shadow-sm">{{ unreadCounts[dm.id] }}</span>
+                 </div>
               </div>
             </button>
           </div>
@@ -266,50 +273,70 @@
         
         <template v-if="activeChat">
           <!-- Chat Header -->
-          <div class="h-16 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur shrink-0 z-10 transition-colors">
-            <div class="flex items-center gap-3">
+          <div class="h-16 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 justify-between bg-white dark:bg-slate-900 shrink-0 z-10 transition-colors shadow-sm">
+            <div class="flex items-center gap-3 overflow-hidden">
               <button @click="isMobileChatOpen = false" class="md:hidden p-2 -ml-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
               </button>
-              <div>
-                <h2 class="font-bold text-lg text-slate-900 dark:text-slate-100 leading-tight">{{ activeChat.name }}</h2>
+              
+              <div v-if="currentChatType === 'group' && activeGroup" class="w-10 h-10 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl border border-slate-200 dark:border-slate-700">
+                {{ activeGroup.avatar || '🏫' }}
+              </div>
+              <div v-else class="w-10 h-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-bold uppercase border border-slate-200 dark:border-slate-700">
+                <span v-if="activeChat.isGroupChat">👥</span>
+                <span v-else>{{ activeChat.name.charAt(0) || '?' }}</span>
+              </div>
+
+              <div class="truncate">
+                <h2 class="font-bold text-lg text-slate-900 dark:text-slate-100 leading-tight truncate">{{ activeChat.name }}</h2>
                 <div v-if="currentChatType === 'group' && activeGroup" class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                  Code: 
-                  <button @click="modals.shareCode = true" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-1.5 py-0.5 rounded text-blue-600 dark:text-blue-300 font-mono transition-colors font-bold cursor-pointer" title="Click to share">
-                    {{ activeGroup.code }}
-                  </button>
+                  Code: <button @click="modals.shareCode = true" class="hover:text-blue-600 dark:hover:text-blue-400 font-mono transition-colors cursor-pointer" title="Click to share">{{ activeGroup.code }}</button>
                 </div>
-                <p v-else class="text-xs text-slate-500 dark:text-slate-400">Direct Message</p>
+                <p v-else class="text-xs text-slate-500 dark:text-slate-400 truncate">Conversation</p>
               </div>
             </div>
             
-            <!-- Group Info Button -->
-            <button v-if="currentChatType === 'group'" @click="openGroupInfo" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors border border-slate-200 dark:border-slate-700">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              Info
-            </button>
+            <div class="flex items-center gap-2 shrink-0">
+               <!-- Class Settings Button (Owner Only) -->
+               <button v-if="currentChatType === 'group' && activeGroup.ownerId === user.uid" @click="openClassSettings" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-300 transition-colors border border-blue-200 dark:border-blue-800/50 shadow-sm">
+                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                 <span class="hidden sm:inline">Settings</span>
+               </button>
+            </div>
           </div>
 
-          <!-- Messages -->
-          <div id="messages-container" class="flex-1 overflow-y-auto p-4 flex flex-col bg-slate-50/50 dark:bg-transparent relative pb-16">
+          <!-- Class Navigation Tabs -->
+          <div v-if="currentChatType === 'group'" class="flex border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0 px-4">
+             <button @click="classTab = 'announcements'" :class="['py-3 px-4 text-sm font-bold border-b-2 transition-colors', classTab === 'announcements' ? 'border-blue-600 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200']">
+               Announcements
+             </button>
+             <button @click="classTab = 'people'" :class="['py-3 px-4 text-sm font-bold border-b-2 transition-colors', classTab === 'people' ? 'border-blue-600 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200']">
+               People
+             </button>
+          </div>
+
+          <!-- Content Area: Announcements OR DM Messages -->
+          <div v-if="currentChatType === 'dm' || (currentChatType === 'group' && classTab === 'announcements')" id="messages-container" class="flex-1 overflow-y-auto p-4 flex flex-col bg-slate-50/50 dark:bg-slate-900/50 relative pb-16">
             <div v-if="messages.length === 0" class="m-auto text-slate-400 dark:text-slate-500 text-sm text-center">
-              No messages yet.<br>
-              <button v-if="currentChatType === 'group' && activeGroup" @click="modals.shareCode = true" class="mt-2 text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 px-3 py-1.5 rounded-full font-bold hover:bg-blue-200 dark:hover:bg-blue-800/60 transition-colors">
+              <span v-if="currentChatType === 'group'">No announcements yet.</span>
+              <span v-else>No messages yet. Say hello!</span>
+              <br>
+              <button v-if="currentChatType === 'group' && activeGroup && activeGroup.ownerId === user.uid" @click="modals.shareCode = true" class="mt-3 text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 px-4 py-2 rounded-full font-bold hover:bg-blue-200 dark:hover:bg-blue-800/60 transition-colors shadow-sm">
                 Invite members to join!
               </button>
             </div>
 
             <!-- Messages Loop -->
             <div v-for="msg in messages" :key="msg.id" 
-                 class="max-w-[85%] rounded-2xl px-4 py-2 flex flex-col shadow-sm mb-4 cursor-pointer relative group/msg"
+                 class="max-w-[90%] md:max-w-[75%] rounded-2xl px-4 py-3 flex flex-col shadow-sm mb-4 cursor-pointer relative group/msg transition-all"
                  :class="[
                    msg.senderId === user.uid ? 'bg-blue-600 text-white self-end rounded-br-sm' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 self-start rounded-bl-sm',
-                   activeMessageMenuId === msg.id ? 'z-[50]' : 'z-10'
+                   activeMessageMenuId === msg.id ? 'z-[50] ring-2 ring-blue-400 ring-offset-2 dark:ring-offset-slate-900' : 'z-10'
                  ]"
                  @click.stop="toggleMessageMenu(msg.id)">
               
               <!-- Reply Reference Bubble -->
-              <div v-if="msg.replyToId" class="text-xs mb-1.5 p-2 rounded bg-black/10 dark:bg-white/10 border-l-2 border-white/50 dark:border-slate-400 flex flex-col overflow-hidden max-w-full text-ellipsis whitespace-nowrap">
+              <div v-if="msg.replyToId" class="text-xs mb-2 p-2 rounded-lg bg-black/10 dark:bg-white/10 border-l-4 border-white/50 dark:border-slate-400 flex flex-col overflow-hidden max-w-full text-ellipsis whitespace-nowrap">
                  <template v-if="isReplyDeleted(msg.replyToId)">
                    <span class="italic opacity-60 flex items-center gap-1 text-[11px]">
                       <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -317,48 +344,107 @@
                    </span>
                  </template>
                  <template v-else>
-                   <span class="font-bold opacity-80">{{ msg.replyToSender }}</span>
+                   <span class="font-bold opacity-80 mb-0.5">{{ msg.replyToSender }}</span>
                    <span class="opacity-75 italic truncate">{{ msg.replyToText }}</span>
                  </template>
               </div>
 
-              <span v-if="msg.senderId !== user.uid" class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-0.5">{{ msg.senderName }}</span>
+              <span v-if="msg.senderId !== user.uid" class="text-xs font-bold mb-1 opacity-70">{{ msg.senderName }}</span>
               
               <span v-if="msg.isDeleted" class="italic opacity-60 flex items-center gap-1 text-sm py-1">
                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                  This message was deleted.
               </span>
-              <span v-else class="leading-relaxed whitespace-pre-wrap break-words">
-                 {{ msg.text }}
-                 <span v-if="msg.isEdited" class="text-[10px] opacity-60 ml-1 italic">(edited)</span>
-              </span>
+              <div v-else class="flex flex-col gap-2">
+                 <!-- Attachment Rendering -->
+                 <div v-if="msg.attachmentUrl" class="rounded-xl overflow-hidden bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 max-w-sm">
+                    <img v-if="msg.attachmentUrl.match(/\.(jpeg|jpg|gif|png|webp|webp\?.*)$/i) || msg.attachmentUrl.includes('firebasestorage')" :src="msg.attachmentUrl" alt="Attachment" class="w-full h-auto max-h-64 object-cover" @click.stop="window.open(msg.attachmentUrl, '_blank')">
+                    <a v-else :href="msg.attachmentUrl" target="_blank" class="flex items-center gap-2 p-3 hover:bg-black/5 dark:hover:bg-white/5 transition-colors" @click.stop>
+                       <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                       <span class="truncate font-medium text-sm underline">View Attachment</span>
+                    </a>
+                 </div>
+                 
+                 <span v-if="msg.text" class="leading-relaxed whitespace-pre-wrap break-words text-[15px]">
+                    {{ msg.text }}
+                    <span v-if="msg.isEdited" class="text-[10px] opacity-60 ml-1 italic inline-block">(edited)</span>
+                 </span>
+              </div>
 
               <!-- Action Menu -->
               <div v-if="activeMessageMenuId === msg.id && !msg.isDeleted" 
-                   class="absolute top-full mt-1 flex gap-1 bg-slate-800 dark:bg-slate-700 text-white rounded-lg shadow-xl px-2 py-1 text-xs font-medium border border-slate-700 dark:border-slate-600"
+                   class="absolute top-full mt-2 flex flex-col sm:flex-row gap-1 bg-slate-800 dark:bg-slate-700 text-white rounded-xl shadow-2xl p-1.5 text-xs font-bold border border-slate-700 dark:border-slate-600 min-w-[120px]"
                    :class="msg.senderId === user.uid ? 'right-0' : 'left-0'">
-                 <button @click.stop="initReply(msg)" class="px-3 py-1.5 hover:bg-slate-700 dark:hover:bg-slate-600 rounded transition-colors whitespace-nowrap">Reply</button>
+                 <button @click.stop="initReply(msg)" class="px-4 py-2 hover:bg-slate-700 dark:hover:bg-slate-600 rounded-lg transition-colors whitespace-nowrap text-left sm:text-center">Reply</button>
                  <template v-if="msg.senderId === user.uid">
-                   <button @click.stop="initEdit(msg)" class="px-3 py-1.5 hover:bg-slate-700 dark:hover:bg-slate-600 rounded transition-colors whitespace-nowrap">Edit</button>
-                   <button @click.stop="deleteMessage(msg)" class="px-3 py-1.5 text-red-400 hover:bg-slate-700 dark:hover:bg-slate-600 rounded transition-colors whitespace-nowrap">Delete</button>
+                   <button @click.stop="initEdit(msg)" class="px-4 py-2 hover:bg-slate-700 dark:hover:bg-slate-600 rounded-lg transition-colors whitespace-nowrap text-left sm:text-center">Edit</button>
+                   <button @click.stop="deleteMessage(msg)" class="px-4 py-2 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-lg transition-colors whitespace-nowrap text-left sm:text-center">Delete</button>
                  </template>
               </div>
             </div>
           </div>
 
-          <!-- Input Area -->
-          <div class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-colors shrink-0">
+          <!-- Content Area: People Tab (Only in Groups) -->
+          <div v-if="currentChatType === 'group' && classTab === 'people'" class="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900/50 p-4">
+             <div class="max-w-3xl mx-auto">
+               
+               <div class="flex justify-between items-center mb-4">
+                 <h3 class="font-bold text-slate-800 dark:text-slate-200">People ({{ activeGroupMembers.length }})</h3>
+                 <button @click="initiateGroupChatModal" class="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    New Group Chat
+                 </button>
+               </div>
+               
+               <div v-if="isLoadingMembers" class="text-sm text-slate-400 py-8 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800/50">
+                 Loading members...
+               </div>
+               <div v-else-if="activeGroupMembers.length === 0" class="text-sm text-slate-400 py-8 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800/50">
+                 No one else is here yet.
+               </div>
+               <div v-else class="space-y-2">
+                 <div v-for="member in activeGroupMembers" :key="member.userId" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl flex items-center justify-between shadow-sm hover:shadow transition-shadow">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 shrink-0 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-bold uppercase border border-slate-200 dark:border-slate-600">
+                        {{ member.name.charAt(0) || '?' }}
+                      </div>
+                      <div>
+                        <div class="flex items-center gap-2">
+                           <span class="font-bold text-slate-900 dark:text-slate-100">{{ member.name }}</span>
+                           <span v-if="member.role === 'owner'" class="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 px-2 py-0.5 rounded-full">Owner</span>
+                        </div>
+                        <span v-if="member.userId === user.uid" class="text-xs text-slate-500 dark:text-slate-400">(You)</span>
+                      </div>
+                    </div>
+                    
+                    <button v-if="member.userId !== user.uid" @click="startDM(member)" class="text-blue-600 dark:text-blue-400 hover:text-white border border-blue-200 dark:border-blue-800 hover:bg-blue-600 px-4 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider shadow-sm">
+                      Message
+                    </button>
+                 </div>
+               </div>
+             </div>
+          </div>
+
+          <!-- Input Area (Only visible in DMs, or in Announcements if you are owner, or for members to reply to owner) -->
+          <div v-if="currentChatType === 'dm' || (currentChatType === 'group' && classTab === 'announcements')" class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-colors shrink-0">
             
-            <!-- Context Banner (Replying or Editing) -->
-            <div v-if="replyingTo || editingMessage" class="px-4 py-2 flex justify-between items-center text-xs"
-                 :class="editingMessage ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-b border-blue-100 dark:border-blue-800/50' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700'">
+            <div v-if="uploadingAttachment" class="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 flex items-center gap-3 border-b border-blue-100 dark:border-blue-800/50 text-xs font-bold text-blue-700 dark:text-blue-400">
+               <div class="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+               Uploading attachment...
+            </div>
+
+            <!-- Context Banner -->
+            <div v-if="replyingTo || editingMessage || selectedFile" class="px-4 py-2 flex justify-between items-center text-xs border-b"
+                 :class="editingMessage ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800/50' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'">
                <div class="flex items-center gap-2 truncate pr-4">
-                  <svg v-if="replyingTo" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                  <svg v-if="selectedFile" class="w-4 h-4 shrink-0 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                  <svg v-else-if="replyingTo" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                   <svg v-else class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                  <span class="truncate">
-                    <strong v-if="replyingTo">Replying to {{ replyingTo.senderName }}: </strong>
-                    <strong v-else>Editing message: </strong>
-                    {{ replyingTo ? replyingTo.text : editingMessage.text }}
+                  
+                  <span class="truncate font-medium">
+                    <template v-if="selectedFile">Attached: {{ selectedFile.name }}</template>
+                    <template v-else-if="replyingTo"><strong>Replying to {{ replyingTo.senderName }}: </strong>{{ replyingTo.text || 'Attachment' }}</template>
+                    <template v-else><strong>Editing message: </strong>{{ editingMessage.text }}</template>
                   </span>
                </div>
                <button @click="cancelInputContext" class="p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-colors shrink-0">
@@ -367,15 +453,28 @@
             </div>
 
             <div class="p-4 pt-3">
-              <form @submit.prevent="sendMessage" class="flex gap-2 items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-full border border-slate-200 dark:border-slate-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-inner">
-                <button type="button" @click="handleAttachmentClick" class="p-2 text-slate-400 hover:text-blue-500 rounded-full transition-colors" title="Attach File">
+              <!-- Regular Broadcast / DM Input -->
+              <form v-if="currentChatType === 'dm' || activeGroup.ownerId === user.uid" @submit.prevent="sendMessage" class="flex gap-2 items-end bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-inner">
+                <input type="file" ref="fileInputRef" @change="handleFileSelect" class="hidden">
+                <button type="button" @click="$refs.fileInputRef.click()" class="p-2.5 text-slate-400 hover:text-blue-500 rounded-xl transition-colors shrink-0" title="Attach File">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
                 </button>
-                <input id="chat-input" v-model="newMessage" type="text" class="flex-1 bg-transparent border-none focus:outline-none text-sm px-2 text-slate-900 dark:text-slate-100 placeholder-slate-500" placeholder="Type a message...">
-                <button type="submit" :disabled="!newMessage.trim()" class="p-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 rounded-full text-white transition-colors shadow-sm">
+                <textarea id="chat-input" v-model="newMessage" rows="1" @keydown.enter.exact.prevent="sendMessage" class="flex-1 bg-transparent border-none focus:outline-none text-[15px] px-2 py-2.5 text-slate-900 dark:text-slate-100 placeholder-slate-500 resize-none max-h-32" :placeholder="currentChatType === 'group' ? 'Post an announcement...' : 'Type a message...'"></textarea>
+                <button type="submit" :disabled="(!newMessage.trim() && !selectedFile) || uploadingAttachment" class="p-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 rounded-xl text-white transition-colors shadow-sm shrink-0 mb-0.5">
                   <svg v-if="editingMessage" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                   <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                 </button>
+              </form>
+
+              <!-- Member Reply-To-Owner Input -->
+              <form v-else @submit.prevent="replyToOwnerDirectly" class="flex gap-2 items-center bg-blue-50 dark:bg-slate-800 p-1.5 rounded-full border border-blue-200 dark:border-slate-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-inner">
+                 <div class="pl-4 pr-2 text-blue-500 shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                 </div>
+                 <input v-model="newMessage" type="text" class="flex-1 bg-transparent border-none focus:outline-none text-[15px] px-2 py-2 text-slate-900 dark:text-slate-100 placeholder-blue-400 dark:placeholder-slate-500" placeholder="Reply to teacher/owner directly...">
+                 <button type="submit" :disabled="!newMessage.trim()" class="p-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded-full text-white transition-colors shadow-sm shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                 </button>
               </form>
             </div>
           </div>
@@ -383,18 +482,184 @@
 
         <div v-else class="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-transparent transition-colors">
           <svg class="w-16 h-16 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
-          <p>Select a chat to start</p>
+          <p>Select a class or conversation to start</p>
         </div>
       </div>
     </div>
 
     <!-- Modals -->
 
+    <!-- Class Settings Modal (For Owners) -->
+    <div v-if="modals.classSettings && activeGroup && activeGroup.ownerId === user.uid" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4 transition-all">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+        
+        <div class="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            Class Settings
+          </h3>
+          <button @click="closeClassSettings" class="p-2 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <!-- Settings Tabs -->
+        <div class="flex border-b border-slate-200 dark:border-slate-700 px-6 shrink-0 bg-white dark:bg-slate-800">
+           <button @click="classSettingsTab = 'general'" :class="['py-3 px-4 text-sm font-bold border-b-2 transition-colors', classSettingsTab === 'general' ? 'border-blue-600 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200']">General</button>
+           <button @click="classSettingsTab = 'requests'" :class="['py-3 px-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2', classSettingsTab === 'requests' ? 'border-blue-600 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200']">
+             Join Requests
+             <span v-if="pendingRequests.length > 0" class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{{ pendingRequests.length }}</span>
+           </button>
+           <button @click="classSettingsTab = 'members'" :class="['py-3 px-4 text-sm font-bold border-b-2 transition-colors', classSettingsTab === 'members' ? 'border-blue-600 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200']">Manage Members</button>
+        </div>
+
+        <div class="overflow-y-auto flex-1 p-6 space-y-6">
+          
+          <!-- GENERAL TAB -->
+          <div v-if="classSettingsTab === 'general'" class="space-y-6">
+             <!-- Avatar Selection -->
+             <div>
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Class Icon</label>
+                <div class="flex gap-2 flex-wrap">
+                   <button v-for="emoji in ['🏫', '📚', '🔬', '🎨', '⚽', '💻', '🌍', '🎵', '📐', '🎭']" :key="emoji" 
+                           @click="editGroupForm.avatar = emoji"
+                           :class="['w-12 h-12 text-2xl rounded-xl flex items-center justify-center border-2 transition-all', editGroupForm.avatar === emoji ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 scale-110 shadow-sm' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600']">
+                      {{ emoji }}
+                   </button>
+                </div>
+             </div>
+
+             <!-- Name & Code -->
+             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                   <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Class Name</label>
+                   <input v-model="editGroupForm.name" type="text" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-all">
+                </div>
+                <div>
+                   <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Class Code</label>
+                   <input v-model="editGroupForm.code" type="text" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 text-sm font-mono uppercase tracking-wider transition-all">
+                </div>
+             </div>
+
+             <!-- Approval Toggle -->
+             <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-4 rounded-xl">
+                <div>
+                   <h4 class="font-bold text-sm text-slate-900 dark:text-white">Require Approval to Join</h4>
+                   <p class="text-xs text-slate-500 dark:text-slate-400">Users who join with the code must be approved by you before they can view messages.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" v-model="editGroupForm.requireApproval" class="sr-only peer">
+                  <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
+                </label>
+             </div>
+
+             <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+                <button @click="saveGroupSettings" :disabled="savingGroup" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-sm shadow-sm transition-colors disabled:opacity-50 flex items-center gap-2">
+                   <span v-if="savingGroup" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                   Save Changes
+                </button>
+             </div>
+
+             <div class="pt-6 mt-6 border-t border-slate-200 dark:border-slate-700">
+                <h4 class="font-bold text-sm text-red-500 uppercase tracking-wider mb-3">Danger Zone</h4>
+                <button @click="modals.confirmDeleteGroup = true" class="w-full sm:w-auto px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 rounded-lg font-bold text-sm transition-colors border border-red-200 dark:border-red-800/50">
+                   Delete Class Permanently
+                </button>
+             </div>
+          </div>
+
+          <!-- REQUESTS TAB -->
+          <div v-else-if="classSettingsTab === 'requests'">
+             <div v-if="pendingRequests.length === 0" class="text-sm text-slate-400 py-8 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl bg-slate-50 dark:bg-slate-900/50">
+                No pending requests.
+             </div>
+             <div v-else class="space-y-4">
+                <div v-for="req in pendingRequests" :key="req.userId" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-4 rounded-xl">
+                   <div class="flex justify-between items-start mb-3">
+                      <div>
+                         <span class="font-bold text-slate-900 dark:text-slate-100 block">{{ req.name }}</span>
+                         <span class="text-xs text-slate-500">Requested to join</span>
+                      </div>
+                      <div class="flex gap-2">
+                         <button @click="denyRequest(req)" class="px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-red-600 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg transition-colors">Deny</button>
+                         <button @click="approveRequest(req)" class="px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors shadow-sm">Approve</button>
+                      </div>
+                   </div>
+                   <!-- View Answers -->
+                   <div v-if="req.answers && Object.keys(req.answers).length > 0" class="bg-white dark:bg-slate-800 p-3 rounded-lg text-sm border border-slate-100 dark:border-slate-700/50">
+                      <p class="font-bold text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Sign-up Responses:</p>
+                      <ul class="space-y-1.5">
+                         <li v-for="(answer, idx) in req.answers" :key="idx" class="flex flex-col">
+                            <span class="text-xs text-slate-500 font-medium">{{ activeGroup.questions[idx] || `Question ${parseInt(idx)+1}` }}</span> 
+                            <span class="font-medium text-slate-700 dark:text-slate-300">{{ answer || 'No response' }}</span>
+                         </li>
+                      </ul>
+                   </div>
+                </div>
+             </div>
+          </div>
+
+          <!-- MEMBERS TAB -->
+          <div v-else-if="classSettingsTab === 'members'">
+            <div class="space-y-3">
+               <div v-for="member in activeGroupMembers" :key="member.userId" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 sm:p-4 rounded-xl flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-start sm:items-center">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-bold uppercase">
+                      {{ member.name.charAt(0) || '?' }}
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                         <span class="font-bold text-slate-900 dark:text-slate-100">{{ member.name }}</span>
+                         <span v-if="member.role === 'owner'" class="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 px-2 py-0.5 rounded-full">Owner</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="shrink-0 flex flex-wrap gap-2 justify-end">
+                     <button v-if="member.role !== 'owner' && member.answers" @click="viewMemberInfo(member)" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-800 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">
+                       Info
+                     </button>
+                     <button v-if="member.userId !== user.uid" @click="promptRemoveMember(member)" class="text-red-500 hover:text-white border border-red-200 dark:border-red-900/50 hover:bg-red-500 hover:border-red-500 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">
+                       Remove
+                     </button>
+                  </div>
+               </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Custom Group Chat Modal -->
+    <div v-if="modals.newGroupChat" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[80vh]">
+        <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">New Group Chat</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Select members from <strong>{{ activeGroup?.name }}</strong> to start a private chat.</p>
+        
+        <div class="overflow-y-auto flex-1 border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-slate-50 dark:bg-slate-900/50 mb-4">
+           <label v-for="member in activeGroupMembers.filter(m => m.userId !== user.uid)" :key="member.userId" class="flex items-center gap-3 p-2 hover:bg-white dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+              <input type="checkbox" :value="member" v-model="selectedMembersForChat" class="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600">
+              <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs font-bold uppercase shrink-0">
+                {{ member.name.charAt(0) }}
+              </div>
+              <span class="font-medium text-sm text-slate-800 dark:text-slate-200">{{ member.name }}</span>
+           </label>
+           <div v-if="activeGroupMembers.length <= 1" class="text-xs text-center text-slate-500 py-4">No other members available to chat.</div>
+        </div>
+
+        <div class="flex justify-end gap-3 shrink-0">
+          <button @click="modals.newGroupChat = false" class="px-4 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors">Cancel</button>
+          <button @click="createGroupChat" :disabled="selectedMembersForChat.length === 0" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50">Start Chat</button>
+        </div>
+      </div>
+    </div>
+
+
     <!-- Group Share Modal -->
     <div v-if="modals.shareCode && activeGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl text-center">
-        <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Share Group</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Invite members to {{ activeGroup.name }}</p>
+        <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Invite Students</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Share this to let people join {{ activeGroup.name }}</p>
 
         <div class="bg-white p-3 rounded-xl border border-slate-200 inline-block mb-6 shadow-sm mx-auto">
           <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(joinLink)}&margin=0`" alt="QR Code" class="w-40 h-40 object-contain">
@@ -402,7 +667,7 @@
 
         <div class="space-y-3 mb-6 text-left">
           <div>
-            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase">Group Code</label>
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase">Class Code</label>
             <div @click="copyText(activeGroup.code)" class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors group">
               <span class="font-mono text-lg font-bold text-slate-900 dark:text-white tracking-widest">{{ activeGroup.code }}</span>
               <span class="text-blue-600 dark:text-blue-400 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">COPY</span>
@@ -427,89 +692,8 @@
       </div>
     </div>
 
-    <!-- Group Info Modal -->
-    <div v-if="modals.groupInfo && activeGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[50] flex items-center justify-center p-4 transition-all">
-      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-2xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh]">
-        
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            Group Info
-          </h3>
-          <button @click="closeGroupInfo" class="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-          </button>
-        </div>
-
-        <div class="overflow-y-auto flex-1 pr-2 space-y-6">
-          <!-- Group Header Card -->
-          <div class="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 p-4 rounded-xl flex justify-between items-center">
-             <div>
-               <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-1">{{ activeGroup.name }}</h4>
-               <p class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                 Code: <span @click="modals.shareCode = true" class="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-mono px-2 py-0.5 rounded font-bold cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors" title="Share">{{ activeGroup.code }}</span>
-               </p>
-             </div>
-             <div v-if="activeGroup.ownerId === user.uid" class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase shadow-sm">Owner</div>
-          </div>
-
-          <!-- Member List -->
-          <div>
-            <h4 class="font-bold text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Members ({{ activeGroupMembers.length }})</h4>
-            
-            <div v-if="isLoadingMembers" class="text-sm text-slate-400 py-4 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
-               Loading members...
-            </div>
-            
-            <div v-else-if="activeGroupMembers.length === 0" class="text-sm text-slate-400 py-4 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
-               No members found.
-            </div>
-
-            <div v-else class="space-y-3">
-               <div v-for="member in activeGroupMembers" :key="member.userId" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 sm:p-4 rounded-xl flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-start sm:items-center">
-                  
-                  <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <div class="w-10 h-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-bold uppercase">
-                      {{ member.name.charAt(0) || '?' }}
-                    </div>
-                    <div>
-                      <div class="flex items-center gap-2">
-                         <span class="font-bold text-slate-900 dark:text-slate-100">{{ member.name }}</span>
-                         <span v-if="member.role === 'owner'" class="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 px-2 py-0.5 rounded-full">Owner</span>
-                      </div>
-                      <span v-if="member.userId === user.uid" class="text-xs text-slate-500 dark:text-slate-400">(You)</span>
-                    </div>
-                  </div>
-                  
-                  <!-- Actions -->
-                  <div class="shrink-0 flex flex-wrap gap-2 w-full sm:w-auto justify-end">
-                     <button v-if="activeGroup.ownerId === user.uid && member.role !== 'owner' && member.answers" @click="viewMemberInfo(member)" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">
-                       Info
-                     </button>
-                     <button v-if="member.userId !== user.uid" @click="startDM(member)" class="text-blue-600 dark:text-blue-400 hover:text-white dark:hover:text-white border border-blue-200 dark:border-blue-800/60 hover:bg-blue-600 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider shadow-sm">
-                       Message
-                     </button>
-                     <button v-if="activeGroup.ownerId === user.uid && member.userId !== user.uid" @click="promptRemoveMember(member)" class="text-red-500 hover:text-white border border-red-200 dark:border-red-900/50 hover:bg-red-500 hover:border-red-500 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">
-                       Remove
-                     </button>
-                  </div>
-               </div>
-            </div>
-          </div>
-
-          <!-- Danger Zone -->
-          <div v-if="activeGroup.ownerId === user.uid" class="pt-6 mt-6 border-t border-slate-200 dark:border-slate-700">
-             <h4 class="font-bold text-sm text-red-500 uppercase tracking-wider mb-3">Danger Zone</h4>
-             <button @click="modals.confirmDeleteGroup = true" class="w-full sm:w-auto px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 rounded-lg font-bold text-sm transition-colors border border-red-200 dark:border-red-800/50">
-                Delete Group
-             </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Member Responses Modal -->
-    <div v-if="modals.memberInfo && selectedMemberInfo" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
+    <div v-if="modals.memberInfo && selectedMemberInfo" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-1 text-slate-900 dark:text-white flex items-center gap-2">
           {{ selectedMemberInfo.name }}
@@ -533,7 +717,7 @@
     </div>
 
     <!-- Confirm Member Removal Modal -->
-    <div v-if="memberToRemove" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+    <div v-if="memberToRemove" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-2 text-slate-900 dark:text-white">Remove {{ memberToRemove.name }}?</h3>
         <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">They will be permanently removed from this group and will lose access to all messages immediately.</p>
@@ -545,7 +729,7 @@
     </div>
 
     <!-- Confirm Delete Group Modal -->
-    <div v-if="modals.confirmDeleteGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+    <div v-if="modals.confirmDeleteGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-2 text-slate-900 dark:text-white">Delete Group?</h3>
         <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">This will permanently delete the group "<b>{{ activeGroup?.name }}</b>" for everyone. All messages will be lost. This cannot be undone.</p>
@@ -559,10 +743,10 @@
     <!-- Join Group Modal -->
     <div v-if="modals.join" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl">
-        <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Join a Group</h3>
+        <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Join a Class</h3>
         
         <template v-if="!joinFlow.group">
-          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Enter the 6-character code provided by the group owner.</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Enter the code provided by the teacher/owner.</p>
           <input v-model="joinFlow.code" type="text" placeholder="e.g. AB12CD" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 mb-6 uppercase font-mono text-center tracking-widest text-lg transition-all">
           <div class="flex justify-end gap-3">
             <button @click="modals.join = false; joinFlow.code = ''" class="px-4 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors">Cancel</button>
@@ -571,7 +755,19 @@
         </template>
 
         <template v-else>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">Joining <span class="font-bold text-slate-900 dark:text-white">{{ joinFlow.group.name }}</span>. Please answer the required questions:</p>
+          <div class="flex items-center gap-3 mb-4 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+             <div class="text-2xl">{{ joinFlow.group.avatar || '🏫' }}</div>
+             <div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Joining</p>
+                <p class="font-bold text-slate-900 dark:text-white">{{ joinFlow.group.name }}</p>
+             </div>
+          </div>
+          
+          <div v-if="joinFlow.group.requireApproval" class="mb-4 text-xs font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400 p-2 rounded border border-amber-200 dark:border-amber-800 flex items-start gap-2">
+             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+             This class requires the owner's approval to join.
+          </div>
+
           <div class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
             <div v-for="(q, index) in joinFlow.group.questions" :key="index">
               <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">{{ q }}</label>
@@ -581,7 +777,9 @@
           </div>
           <div class="flex justify-end gap-3">
             <button @click="joinFlow.group = null" class="px-4 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors">Back</button>
-            <button @click="submitJoin" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-medium transition-colors shadow-sm">Join Group</button>
+            <button @click="submitJoin" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-medium transition-colors shadow-sm">
+               {{ joinFlow.group.requireApproval ? 'Request to Join' : 'Join Class' }}
+            </button>
           </div>
         </template>
       </div>
@@ -589,20 +787,42 @@
 
     <!-- Create Group Modal -->
     <div v-if="modals.create" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
-      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl">
-        <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Create a Group</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Start a new space for communication.</p>
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh]">
+        <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Create a Class</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 shrink-0">Start a new space for communication.</p>
         
-        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Group Name</label>
-        <input v-model="createFlow.name" type="text" placeholder="e.g. AP History Class" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 mb-4 text-sm transition-all">
-        
-        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Sign-up Questions (Optional)</label>
-        <p class="text-xs text-slate-400 dark:text-slate-500 mb-2">Separate questions with commas.</p>
-        <textarea v-model="createFlow.questions" placeholder="e.g. What is your student ID?, Parent's Phone Number" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 mb-6 text-sm resize-none h-24 transition-all"></textarea>
+        <div class="overflow-y-auto flex-1 pr-2 space-y-4">
+           <div>
+             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Icon</label>
+             <div class="flex gap-2 flex-wrap">
+                <button v-for="emoji in ['🏫', '📚', '🔬', '🎨', '⚽', '💻', '🌍', '🎵', '📐', '🎭']" :key="emoji" 
+                        @click="createFlow.avatar = emoji"
+                        :class="['w-10 h-10 text-xl rounded-lg flex items-center justify-center border-2 transition-all', createFlow.avatar === emoji ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 scale-110 shadow-sm' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600']">
+                   {{ emoji }}
+                </button>
+             </div>
+           </div>
 
-        <div class="flex justify-end gap-3">
-          <button @click="modals.create = false; createFlow.name = ''; createFlow.questions = ''" class="px-4 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors">Cancel</button>
-          <button @click="submitCreate" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-medium transition-colors shadow-sm">Create Group</button>
+           <div>
+              <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Class Name</label>
+              <input v-model="createFlow.name" type="text" placeholder="e.g. AP History Class" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 mb-4 text-sm transition-all">
+           </div>
+           
+           <div>
+              <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Sign-up Questions (Optional)</label>
+              <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-1">Separate questions with commas.</p>
+              <textarea v-model="createFlow.questions" placeholder="e.g. What is your student ID?, Parent's Phone Number" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 mb-6 text-sm resize-none h-24 transition-all"></textarea>
+           </div>
+           
+           <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 rounded-lg">
+              <input type="checkbox" v-model="createFlow.requireApproval" id="reqApp" class="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600">
+              <label for="reqApp" class="text-sm font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">Require Approval to Join</label>
+           </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700 shrink-0 mt-2">
+          <button @click="modals.create = false" class="px-4 py-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors">Cancel</button>
+          <button @click="submitCreate" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-medium transition-colors shadow-sm">Create</button>
         </div>
       </div>
     </div>
@@ -667,6 +887,7 @@
     import { initializeApp } from 'firebase/app';
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
     import { getFirestore, collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+    import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
     import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
     const VAPID_KEY = "BBZAUePsEq6JeUWx25-_FOMCIxHvlNZ3TtJK9dRzOPqxAcE5EpDVI1s6xODHMa3j7YugzOuf8k8PLH4VmSVq9BU";
@@ -693,8 +914,10 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const storage = getStorage(app);
     
     // Explicitly use standard paths to adhere perfectly to User's security rules
+    const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'tether-production';
     const dbPath = (colName, isPublic = true, userId = null) => {
       return isPublic ? colName : `users/${userId}/${colName}`;
     };
@@ -720,37 +943,51 @@
         const groups = ref([]); 
         const myMemberships = ref([]);
         const myDms = ref([]);
-        const allMessages = ref({}); // Caches messages for instant loading
+        const allMessages = ref({}); 
         const unreadCounts = ref({});
         const appInitTime = Date.now();
-        let messageListeners = {}; // Stores background snapshot listeners
+        let messageListeners = {}; 
         
         const activeGroupMembers = ref([]);
+        const pendingRequests = ref([]);
         const isLoadingMembers = ref(false);
         const memberToRemove = ref(null);
         const selectedMemberInfo = ref(null);
-        let groupInfoUnsub = null;
+        let rosterUnsub = null;
+        let requestsUnsub = null;
         
         // Chat Action State
         const activeMessageMenuId = ref(null);
         const replyingTo = ref(null);
         const editingMessage = ref(null);
+        
+        // Attachment State
+        const selectedFile = ref(null);
+        const uploadingAttachment = ref(false);
+        const fileInputRef = ref(null);
 
         const currentChatId = ref(null);
         const currentChatType = ref('group'); // 'group' or 'dm'
+        const classTab = ref('announcements'); // 'announcements' or 'people'
         const isMobileChatOpen = ref(false);
         
-        // Toast UI State
         const toast = ref({ show: false, title: '', msg: '', type: 'info', chatId: null });
         let toastTimeout = null;
         
         const newMessage = ref('');
         
         const modals = ref({ 
-          join: false, create: false, settings: false, groupInfo: false, shareCode: false, memberInfo: false, confirmDeleteGroup: false 
+          join: false, create: false, settings: false, shareCode: false, memberInfo: false, confirmDeleteGroup: false, classSettings: false, newGroupChat: false
         });
-        const createFlow = ref({ name: '', questions: '' });
+        const classSettingsTab = ref('general');
+        const editGroupForm = ref({ name: '', code: '', avatar: '🏫', requireApproval: false });
+        const savingGroup = ref(false);
+
+        const createFlow = ref({ name: '', questions: '', avatar: '🏫', requireApproval: false });
         const joinFlow = ref({ code: '', group: null, answers: {} });
+        
+        // New Group Chat State
+        const selectedMembersForChat = ref([]);
 
         let listeners = [];
 
@@ -796,11 +1033,10 @@
              return groups.value.find(g => g.id === currentChatId.value);
           } else {
              const dm = myDms.value.find(d => d.id === currentChatId.value);
-             return dm ? { id: dm.id, name: dm.peerName, isDM: true } : null;
+             return dm ? { id: dm.id, name: dm.peerName, isDM: true, isGroupChat: dm.isGroupChat } : null;
           }
         });
 
-        // The reactive list of messages for the currently viewed chat
         const messages = computed(() => {
            return allMessages.value[currentChatId.value] || [];
         });
@@ -858,7 +1094,7 @@
            if (navigator.share) {
              navigator.share({
                title: `Join ${activeGroup.value.name}`,
-               text: `Join my group "${activeGroup.value.name}" on Tether using code: ${activeGroup.value.code}`,
+               text: `Join my class "${activeGroup.value.name}" on Tether using code: ${activeGroup.value.code}`,
                url: joinLink.value
              }).catch(console.warn);
            } else {
@@ -866,8 +1102,23 @@
            }
         };
 
+        // --- ATTACHMENTS ---
+        const handleFileSelect = (event) => {
+           const file = event.target.files[0];
+           if (!file) return;
+           if (file.size > 5 * 1024 * 1024) {
+              return showToast('File too large (Max 5MB).', 'error');
+           }
+           selectedFile.value = file;
+        };
+        
+        // This function handles both closing attachment and handling security alert fallback
         const handleAttachmentClick = () => {
-          showToast('Security Alert: File uploads are disabled in this prototype.', 'error');
+          if(fileInputRef.value) {
+            fileInputRef.value.click();
+          } else {
+            showToast('Security Alert: File uploads are disabled in this prototype.', 'error');
+          }
         };
 
         const markAsRead = (id) => {
@@ -878,11 +1129,16 @@
         const selectChat = (id, type) => {
           currentChatId.value = id;
           currentChatType.value = type;
+          classTab.value = 'announcements';
           isMobileChatOpen.value = true;
           activeMessageMenuId.value = null;
           markAsRead(id);
           cancelInputContext();
           scrollToBottom();
+          
+          if (type === 'group') {
+             loadActiveGroupRoster();
+          }
         };
 
         // --- CHAT ACTIONS (Edit / Reply / Delete) ---
@@ -899,6 +1155,7 @@
         const initReply = (msg) => {
            replyingTo.value = msg;
            editingMessage.value = null;
+           selectedFile.value = null;
            activeMessageMenuId.value = null;
            document.getElementById('chat-input')?.focus();
         };
@@ -906,6 +1163,7 @@
         const initEdit = (msg) => {
            editingMessage.value = msg;
            replyingTo.value = null;
+           selectedFile.value = null;
            newMessage.value = msg.text;
            activeMessageMenuId.value = null;
            document.getElementById('chat-input')?.focus();
@@ -914,6 +1172,7 @@
         const cancelInputContext = () => {
            replyingTo.value = null;
            editingMessage.value = null;
+           selectedFile.value = null;
            newMessage.value = '';
         };
 
@@ -923,6 +1182,7 @@
               await updateDoc(doc(db, dbPath(`messages_${currentChatId.value}`), msg.id), {
                  isDeleted: true,
                  text: "",
+                 attachmentUrl: null,
                  updatedAt: serverTimestamp()
               });
            } catch (e) {
@@ -931,23 +1191,42 @@
         };
 
         const sendMessage = async () => {
-          if (!newMessage.value.trim() || !currentChatId.value) return;
+          if (!newMessage.value.trim() && !selectedFile.value) return;
+          if (!currentChatId.value) return;
           
           if (currentChatType.value === 'group' && !myMemberships.value.some(m => m.groupId === currentChatId.value)) {
-             return showToast('You are no longer a member of this group.', 'error');
+             return showToast('You are no longer a member of this class.', 'error');
           }
 
           const text = newMessage.value;
           const isEdit = !!editingMessage.value;
           const editId = editingMessage.value?.id;
           const isReply = !!replyingTo.value;
+          const fileToUpload = selectedFile.value;
+
           const replyData = isReply ? {
              replyToId: replyingTo.value.id,
-             replyToText: replyingTo.value.text,
+             replyToText: replyingTo.value.text || 'Attachment',
              replyToSender: replyingTo.value.senderName
           } : {};
 
-          cancelInputContext();
+          cancelInputContext(); // Optimistic clear
+
+          let attachmentUrl = null;
+          if (fileToUpload && !isEdit) {
+             uploadingAttachment.value = true;
+             try {
+                // Prefix with app ID dynamically to avoid clashes if user hosts this somewhere global
+                const sRef = storageRef(storage, `artifacts/${APP_ID}/attachments/${Date.now()}_${fileToUpload.name}`);
+                await uploadBytesResumable(sRef, fileToUpload);
+                attachmentUrl = await getDownloadURL(sRef);
+             } catch(e) {
+                console.error(e);
+                uploadingAttachment.value = false;
+                return showToast('Failed to upload file.', 'error');
+             }
+             uploadingAttachment.value = false;
+          }
 
           try {
             if (isEdit) {
@@ -958,29 +1237,80 @@
                });
             } else {
                const messageRef = doc(collection(db, dbPath(`messages_${currentChatId.value}`)));
-               await setDoc(messageRef, {
+               const payload = {
                  id: messageRef.id,
                  text,
                  senderId: user.value.uid,
-                 senderName: userProfileName.value || 'Anonymous Student',
+                 senderName: userProfileName.value || 'Anonymous',
                  timestamp: serverTimestamp(),
                  ...replyData
-               });
+               };
+               if (attachmentUrl) payload.attachmentUrl = attachmentUrl;
+               
+               await setDoc(messageRef, payload);
             }
           } catch (e) {
             showToast('Failed to send', 'error');
           }
         };
 
-        // --- GROUP INFO & DM CREATION ---
-        const openGroupInfo = () => {
-           if (!activeGroup.value) return;
-           modals.value.groupInfo = true;
+        // --- REPLY TO OWNER LOGIC ---
+        const replyToOwnerDirectly = async () => {
+           if (!newMessage.value.trim()) return;
+           if (!activeGroup.value || !activeGroup.value.ownerId) return;
+
+           const text = newMessage.value;
+           newMessage.value = '';
+           
+           const ownerId = activeGroup.value.ownerId;
+           if (ownerId === user.value.uid) return;
+
+           const ownerObj = activeGroupMembers.value.find(m => m.userId === ownerId);
+           const ownerName = ownerObj ? ownerObj.name : 'Teacher';
+
+           const uids = [user.value.uid, ownerId].sort();
+           const dmId = `messages_dm_${uids[0]}_${uids[1]}`;
+
+           try {
+              if (!myDms.value.find(d => d.id === dmId)) {
+                  await setDoc(doc(db, dbPath('messages_dms_directory'), dmId), {
+                     id: dmId,
+                     users: uids,
+                     names: {
+                        [user.value.uid]: userProfileName.value,
+                        [ownerId]: ownerName
+                     },
+                     updatedAt: serverTimestamp()
+                  }, { merge: true });
+              }
+              
+              const messageRef = doc(collection(db, dbPath(`messages_${dmId}`)));
+              await setDoc(messageRef, {
+                 id: messageRef.id,
+                 text,
+                 senderId: user.value.uid,
+                 senderName: userProfileName.value,
+                 timestamp: serverTimestamp(),
+                 replyToText: `Reply from ${activeGroup.value.name} feed`,
+                 replyToSender: 'System'
+              });
+
+              selectChat(dmId, 'dm');
+              showToast('Reply sent directly to ' + ownerName, 'success');
+           } catch(e) {
+              console.error(e);
+              showToast('Failed to send reply to owner.', 'error');
+           }
+        };
+
+        // --- ROSTER LOADING ---
+        const loadActiveGroupRoster = () => {
+           if (!currentChatId.value || currentChatType.value !== 'group') return;
            isLoadingMembers.value = true;
            activeGroupMembers.value = [];
            
-           if (groupInfoUnsub) groupInfoUnsub();
-           groupInfoUnsub = onSnapshot(collection(db, dbPath(`messages_roster_${currentChatId.value}`)), (snap) => {
+           if (rosterUnsub) rosterUnsub();
+           rosterUnsub = onSnapshot(collection(db, dbPath(`messages_roster_${currentChatId.value}`)), (snap) => {
               activeGroupMembers.value = snap.docs.map(d => d.data());
               isLoadingMembers.value = false;
            }, (e) => {
@@ -989,11 +1319,80 @@
            });
         };
 
-        const closeGroupInfo = () => {
-           modals.value.groupInfo = false;
-           if (groupInfoUnsub) {
-              groupInfoUnsub();
-              groupInfoUnsub = null;
+        watch(classTab, (newTab) => {
+           if (newTab === 'people' && currentChatType.value === 'group') {
+              loadActiveGroupRoster();
+           }
+        });
+
+        // --- CLASS SETTINGS (OWNER) ---
+        const openClassSettings = () => {
+           if (!activeGroup.value || activeGroup.value.ownerId !== user.value.uid) return;
+           
+           editGroupForm.value = {
+              name: activeGroup.value.name,
+              code: activeGroup.value.code,
+              avatar: activeGroup.value.avatar || '🏫',
+              requireApproval: activeGroup.value.requireApproval || false
+           };
+           classSettingsTab.value = 'general';
+           modals.value.classSettings = true;
+           loadActiveGroupRoster();
+
+           // Load Pending Requests
+           if (requestsUnsub) requestsUnsub();
+           requestsUnsub = onSnapshot(collection(db, dbPath(`joinRequests_${currentChatId.value}`)), (snap) => {
+              pendingRequests.value = snap.docs.map(d => d.data());
+           }, (e) => console.warn("Failed to load requests", e));
+        };
+
+        const closeClassSettings = () => {
+           modals.value.classSettings = false;
+           if (requestsUnsub) { requestsUnsub(); requestsUnsub = null; }
+        };
+
+        const saveGroupSettings = async () => {
+           if (!editGroupForm.value.name.trim() || !editGroupForm.value.code.trim()) return;
+           savingGroup.value = true;
+           try {
+              await updateDoc(doc(db, dbPath('groups'), currentChatId.value), {
+                 name: editGroupForm.value.name,
+                 code: editGroupForm.value.code.toUpperCase(),
+                 avatar: editGroupForm.value.avatar,
+                 requireApproval: editGroupForm.value.requireApproval
+              });
+              showToast('Class settings updated!', 'success');
+           } catch(e) {
+              showToast('Failed to update class settings.', 'error');
+           } finally {
+              savingGroup.value = false;
+           }
+        };
+
+        const approveRequest = async (req) => {
+           try {
+              // 1. Add to memberships
+              await setDoc(doc(db, dbPath('memberships', false, req.userId), currentChatId.value), {
+                 groupId: currentChatId.value, role: 'member', answers: req.answers || {}, joinedAt: serverTimestamp()
+              });
+              // 2. Add to roster
+              await setDoc(doc(db, dbPath(`messages_roster_${currentChatId.value}`), req.userId), {
+                 userId: req.userId, role: 'member', name: req.name, answers: req.answers || {}, joinedAt: serverTimestamp()
+              });
+              // 3. Remove from requests
+              await deleteDoc(doc(db, dbPath(`joinRequests_${currentChatId.value}`), req.userId));
+              showToast(`${req.name} approved.`, 'success');
+           } catch(e) {
+              showToast('Failed to approve request', 'error');
+           }
+        };
+
+        const denyRequest = async (req) => {
+           try {
+              await deleteDoc(doc(db, dbPath(`joinRequests_${currentChatId.value}`), req.userId));
+              showToast(`${req.name} denied.`, 'info');
+           } catch(e) {
+              showToast('Failed to deny request', 'error');
            }
         };
 
@@ -1010,7 +1409,7 @@
            if (!memberToRemove.value || !currentChatId.value) return;
            try {
               await deleteDoc(doc(db, dbPath(`messages_roster_${currentChatId.value}`), memberToRemove.value.userId));
-              showToast(`${memberToRemove.value.name} removed from the group.`, 'success');
+              showToast(`${memberToRemove.value.name} removed from the class.`, 'success');
               memberToRemove.value = null;
            } catch (e) {
               showToast('Error removing member', 'error');
@@ -1022,14 +1421,15 @@
            try {
               await deleteDoc(doc(db, dbPath('groups'), currentChatId.value));
               modals.value.confirmDeleteGroup = false;
-              modals.value.groupInfo = false;
-              showToast('Group deleted successfully.', 'success');
+              modals.value.classSettings = false;
+              showToast('Class deleted successfully.', 'success');
               currentChatId.value = null;
            } catch (e) {
-              showToast('Error deleting group. Check permissions.', 'error');
+              showToast('Error deleting class. Check permissions.', 'error');
            }
         };
 
+        // --- DM AND MULTI-USER CHATS ---
         const startDM = async (member) => {
            modals.value.groupInfo = false; 
            const uids = [user.value.uid, member.userId].sort();
@@ -1040,6 +1440,7 @@
                 await setDoc(doc(db, dbPath('messages_dms_directory'), dmId), {
                    id: dmId,
                    users: uids,
+                   isGroupChat: false,
                    names: {
                       [user.value.uid]: userProfileName.value,
                       [member.userId]: member.name
@@ -1047,12 +1448,45 @@
                    updatedAt: serverTimestamp()
                 }, { merge: true });
              } catch (e) {
-                console.error(e);
                 showToast('Error starting private chat', 'error');
                 return;
              }
            }
            selectChat(dmId, 'dm');
+        };
+
+        const initiateGroupChatModal = () => {
+           selectedMembersForChat.value = [];
+           modals.value.newGroupChat = true;
+        };
+
+        const createGroupChat = async () => {
+           if (selectedMembersForChat.value.length === 0) return;
+           if (selectedMembersForChat.value.length === 1) {
+              modals.value.newGroupChat = false;
+              return startDM(selectedMembersForChat.value[0]);
+           }
+
+           const uids = [user.value.uid, ...selectedMembersForChat.value.map(m => m.userId)].sort();
+           const dmId = `messages_groupchat_${Date.now()}_${Math.random().toString(36).substr(2,5)}`;
+           
+           const namesMap = { [user.value.uid]: userProfileName.value };
+           selectedMembersForChat.value.forEach(m => namesMap[m.userId] = m.name);
+
+           try {
+              await setDoc(doc(db, dbPath('messages_dms_directory'), dmId), {
+                 id: dmId,
+                 users: uids,
+                 isGroupChat: true,
+                 names: namesMap,
+                 updatedAt: serverTimestamp()
+              });
+              modals.value.newGroupChat = false;
+              selectChat(dmId, 'dm');
+              showToast('Group chat created!', 'success');
+           } catch (e) {
+              showToast('Error creating group chat', 'error');
+           }
         };
 
         // --- AUTHENTICATION ---
@@ -1104,7 +1538,8 @@
           try {
             await signOut(auth);
             modals.value.settings = false;
-            if(groupInfoUnsub) groupInfoUnsub();
+            if(rosterUnsub) rosterUnsub();
+            if(requestsUnsub) requestsUnsub();
             isProfileComplete.value = null;
             notificationsResolved.value = false;
             userProfileName.value = '';
@@ -1188,19 +1623,19 @@
            const isGroup = groups.value.some(g => g.id === chatId);
            const title = isGroup ? `${msg.senderName} in ${chatName}` : msg.senderName;
            
-           showToast(msg.text, 'message', title, chatId);
+           showToast(msg.text || (msg.attachmentUrl ? 'Sent an attachment' : 'New Message'), 'message', title, chatId);
            
            if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
               try {
                  const regs = await navigator.serviceWorker.getRegistrations();
                  if (regs.length > 0) {
                     regs[0].showNotification(`Tether: ${title}`, {
-                       body: msg.text,
+                       body: msg.text || 'Sent an attachment',
                        icon: '/favicon.ico',
                        tag: `chat_${chatId}` 
                     });
                  } else {
-                    new Notification(`Tether: ${title}`, { body: msg.text, icon: '/favicon.ico' });
+                    new Notification(`Tether: ${title}`, { body: msg.text || 'Sent an attachment', icon: '/favicon.ico' });
                  }
               } catch (e) { console.warn('Native notif failed', e); }
            }
@@ -1277,7 +1712,14 @@
             const questions = createFlow.value.questions.split(',').map(q => q.trim()).filter(Boolean);
             
             await setDoc(doc(db, dbPath('groups'), groupId), {
-              id: groupId, name: createFlow.value.name, code, ownerId: user.value.uid, questions, createdAt: serverTimestamp()
+              id: groupId, 
+              name: createFlow.value.name, 
+              code, 
+              ownerId: user.value.uid, 
+              questions, 
+              avatar: createFlow.value.avatar,
+              requireApproval: createFlow.value.requireApproval,
+              createdAt: serverTimestamp()
             });
 
             await setDoc(doc(db, dbPath('memberships', false, user.value.uid), groupId), {
@@ -1289,11 +1731,11 @@
             });
 
             modals.value.create = false;
-            createFlow.value = { name: '', questions: '' };
+            createFlow.value = { name: '', questions: '', avatar: '🏫', requireApproval: false };
             selectChat(groupId, 'group');
-            showToast('Group created!', 'success');
+            showToast('Class created!', 'success');
           } catch (e) {
-            showToast('Error creating group', 'error');
+            showToast('Error creating class', 'error');
           }
         };
 
@@ -1311,6 +1753,19 @@
           try {
             const groupId = joinFlow.value.group.id;
             
+            if (joinFlow.value.group.requireApproval) {
+               await setDoc(doc(db, dbPath(`joinRequests_${groupId}`), user.value.uid), {
+                 userId: user.value.uid,
+                 name: userProfileName.value,
+                 answers: joinFlow.value.answers,
+                 requestedAt: serverTimestamp()
+               });
+               modals.value.join = false;
+               joinFlow.value = { code: '', group: null, answers: {} };
+               showToast('Request sent! Waiting for teacher approval.', 'success');
+               return;
+            }
+
             await setDoc(doc(db, dbPath('memberships', false, user.value.uid), groupId), {
               groupId, role: 'member', answers: joinFlow.value.answers, joinedAt: serverTimestamp()
             });
@@ -1324,9 +1779,9 @@
             
             window.history.replaceState({}, document.title, window.location.pathname);
             selectChat(groupId, 'group');
-            showToast('Successfully joined group!', 'success');
+            showToast('Successfully joined class!', 'success');
           } catch (e) {
-            showToast('Error joining group', 'error');
+            showToast('Error joining class', 'error');
           }
         };
 
@@ -1382,11 +1837,18 @@
             myDms.value = allDms
                .filter(dm => dm.users && dm.users.includes(uid))
                .map(dm => {
-                   const peerId = dm.users.find(id => id !== uid) || uid; 
+                   let peerName = 'Unknown';
+                   if (dm.isGroupChat) {
+                      const otherNames = Object.keys(dm.names).filter(id => id !== uid).map(id => dm.names[id]);
+                      peerName = otherNames.join(', ');
+                   } else {
+                      const peerId = dm.users.find(id => id !== uid) || uid; 
+                      peerName = dm.names[peerId] || 'Unknown';
+                   }
                    return {
                        id: dm.id,
-                       peerId: peerId,
-                       peerName: dm.names[peerId] || 'Unknown'
+                       peerName: peerName,
+                       isGroupChat: dm.isGroupChat || false
                    };
                });
           }, (e) => console.error(e)));
@@ -1395,7 +1857,6 @@
         const syncChatListeners = () => {
            const allChatIds = [...myGroups.value.map(g => g.id), ...myDms.value.map(d => d.id)];
            
-           // Cleanup removed group listeners
            for(let id in messageListeners) {
               if(!allChatIds.includes(id)) {
                  messageListeners[id]();
@@ -1403,13 +1864,12 @@
               }
            }
 
-           // Setup active background listeners for unread & native notifications
            allChatIds.forEach(id => {
               if(!messageListeners[id]) {
                  messageListeners[id] = onSnapshot(collection(db, dbPath(`messages_${id}`)), (snap) => {
                     const msgs = snap.docs.map(d => ({...d.data(), ts: d.data().timestamp?.toMillis() || Date.now()}));
                     msgs.sort((a, b) => a.ts - b.ts);
-                    allMessages.value[id] = msgs; // Update local cache securely
+                    allMessages.value[id] = msgs;
 
                     snap.docChanges().forEach(change => {
                        if (change.type === 'added') {
@@ -1418,11 +1878,9 @@
                           const lastRead = Number(localStorage.getItem(`lastRead_${id}`) || 0);
 
                           if (msg.senderId !== user.value?.uid) {
-                             // Only count as unread if the message is newer than our last view
                              if (msgTime > lastRead && id !== currentChatId.value) {
                                 unreadCounts.value[id] = (unreadCounts.value[id] || 0) + 1;
                              }
-                             // Prevent notification spam from old messages on page load
                              if (msgTime > appInitTime) {
                                 if (id !== currentChatId.value || document.hidden) {
                                    triggerNotification(msg, id);
@@ -1432,7 +1890,6 @@
                        }
                     });
 
-                    // Auto-read if we are currently looking at it
                     if (id === currentChatId.value) {
                        markAsRead(id);
                        scrollToBottom();
@@ -1442,12 +1899,10 @@
            });
         };
 
-        // When user joins a new group or starts a new DM, attach a listener
         watch(() => [myGroups.value.length, myDms.value.length], () => {
            syncChatListeners();
         });
 
-        // Watch for Chat Swapping
         watch(currentChatId, (newId) => {
           if (!newId) return;
           markAsRead(newId);
@@ -1469,7 +1924,8 @@
           } else {
             listeners.forEach(unsub => unsub());
             listeners = [];
-            if(groupInfoUnsub) groupInfoUnsub();
+            if(rosterUnsub) rosterUnsub();
+            if(requestsUnsub) requestsUnsub();
           }
           loading.value = false;
         });
@@ -1479,12 +1935,14 @@
           authForm, hasCanvasToken, setupFlowName, settingsForm,
           notificationsResolved, notifLoading, handleMandatoryNotifications,
           groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo, unreadCounts,
-          currentChatId, currentChatType, activeGroup, activeChat, isMobileChatOpen, joinLink,
+          currentChatId, currentChatType, classTab, classSettingsTab, activeGroup, activeChat, isMobileChatOpen, joinLink,
           activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, isReplyDeleted, initReply, initEdit, cancelInputContext, deleteMessage,
-          toast, newMessage, modals, createFlow, joinFlow, isLoadingMembers,
+          selectedFile, fileInputRef, handleFileSelect, uploadingAttachment,
+          toast, newMessage, modals, createFlow, joinFlow, editGroupForm, savingGroup, pendingRequests, isLoadingMembers,
+          selectedMembersForChat, initiateGroupChatModal, createGroupChat,
           showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
-          submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, 
-          saveInitialProfile, saveSettings, openGroupInfo, closeGroupInfo, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, handleAttachmentClick, dismissBanner, enableNotifications, copyText, nativeShare, testNotification
+          submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly,
+          saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, dismissBanner, enableNotifications, copyText, nativeShare, testNotification
         };
       }
     }).mount('#app');
