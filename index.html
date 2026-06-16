@@ -252,7 +252,7 @@
           </div>
 
           <!-- Messages -->
-          <div id="messages-container" class="flex-1 overflow-y-auto p-4 flex flex-col bg-slate-50/50 dark:bg-transparent relative pb-8">
+          <div id="messages-container" class="flex-1 overflow-y-auto p-4 flex flex-col bg-slate-50/50 dark:bg-transparent relative pb-16">
             <div v-if="messages.length === 0" class="m-auto text-slate-400 dark:text-slate-500 text-sm text-center">
               No messages yet.<br>
               <button v-if="currentChatType === 'group' && activeGroup" @click="modals.shareCode = true" class="mt-2 text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 px-3 py-1.5 rounded-full font-bold hover:bg-blue-200 dark:hover:bg-blue-800/60 transition-colors">
@@ -263,7 +263,10 @@
             <!-- Messages Loop -->
             <div v-for="msg in messages" :key="msg.id" 
                  class="max-w-[85%] rounded-2xl px-4 py-2 flex flex-col shadow-sm mb-4 cursor-pointer relative group/msg"
-                 :class="msg.senderId === user.uid ? 'bg-blue-600 text-white self-end rounded-br-sm' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 self-start rounded-bl-sm'"
+                 :class="[
+                   msg.senderId === user.uid ? 'bg-blue-600 text-white self-end rounded-br-sm' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 self-start rounded-bl-sm',
+                   activeMessageMenuId === msg.id ? 'z-[50]' : 'z-10'
+                 ]"
                  @click.stop="toggleMessageMenu(msg.id)">
               
               <!-- Reply Reference Bubble -->
@@ -285,12 +288,12 @@
 
               <!-- Action Menu -->
               <div v-if="activeMessageMenuId === msg.id && !msg.isDeleted" 
-                   class="absolute z-10 bottom-full mb-1 flex gap-1 bg-slate-800 text-white rounded-lg shadow-xl px-2 py-1 text-xs font-medium"
+                   class="absolute top-full mt-1 flex gap-1 bg-slate-800 dark:bg-slate-700 text-white rounded-lg shadow-xl px-2 py-1 text-xs font-medium border border-slate-700 dark:border-slate-600"
                    :class="msg.senderId === user.uid ? 'right-0' : 'left-0'">
-                 <button @click.stop="initReply(msg)" class="px-2 py-1 hover:bg-slate-700 rounded transition-colors whitespace-nowrap">Reply</button>
+                 <button @click.stop="initReply(msg)" class="px-3 py-1.5 hover:bg-slate-700 dark:hover:bg-slate-600 rounded transition-colors whitespace-nowrap">Reply</button>
                  <template v-if="msg.senderId === user.uid">
-                   <button @click.stop="initEdit(msg)" class="px-2 py-1 hover:bg-slate-700 rounded transition-colors whitespace-nowrap">Edit</button>
-                   <button @click.stop="deleteMessage(msg)" class="px-2 py-1 text-red-400 hover:bg-slate-700 rounded transition-colors whitespace-nowrap">Delete</button>
+                   <button @click.stop="initEdit(msg)" class="px-3 py-1.5 hover:bg-slate-700 dark:hover:bg-slate-600 rounded transition-colors whitespace-nowrap">Edit</button>
+                   <button @click.stop="deleteMessage(msg)" class="px-3 py-1.5 text-red-400 hover:bg-slate-700 dark:hover:bg-slate-600 rounded transition-colors whitespace-nowrap">Delete</button>
                  </template>
               </div>
             </div>
@@ -407,8 +410,12 @@
           <div>
             <h4 class="font-bold text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Members ({{ activeGroupMembers.length }})</h4>
             
-            <div v-if="activeGroupMembers.length === 0" class="text-sm text-slate-400 py-4 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
+            <div v-if="isLoadingMembers" class="text-sm text-slate-400 py-4 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
                Loading members...
+            </div>
+            
+            <div v-else-if="activeGroupMembers.length === 0" class="text-sm text-slate-400 py-4 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
+               No members found.
             </div>
 
             <div v-else class="space-y-3">
@@ -541,6 +548,11 @@
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-6 text-slate-900 dark:text-white">Settings</h3>
         
+        <div class="mb-4 flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+          <span class="text-sm font-bold text-slate-700 dark:text-slate-300">Push Notifications</span>
+          <button @click="testNotification" class="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900/50 dark:hover:bg-blue-800 dark:text-blue-300 rounded text-xs font-bold transition-colors">Test</button>
+        </div>
+
         <div class="mb-6">
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Display Name</label>
           <input v-model="settingsForm.name" type="text" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm transition-all">
@@ -640,6 +652,7 @@
         const messages = ref([]);
         
         const activeGroupMembers = ref([]);
+        const isLoadingMembers = ref(false);
         const memberToRemove = ref(null);
         const selectedMemberInfo = ref(null);
         let groupInfoUnsub = null;
@@ -859,11 +872,17 @@
         const openGroupInfo = () => {
            if (!activeGroup.value) return;
            modals.value.groupInfo = true;
+           isLoadingMembers.value = true;
+           activeGroupMembers.value = [];
            
            if (groupInfoUnsub) groupInfoUnsub();
            groupInfoUnsub = onSnapshot(collection(db, dbPath(`messages_roster_${currentChatId.value}`)), (snap) => {
               activeGroupMembers.value = snap.docs.map(d => d.data());
-           }, (e) => showToast('Failed to load members', 'error'));
+              isLoadingMembers.value = false;
+           }, (e) => {
+              showToast('Failed to load members', 'error');
+              isLoadingMembers.value = false;
+           });
         };
 
         const closeGroupInfo = () => {
@@ -1039,6 +1058,27 @@
               showToast(`New Message: ${payload.notification?.body}`, 'message');
             });
           } catch (e) {}
+        };
+
+        const testNotification = async () => {
+          if (!('Notification' in window) || Notification.permission !== 'granted') {
+            return showToast('Please enable notifications first.', 'error');
+          }
+          try {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            if (regs.length > 0) {
+              regs[0].showNotification('Tether Test', {
+                body: 'Push notifications are working perfectly!',
+                icon: '/favicon.ico'
+              });
+              showToast('Test notification sent!', 'success');
+            } else {
+               new Notification('Tether Test', { body: 'Push notifications are working perfectly!' });
+               showToast('Test notification sent!', 'success');
+            }
+          } catch(e) {
+            showToast('Failed to send test notification.', 'error');
+          }
         };
 
         const dismissBanner = () => {
@@ -1254,10 +1294,10 @@
           groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo,
           currentChatId, currentChatType, activeGroup, activeChat, isMobileChatOpen, joinLink,
           activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, initReply, initEdit, cancelInputContext, deleteMessage,
-          toast, newMessage, modals, createFlow, joinFlow,
+          toast, newMessage, modals, createFlow, joinFlow, isLoadingMembers,
           showToast, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
           submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, 
-          saveInitialProfile, saveSettings, openGroupInfo, closeGroupInfo, viewMemberInfo, promptRemoveMember, executeRemoveMember, handleAttachmentClick, dismissBanner, enableNotifications, copyText, nativeShare
+          saveInitialProfile, saveSettings, openGroupInfo, closeGroupInfo, viewMemberInfo, promptRemoveMember, executeRemoveMember, handleAttachmentClick, dismissBanner, enableNotifications, copyText, nativeShare, testNotification
         };
       }
     }).mount('#app');
