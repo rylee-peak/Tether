@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Tether - Secure Communications</title>
   
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -13,6 +14,7 @@
     }
   </script>
   
+  <!-- Dynamic PWA Manifest -->
   <link rel="manifest" id="pwa-manifest">
   <script>
     const manifest = {
@@ -31,6 +33,7 @@
     document.getElementById('pwa-manifest').href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
   </script>
 
+  <!-- Import Maps for Vue and Firebase -->
   <script type="importmap">
     {
       "imports": {
@@ -56,38 +59,54 @@
       </div>
     </div>
 
+    <!-- Toast Notification (OS Style) -->
     <transition name="toast">
       <div v-if="toast.show" 
-           class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] flex items-center p-3 sm:px-4 sm:py-3 rounded-2xl shadow-2xl border backdrop-blur-xl font-medium text-sm w-11/12 max-w-md sm:w-auto transition-all"
-           :class="toast.type === 'error' ? 'bg-red-50/95 dark:bg-red-900/90 border-red-200 dark:border-red-800 text-red-800 dark:text-red-100' : 'bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100'">
+           @click="handleToastClick"
+           class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
+           :class="toast.type === 'error' ? 'bg-red-50/95 dark:bg-red-900/90 border-red-200 dark:border-red-800' : 'bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700'">
         
-        <div class="flex-shrink-0 mr-3">
-          <div v-if="toast.type === 'error'" class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/60 flex items-center justify-center">
-            <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <!-- Header -->
+        <div class="flex items-center justify-between px-4 py-2 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5">
+          <div class="flex items-center gap-2">
+            <!-- Dynamic Icon -->
+            <div v-if="toast.type === 'error'" class="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center text-white shadow-sm">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </div>
+            <div v-else-if="toast.type === 'message'" class="w-5 h-5 rounded-md bg-blue-500 flex items-center justify-center text-white shadow-sm">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+            </div>
+            <div v-else class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-white shadow-sm">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <span class="text-xs font-bold uppercase tracking-wider truncate max-w-[200px]" :class="toast.type === 'error' ? 'text-red-700 dark:text-red-300' : 'text-slate-700 dark:text-slate-300'">
+              {{ toast.title || (toast.type === 'error' ? 'Error' : toast.type === 'message' ? 'New Message' : 'Success') }}
+            </span>
           </div>
-          <div v-else-if="toast.type === 'message'" class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/60 flex items-center justify-center">
-            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-          </div>
-          <div v-else class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/60 flex items-center justify-center">
-            <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          <div class="flex items-center gap-3">
+             <span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold tracking-wide">NOW</span>
+             <button @click.stop="toast.show = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+             </button>
           </div>
         </div>
-        
-        <div class="flex-1 pr-4 leading-relaxed whitespace-pre-wrap break-words">
-          {{ toast.msg }}
+
+        <!-- Body -->
+        <div class="px-4 py-3 flex items-start gap-3">
+          <div class="flex-1 text-sm font-medium leading-relaxed" :class="toast.type === 'error' ? 'text-red-900 dark:text-red-100' : 'text-slate-800 dark:text-slate-100'">
+            <p class="line-clamp-2">{{ toast.msg }}</p>
+          </div>
         </div>
-        
-        <button @click="toast.show = false" class="flex-shrink-0 p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors opacity-70 hover:opacity-100">
-           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
       </div>
     </transition>
 
+    <!-- 0. Loading Screen -->
     <div v-if="loading || (user && isProfileComplete === null)" class="h-full w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 absolute inset-0 z-40 transition-colors duration-200">
       <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="mt-4 text-slate-500 dark:text-slate-400 font-medium">Connecting to Tether...</p>
     </div>
 
+    <!-- 1. Authentication Screen -->
     <div v-else-if="!user" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200 overflow-y-auto">
       <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md my-auto">
         <div class="flex items-center gap-2 justify-center text-blue-600 dark:text-blue-400 font-bold text-3xl tracking-tight mb-2">
@@ -137,6 +156,7 @@
       </div>
     </div>
 
+    <!-- 2. Profile Creation Screen -->
     <div v-else-if="user && isProfileComplete === false" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200">
       <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md text-center">
         <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -155,6 +175,7 @@
       </div>
     </div>
 
+    <!-- 3. Mandatory Notifications Screen -->
     <div v-else-if="user && isProfileComplete === true && !notificationsResolved" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200">
       <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md text-center">
         <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -170,13 +191,14 @@
       </div>
     </div>
 
+    <!-- 4. Main Application -->
     <div v-else-if="user && isProfileComplete === true && notificationsResolved" class="h-full w-full flex flex-1 overflow-hidden">
       
-      <!-- Sidebar Panel -->
+      <!-- Sidebar / List -->
       <div :class="['w-full md:w-80 bg-slate-50 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform z-10', 
                     isMobileChatOpen ? 'hidden md:flex' : 'flex']">
         
-        <!-- Sidebar Header with User Controls -->
+        <!-- Sidebar Header -->
         <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800/50 transition-colors">
           <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-xl tracking-tight">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
@@ -199,6 +221,7 @@
 
         <div class="flex-1 overflow-y-auto pb-4 flex flex-col">
           
+          <!-- Groups Section -->
           <div class="px-4 pt-2 pb-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Groups</div>
           <div class="space-y-1 px-2 mb-4">
             <p v-if="myGroups.length === 0" class="text-slate-400 dark:text-slate-500 text-xs px-2 italic">No groups yet.</p>
@@ -214,6 +237,7 @@
             </button>
           </div>
 
+          <!-- Direct Messages Section -->
           <div class="px-4 pt-2 pb-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Direct Messages</div>
           <div class="space-y-1 px-2 mb-4">
             <p v-if="myDms.length === 0" class="text-slate-400 dark:text-slate-500 text-xs px-2 italic">No messages yet. Open a Group's Info to message members.</p>
@@ -235,6 +259,7 @@
         </div>
       </div>
 
+      <!-- Main Chat Area -->
       <div :class="['flex-1 bg-white dark:bg-slate-900 flex flex-col relative transition-colors', 
                     !isMobileChatOpen ? 'hidden md:flex' : 'flex']"
            @click="activeMessageMenuId = null">
@@ -258,12 +283,14 @@
               </div>
             </div>
             
+            <!-- Group Info Button -->
             <button v-if="currentChatType === 'group'" @click="openGroupInfo" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors border border-slate-200 dark:border-slate-700">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
               Info
             </button>
           </div>
 
+          <!-- Messages -->
           <div id="messages-container" class="flex-1 overflow-y-auto p-4 flex flex-col bg-slate-50/50 dark:bg-transparent relative pb-16">
             <div v-if="messages.length === 0" class="m-auto text-slate-400 dark:text-slate-500 text-sm text-center">
               No messages yet.<br>
@@ -272,6 +299,7 @@
               </button>
             </div>
 
+            <!-- Messages Loop -->
             <div v-for="msg in messages" :key="msg.id" 
                  class="max-w-[85%] rounded-2xl px-4 py-2 flex flex-col shadow-sm mb-4 cursor-pointer relative group/msg"
                  :class="[
@@ -280,6 +308,7 @@
                  ]"
                  @click.stop="toggleMessageMenu(msg.id)">
               
+              <!-- Reply Reference Bubble -->
               <div v-if="msg.replyToId" class="text-xs mb-1.5 p-2 rounded bg-black/10 dark:bg-white/10 border-l-2 border-white/50 dark:border-slate-400 flex flex-col overflow-hidden max-w-full text-ellipsis whitespace-nowrap">
                  <template v-if="isReplyDeleted(msg.replyToId)">
                    <span class="italic opacity-60 flex items-center gap-1 text-[11px]">
@@ -304,6 +333,7 @@
                  <span v-if="msg.isEdited" class="text-[10px] opacity-60 ml-1 italic">(edited)</span>
               </span>
 
+              <!-- Action Menu -->
               <div v-if="activeMessageMenuId === msg.id && !msg.isDeleted" 
                    class="absolute top-full mt-1 flex gap-1 bg-slate-800 dark:bg-slate-700 text-white rounded-lg shadow-xl px-2 py-1 text-xs font-medium border border-slate-700 dark:border-slate-600"
                    :class="msg.senderId === user.uid ? 'right-0' : 'left-0'">
@@ -316,8 +346,10 @@
             </div>
           </div>
 
+          <!-- Input Area -->
           <div class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-colors shrink-0">
             
+            <!-- Context Banner (Replying or Editing) -->
             <div v-if="replyingTo || editingMessage" class="px-4 py-2 flex justify-between items-center text-xs"
                  :class="editingMessage ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-b border-blue-100 dark:border-blue-800/50' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700'">
                <div class="flex items-center gap-2 truncate pr-4">
@@ -356,6 +388,8 @@
       </div>
     </div>
 
+    <!-- Modals -->
+
     <!-- Group Share Modal -->
     <div v-if="modals.shareCode && activeGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl text-center">
@@ -393,6 +427,7 @@
       </div>
     </div>
 
+    <!-- Group Info Modal -->
     <div v-if="modals.groupInfo && activeGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[50] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-2xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh]">
         
@@ -407,6 +442,7 @@
         </div>
 
         <div class="overflow-y-auto flex-1 pr-2 space-y-6">
+          <!-- Group Header Card -->
           <div class="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 p-4 rounded-xl flex justify-between items-center">
              <div>
                <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-1">{{ activeGroup.name }}</h4>
@@ -417,6 +453,7 @@
              <div v-if="activeGroup.ownerId === user.uid" class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase shadow-sm">Owner</div>
           </div>
 
+          <!-- Member List -->
           <div>
             <h4 class="font-bold text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Members ({{ activeGroupMembers.length }})</h4>
             
@@ -444,6 +481,7 @@
                     </div>
                   </div>
                   
+                  <!-- Actions -->
                   <div class="shrink-0 flex flex-wrap gap-2 w-full sm:w-auto justify-end">
                      <button v-if="activeGroup.ownerId === user.uid && member.role !== 'owner' && member.answers" @click="viewMemberInfo(member)" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">
                        Info
@@ -459,6 +497,7 @@
             </div>
           </div>
 
+          <!-- Danger Zone -->
           <div v-if="activeGroup.ownerId === user.uid" class="pt-6 mt-6 border-t border-slate-200 dark:border-slate-700">
              <h4 class="font-bold text-sm text-red-500 uppercase tracking-wider mb-3">Danger Zone</h4>
              <button @click="modals.confirmDeleteGroup = true" class="w-full sm:w-auto px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 rounded-lg font-bold text-sm transition-colors border border-red-200 dark:border-red-800/50">
@@ -568,6 +607,7 @@
       </div>
     </div>
 
+    <!-- Settings Modal -->
     <div v-if="modals.settings" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-6 text-slate-900 dark:text-white">Settings</h3>
@@ -608,7 +648,7 @@
   <style>
     [v-cloak] { display: none !important; }
     
-    /* Toast Animation */
+    /* OS-Style Toast Animation */
     .toast-enter-active, .toast-leave-active { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .toast-enter-from, .toast-leave-to { opacity: 0; transform: translate(-50%, -20px) scale(0.95); }
     .toast-enter-to, .toast-leave-from { opacity: 1; transform: translate(-50%, 0) scale(1); }
@@ -640,6 +680,16 @@
       appId: "1:825984310844:web:9174be65ae9a0c08b66d39"
     };
 
+    try {
+       if (typeof __firebase_config !== 'undefined') {
+          if (typeof __firebase_config === 'string' && __firebase_config.trim() !== '') {
+             firebaseConfig = JSON.parse(__firebase_config);
+          } else if (typeof __firebase_config === 'object') {
+             firebaseConfig = __firebase_config;
+          }
+       }
+    } catch(e) { console.warn("Fallback to default config"); }
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -670,10 +720,10 @@
         const groups = ref([]); 
         const myMemberships = ref([]);
         const myDms = ref([]);
-        const allMessages = ref({}); // Replaces single array for fast local cache
+        const allMessages = ref({}); // Caches messages for instant loading
         const unreadCounts = ref({});
         const appInitTime = Date.now();
-        let messageListeners = {}; // Track background chat listeners
+        let messageListeners = {}; // Stores background snapshot listeners
         
         const activeGroupMembers = ref([]);
         const isLoadingMembers = ref(false);
@@ -689,7 +739,11 @@
         const currentChatId = ref(null);
         const currentChatType = ref('group'); // 'group' or 'dm'
         const isMobileChatOpen = ref(false);
-        const toast = ref({ show: false, msg: '', type: 'info' });
+        
+        // Toast UI State
+        const toast = ref({ show: false, title: '', msg: '', type: 'info', chatId: null });
+        let toastTimeout = null;
+        
         const newMessage = ref('');
         
         const modals = ref({ 
@@ -746,6 +800,7 @@
           }
         });
 
+        // The reactive list of messages for the currently viewed chat
         const messages = computed(() => {
            return allMessages.value[currentChatId.value] || [];
         });
@@ -765,9 +820,19 @@
            }
         });
 
-        const showToast = (msg, type = 'info') => {
-          toast.value = { show: true, msg, type };
-          setTimeout(() => toast.value.show = false, type === 'message' ? 5000 : 3000);
+        // --- OS-STYLE NOTIFICATION HANDLER ---
+        const showToast = (msg, type = 'info', title = '', chatId = null) => {
+          toast.value = { show: true, msg, type, title, chatId };
+          if (toastTimeout) clearTimeout(toastTimeout);
+          toastTimeout = setTimeout(() => toast.value.show = false, type === 'message' ? 5000 : 3000);
+        };
+
+        const handleToastClick = () => {
+          if (toast.value.chatId) {
+            const isGroup = groups.value.some(g => g.id === toast.value.chatId);
+            selectChat(toast.value.chatId, isGroup ? 'group' : 'dm');
+          }
+          toast.value.show = false;
         };
 
         const generateCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -945,7 +1010,7 @@
            if (!memberToRemove.value || !currentChatId.value) return;
            try {
               await deleteDoc(doc(db, dbPath(`messages_roster_${currentChatId.value}`), memberToRemove.value.userId));
-              showToast(`${memberToRemove.value.name} removed from the group.`);
+              showToast(`${memberToRemove.value.name} removed from the group.`, 'success');
               memberToRemove.value = null;
            } catch (e) {
               showToast('Error removing member', 'error');
@@ -958,7 +1023,7 @@
               await deleteDoc(doc(db, dbPath('groups'), currentChatId.value));
               modals.value.confirmDeleteGroup = false;
               modals.value.groupInfo = false;
-              showToast('Group deleted successfully.');
+              showToast('Group deleted successfully.', 'success');
               currentChatId.value = null;
            } catch (e) {
               showToast('Error deleting group. Check permissions.', 'error');
@@ -1046,9 +1111,9 @@
             groups.value = [];
             myMemberships.value = [];
             myDms.value = [];
-            messages.value = [];
+            allMessages.value = {};
             currentChatId.value = null;
-            showToast('Signed out safely.');
+            showToast('Signed out safely.', 'success');
           } catch (e) {
             showToast('Failed to sign out.', 'error');
           }
@@ -1105,7 +1170,7 @@
           try {
             const messaging = getMessaging(app);
             onMessage(messaging, (payload) => {
-              showToast(`New Message: ${payload.notification?.body}`, 'message');
+              showToast(payload.notification?.body || 'New message received', 'message', payload.notification?.title || 'Tether');
             });
           } catch (e) {}
         };
@@ -1120,22 +1185,22 @@
 
         const triggerNotification = async (msg, chatId) => {
            const chatName = getChatName(chatId);
-           showToast(`New from ${msg.senderName}: ${msg.text}`, 'message');
+           const isGroup = groups.value.some(g => g.id === chatId);
+           const title = isGroup ? `${msg.senderName} in ${chatName}` : msg.senderName;
+           
+           showToast(msg.text, 'message', title, chatId);
            
            if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
               try {
                  const regs = await navigator.serviceWorker.getRegistrations();
                  if (regs.length > 0) {
-                    regs[0].showNotification(`Tether: ${chatName}`, {
-                       body: `${msg.senderName}: ${msg.text}`,
+                    regs[0].showNotification(`Tether: ${title}`, {
+                       body: msg.text,
                        icon: '/favicon.ico',
                        tag: `chat_${chatId}` 
                     });
                  } else {
-                    new Notification(`Tether: ${chatName}`, {
-                       body: `${msg.senderName}: ${msg.text}`,
-                       icon: '/favicon.ico'
-                    });
+                    new Notification(`Tether: ${title}`, { body: msg.text, icon: '/favicon.ico' });
                  }
               } catch (e) { console.warn('Native notif failed', e); }
            }
@@ -1152,10 +1217,10 @@
                 body: 'Push notifications are working perfectly!',
                 icon: '/favicon.ico'
               });
-              showToast('Test notification sent!', 'success');
+              showToast('Push notifications are working perfectly!', 'success', 'Tether Test');
             } else {
                new Notification('Tether Test', { body: 'Push notifications are working perfectly!' });
-               showToast('Test notification sent!', 'success');
+               showToast('Push notifications are working perfectly!', 'success', 'Tether Test');
             }
           } catch(e) {
             showToast('Failed to send test notification.', 'error');
@@ -1198,7 +1263,7 @@
             
             themePreference.value = settingsForm.value.theme;
             modals.value.settings = false;
-            showToast('Settings saved');
+            showToast('Settings saved', 'success');
           } catch (e) {
             showToast('Failed to save settings', 'error');
           }
@@ -1226,7 +1291,7 @@
             modals.value.create = false;
             createFlow.value = { name: '', questions: '' };
             selectChat(groupId, 'group');
-            showToast('Group created!');
+            showToast('Group created!', 'success');
           } catch (e) {
             showToast('Error creating group', 'error');
           }
@@ -1259,7 +1324,7 @@
             
             window.history.replaceState({}, document.title, window.location.pathname);
             selectChat(groupId, 'group');
-            showToast('Successfully joined group!');
+            showToast('Successfully joined group!', 'success');
           } catch (e) {
             showToast('Error joining group', 'error');
           }
@@ -1344,7 +1409,7 @@
                  messageListeners[id] = onSnapshot(collection(db, dbPath(`messages_${id}`)), (snap) => {
                     const msgs = snap.docs.map(d => ({...d.data(), ts: d.data().timestamp?.toMillis() || Date.now()}));
                     msgs.sort((a, b) => a.ts - b.ts);
-                    allMessages.value[id] = msgs;
+                    allMessages.value[id] = msgs; // Update local cache securely
 
                     snap.docChanges().forEach(change => {
                        if (change.type === 'added') {
@@ -1353,10 +1418,11 @@
                           const lastRead = Number(localStorage.getItem(`lastRead_${id}`) || 0);
 
                           if (msg.senderId !== user.value?.uid) {
+                             // Only count as unread if the message is newer than our last view
                              if (msgTime > lastRead && id !== currentChatId.value) {
                                 unreadCounts.value[id] = (unreadCounts.value[id] || 0) + 1;
                              }
-                             // Prevent notification spam on page load
+                             // Prevent notification spam from old messages on page load
                              if (msgTime > appInitTime) {
                                 if (id !== currentChatId.value || document.hidden) {
                                    triggerNotification(msg, id);
@@ -1366,6 +1432,7 @@
                        }
                     });
 
+                    // Auto-read if we are currently looking at it
                     if (id === currentChatId.value) {
                        markAsRead(id);
                        scrollToBottom();
@@ -1375,6 +1442,7 @@
            });
         };
 
+        // When user joins a new group or starts a new DM, attach a listener
         watch(() => [myGroups.value.length, myDms.value.length], () => {
            syncChatListeners();
         });
@@ -1414,7 +1482,7 @@
           currentChatId, currentChatType, activeGroup, activeChat, isMobileChatOpen, joinLink,
           activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, isReplyDeleted, initReply, initEdit, cancelInputContext, deleteMessage,
           toast, newMessage, modals, createFlow, joinFlow, isLoadingMembers,
-          showToast, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
+          showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
           submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, 
           saveInitialProfile, saveSettings, openGroupInfo, closeGroupInfo, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, handleAttachmentClick, dismissBanner, enableNotifications, copyText, nativeShare, testNotification
         };
