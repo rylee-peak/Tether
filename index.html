@@ -14,24 +14,8 @@
     }
   </script>
   
-  <!-- Dynamic PWA Manifest -->
-  <link rel="manifest" id="pwa-manifest">
-  <script>
-    const manifest = {
-      name: "Tether Classes",
-      short_name: "Tether",
-      start_url: ".",
-      display: "standalone",
-      background_color: "#ffffff",
-      theme_color: "#2563eb",
-      icons: [{ 
-        src: "data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><circle cx='12' cy='12' r='10' fill='%232563eb'/></svg>", 
-        sizes: "192x192", 
-        type: "image/svg+xml" 
-      }]
-    };
-    document.getElementById('pwa-manifest').href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
-  </script>
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
 
   <!-- Import Maps for Vue and Firebase -->
   <script type="importmap">
@@ -1243,6 +1227,7 @@
                   await setDoc(doc(db, dbPath('messages_dms_directory'), dmId), {
                      id: dmId,
                      users: uids,
+                     isGroupChat: false,
                      names: {
                         [user.value.uid]: userProfileName.value,
                         [ownerId]: ownerName
