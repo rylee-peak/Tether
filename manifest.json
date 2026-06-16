@@ -1,0 +1,44 @@
+{
+  "short_name": "Tether",
+  "dir": "auto",
+  "name": "Tether",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "https://tether.rpeak.org/",
+  "scope": "https://tether.rpeak.org",
+  "id": "https://tether.rpeak.org/uEP2tinN3tRboGiMzsD6",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "https://oouxkyuexvzylckxeeks.supabase.co/storage/v1/object/public/pgsstoragebucket/9EwctgpUA9VUjyL65DkV/mJMUNAnkwOkiTIk.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://oouxkyuexvzylckxeeks.supabase.co/storage/v1/object/public/pgsstoragebucket/9EwctgpUA9VUjyL65DkV/hdvxsqpMzsyDTko.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+pwa",
+      "url": "https://tether.rpeak.org/?launchedfrom=homescreen&pwaprotocolredirect=%s"
+    },
+    {
+      "protocol": "web+tether",
+      "url": "https://tether.rpeak.org/?launchedfrom=homescreen&pwaprotocolredirect=%s"
+    }
+  ],
+  "lang": "en",
+  "display_override": [
+    "window-controls-overlay"
+  ],
+  "categories": [
+    "education",
+    "government"
+  ]
+}
