@@ -14,7 +14,13 @@
     }
   </script>
   
-  <!-- Dynamic PWA Manifest -->
+  <!-- PROGRESSIER START -->
+  <link rel="manifest" href="https://progressier.app/uEP2tinN3tRboGiMzsD6/progressier.json">
+  <script src="https://progressier.app/uEP2tinN3tRboGiMzsD6/script.js"></script>
+  <!-- PROGRESSIER END -->
+
+  <!-- Dynamic PWA Manifest (Commented out for Progressier) -->
+  <!--
   <link rel="manifest" id="pwa-manifest">
   <script>
     const manifest = {
@@ -32,6 +38,7 @@
     };
     document.getElementById('pwa-manifest').href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
   </script>
+  -->
 
   <!-- Import Maps for Vue and Firebase -->
   <script type="importmap">
@@ -41,8 +48,7 @@
         "firebase/app": "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js",
         "firebase/auth": "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js",
         "firebase/firestore": "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js",
-        "firebase/storage": "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js",
-        "firebase/messaging": "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js"
+        "firebase/storage": "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js"
       }
     }
   </script>
@@ -51,15 +57,6 @@
   
   <div id="app" class="h-full w-full flex flex-col" v-cloak>
     
-    <!-- Notification Banner -->
-    <div v-if="showNotificationBanner && isProfileComplete" class="bg-blue-600 px-4 py-2 flex items-center justify-between z-20 shrink-0 shadow-md">
-      <span class="text-sm font-medium text-white">Turn on notifications to get alerts for new messages.</span>
-      <div class="flex gap-3">
-        <button @click="enableNotifications" class="bg-white text-blue-600 px-3 py-1 rounded text-xs font-bold hover:bg-slate-100 transition-colors">Enable</button>
-        <button @click="dismissBanner" class="text-white/80 hover:text-white text-xs transition-colors">Dismiss</button>
-      </div>
-    </div>
-
     <!-- Toast Notification (OS Style) -->
     <transition name="toast">
       <div v-if="toast.show" 
@@ -171,24 +168,8 @@
       </div>
     </div>
 
-    <!-- 3. Mandatory Notifications Screen -->
-    <div v-else-if="user && isProfileComplete === true && !notificationsResolved" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200">
-      <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md text-center">
-        <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-        </div>
-        <h2 class="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Enable Notifications</h2>
-        <p class="text-slate-500 dark:text-slate-400 mb-8 text-sm">To ensure you don't miss important messages and class announcements, you must enable push notifications.</p>
-        
-        <button @click="handleMandatoryNotifications" :disabled="notifLoading" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center h-12">
-          <span v-if="!notifLoading">Enable & Continue</span>
-          <div v-else class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-        </button>
-      </div>
-    </div>
-
     <!-- 4. Main Application -->
-    <div v-else-if="user && isProfileComplete === true && notificationsResolved" class="h-full w-full flex flex-1 overflow-hidden">
+    <div v-else-if="user && isProfileComplete === true" class="h-full w-full flex flex-1 overflow-hidden">
       
       <!-- Sidebar / List -->
       <div :class="['w-full md:w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform z-10 shadow-sm', 
@@ -819,11 +800,6 @@
     <div v-if="modals.settings" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-6 text-slate-900 dark:text-white">Settings</h3>
-        
-        <div class="mb-4 flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-          <span class="text-sm font-bold text-slate-700 dark:text-slate-300">Push Notifications</span>
-          <button @click="testNotification" class="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900/50 dark:hover:bg-blue-800 dark:text-blue-300 rounded text-xs font-bold transition-colors">Test</button>
-        </div>
 
         <div class="mb-6">
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Display Name</label>
@@ -876,9 +852,6 @@
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
     import { getFirestore, collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
     import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-    import { getMessaging, getToken, onMessage } from 'firebase/messaging';
-
-    const VAPID_KEY = "BBZAUePsEq6JeUWx25-_FOMCIxHvlNZ3TtJK9dRzOPqxAcE5EpDVI1s6xODHMa3j7YugzOuf8k8PLH4VmSVq9BU";
 
     let firebaseConfig = {
       apiKey: "AIzaSyCL4niDOUs2X8Je7-UmhGGpsowA7CfFAEA",
@@ -933,14 +906,11 @@
         const hasCanvasToken = typeof __initial_auth_token !== 'undefined' && __initial_auth_token;
         
         const isProfileComplete = ref(null);
-        const notificationsResolved = ref(false);
-        const notifLoading = ref(false);
 
         const userProfileName = ref('');
         const themePreference = ref('system');
         const setupFlowName = ref('');
         const settingsForm = ref({ name: '', theme: 'system' });
-        const showNotificationBanner = ref(false);
         
         const groups = ref([]); 
         const myMemberships = ref([]);
@@ -1546,7 +1516,6 @@
             if(rosterUnsub) rosterUnsub();
             if(requestsUnsub) requestsUnsub();
             isProfileComplete.value = null;
-            notificationsResolved.value = false;
             userProfileName.value = '';
             groups.value = [];
             myMemberships.value = [];
@@ -1556,116 +1525,6 @@
             showToast('Signed out safely.', 'success');
           } catch (e) {
             showToast('Failed to sign out.', 'error');
-          }
-        };
-
-        // --- MANDATORY FIREBASE MESSAGING SETUP ---
-        const handleMandatoryNotifications = async () => {
-           notifLoading.value = true;
-           try {
-             if (!('Notification' in window)) {
-                showToast('Notifications not available in this environment. Proceeding securely.', 'info');
-                notificationsResolved.value = true;
-                return;
-             }
-
-             const permission = await Notification.requestPermission();
-             if (permission === 'granted') {
-                // iOS BUG FIX: Apple blocks Blob-generated Service Workers. 
-                // We must register the physical file natively.
-                const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-                const messaging = getMessaging(app);
-                const token = await getToken(messaging, { 
-                  vapidKey: VAPID_KEY, 
-                  serviceWorkerRegistration: registration 
-                });
-
-                if (token) {
-                  await setDoc(doc(db, dbPath('fcmTokens', false, user.value.uid), 'current'), {
-                    token, updatedAt: serverTimestamp()
-                  });
-                  setupMessagingListener();
-                }
-             } else {
-                showToast('Permission denied. App functionality will be limited.', 'error');
-             }
-           } catch (e) {
-             console.warn("Notifications strictly blocked. Bypassing safely.", e);
-           } finally {
-             notifLoading.value = false;
-             notificationsResolved.value = true;
-           }
-        };
-
-        const setupMessagingListener = () => {
-          try {
-            const messaging = getMessaging(app);
-            onMessage(messaging, (payload) => {
-              showToast(payload.notification?.body || 'New message received', 'message', payload.notification?.title || 'Tether');
-            });
-          } catch (e) {}
-        };
-
-        const getChatName = (id) => {
-           const grp = groups.value.find(g => g.id === id);
-           if (grp) return grp.name;
-           const dm = myDms.value.find(d => d.id === id);
-           if (dm) return dm.peerName;
-           return "New Message";
-        };
-
-        const triggerNotification = async (msg, chatId) => {
-           const chatName = getChatName(chatId);
-           const isGroup = groups.value.some(g => g.id === chatId);
-           const title = isGroup ? `${msg.senderName} in ${chatName}` : msg.senderName;
-           
-           showToast(msg.text || (msg.attachmentUrl ? 'Sent an attachment' : 'New Message'), 'message', title, chatId);
-           
-           if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
-              try {
-                 const regs = await navigator.serviceWorker.getRegistrations();
-                 if (regs.length > 0) {
-                    regs[0].showNotification(`Tether: ${title}`, {
-                       body: msg.text || 'Sent an attachment',
-                       icon: '/favicon.ico',
-                       tag: `chat_${chatId}` 
-                    });
-                 } else {
-                    new Notification(`Tether: ${title}`, { body: msg.text || 'Sent an attachment', icon: '/favicon.ico' });
-                 }
-              } catch (e) { console.warn('Native notif failed', e); }
-           }
-        };
-
-        const testNotification = async () => {
-          if (!('Notification' in window) || Notification.permission !== 'granted') {
-            return showToast('Please enable notifications first.', 'error');
-          }
-          try {
-            const regs = await navigator.serviceWorker.getRegistrations();
-            if (regs.length > 0) {
-              regs[0].showNotification('Tether Test', {
-                body: 'Push notifications are working perfectly!',
-                icon: '/favicon.ico'
-              });
-              showToast('Push notifications are working perfectly!', 'success', 'Tether Test');
-            } else {
-               new Notification('Tether Test', { body: 'Push notifications are working perfectly!' });
-               showToast('Push notifications are working perfectly!', 'success', 'Tether Test');
-            }
-          } catch(e) {
-            showToast('Failed to send test notification.', 'error');
-          }
-        };
-
-        const dismissBanner = () => {
-          showNotificationBanner.value = false;
-        };
-
-        const enableNotifications = async () => {
-          await handleMandatoryNotifications();
-          if (notificationsResolved.value) {
-            showNotificationBanner.value = false;
           }
         };
 
@@ -1880,11 +1739,6 @@
                              if (msgTime > lastRead && id !== currentChatId.value) {
                                 unreadCounts.value[id] = (unreadCounts.value[id] || 0) + 1;
                              }
-                             if (msgTime > appInitTime) {
-                                if (id !== currentChatId.value || document.hidden) {
-                                   triggerNotification(msg, id);
-                                }
-                             }
                           }
                        }
                     });
@@ -1915,10 +1769,6 @@
             if (u.displayName && !isProfileComplete.value) {
               setupFlowName.value = u.displayName;
             }
-            if ('Notification' in window && Notification.permission === 'granted') {
-               notificationsResolved.value = true;
-               setupMessagingListener();
-            }
             setupDataListeners();
           } else {
             listeners.forEach(unsub => unsub());
@@ -1930,9 +1780,8 @@
         });
 
         return {
-          loading, user, isProfileComplete, userProfileName, showNotificationBanner, svgIcons,
+          loading, user, isProfileComplete, userProfileName, svgIcons,
           authForm, hasCanvasToken, setupFlowName, settingsForm,
-          notificationsResolved, notifLoading, handleMandatoryNotifications,
           groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo, unreadCounts,
           currentChatId, currentChatType, classTab, classSettingsTab, activeGroup, activeChat, isMobileChatOpen, joinLink,
           activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, isReplyDeleted, initReply, initEdit, cancelInputContext, deleteMessage,
@@ -1941,7 +1790,7 @@
           selectedMembersForChat, initiateGroupChatModal, createGroupChat,
           showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
           submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly,
-          saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, dismissBanner, enableNotifications, copyText, nativeShare, testNotification
+          saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare
         };
       }
     }).mount('#app');
