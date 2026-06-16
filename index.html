@@ -1248,19 +1248,6 @@
                
                await setDoc(messageRef, payload);
             }
-
-            // Trigger the free background worker queue
-            try {
-              await setDoc(doc(collection(db, dbPath('pending_notifications'))), {
-                chatId: currentChatId.value,
-                senderId: user.value.uid,
-                senderName: userProfileName.value || 'Anonymous',
-                text: text,
-                attachmentUrl: attachmentUrl,
-                createdAt: serverTimestamp()
-              });
-            } catch(e) { console.warn('Failed to queue notification', e); }
-
           } catch (e) {
             showToast('Failed to send', 'error');
           }
@@ -1310,17 +1297,6 @@
                  replyToText: `Reply from ${activeGroup.value.name} feed`,
                  replyToSender: 'System'
               });
-
-              // Trigger the free background worker queue
-              try {
-                await setDoc(doc(collection(db, dbPath('pending_notifications'))), {
-                  chatId: dmId,
-                  senderId: user.value.uid,
-                  senderName: userProfileName.value,
-                  text: text,
-                  createdAt: serverTimestamp()
-                });
-              } catch(e) { console.warn('Failed to queue notification', e); }
 
               selectChat(dmId, 'dm');
               showToast('Reply sent directly to ' + ownerName, 'success');
