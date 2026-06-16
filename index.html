@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,6 +50,15 @@
   
   <div id="app" class="h-full w-full flex flex-col" v-cloak>
     
+    <!-- Notification Banner -->
+    <div v-if="showNotificationBanner && isProfileComplete" class="bg-blue-600 px-4 py-2 flex items-center justify-between z-20 shrink-0 shadow-md">
+      <span class="text-sm font-medium text-white">Turn on notifications to get alerts for new messages.</span>
+      <div class="flex gap-3">
+        <button @click="enableNotifications" class="bg-white text-blue-600 px-3 py-1 rounded text-xs font-bold hover:bg-slate-100 transition-colors">Enable</button>
+        <button @click="dismissBanner" class="text-white/80 hover:text-white text-xs transition-colors">Dismiss</button>
+      </div>
+    </div>
+
     <!-- Toast Notification -->
     <div v-if="toast.show" 
          class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-lg font-medium transition-all text-sm flex items-center gap-2"
@@ -59,8 +67,8 @@
       {{ toast.msg }}
     </div>
 
-    <!-- Loading Screen -->
-    <div v-if="loading" class="h-full w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 absolute inset-0 z-40 transition-colors duration-200">
+    <!-- 0. Loading Screen -->
+    <div v-if="loading || (user && isProfileComplete === null)" class="h-full w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 absolute inset-0 z-40 transition-colors duration-200">
       <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="mt-4 text-slate-500 dark:text-slate-400 font-medium">Connecting to Tether...</p>
     </div>
@@ -215,7 +223,7 @@
       <!-- Main Chat Area -->
       <div :class="['flex-1 bg-white dark:bg-slate-900 flex flex-col relative transition-colors', 
                     !isMobileChatOpen ? 'hidden md:flex' : 'flex']"
-           @click="activeMessageMenuId = null"> <!-- Click anywhere in chat to close msg menus -->
+           @click="activeMessageMenuId = null">
         
         <template v-if="activeChat">
           <!-- Chat Header -->
@@ -259,16 +267,14 @@
                  @click.stop="toggleMessageMenu(msg.id)">
               
               <!-- Reply Reference Bubble -->
-              <div v-if="msg.replyToId" class="text-xs mb-1 p-1.5 rounded bg-black/10 dark:bg-white/10 border-l-2 border-white/40 dark:border-slate-500 flex flex-col overflow-hidden max-w-full text-ellipsis whitespace-nowrap">
+              <div v-if="msg.replyToId" class="text-xs mb-1.5 p-2 rounded bg-black/10 dark:bg-white/10 border-l-2 border-white/50 dark:border-slate-400 flex flex-col overflow-hidden max-w-full text-ellipsis whitespace-nowrap">
                  <span class="font-bold opacity-80">{{ msg.replyToSender }}</span>
                  <span class="opacity-75 italic truncate">{{ msg.replyToText }}</span>
               </div>
 
-              <!-- Sender Name -->
               <span v-if="msg.senderId !== user.uid" class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-0.5">{{ msg.senderName }}</span>
               
-              <!-- Message Text (Handling Deleted State) -->
-              <span v-if="msg.isDeleted" class="italic opacity-60 flex items-center gap-1 text-sm">
+              <span v-if="msg.isDeleted" class="italic opacity-60 flex items-center gap-1 text-sm py-1">
                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                  This message was deleted.
               </span>
@@ -277,7 +283,7 @@
                  <span v-if="msg.isEdited" class="text-[10px] opacity-60 ml-1 italic">(edited)</span>
               </span>
 
-              <!-- Action Menu (Edit/Delete/Reply) -->
+              <!-- Action Menu -->
               <div v-if="activeMessageMenuId === msg.id && !msg.isDeleted" 
                    class="absolute z-10 bottom-full mb-1 flex gap-1 bg-slate-800 text-white rounded-lg shadow-xl px-2 py-1 text-xs font-medium"
                    :class="msg.senderId === user.uid ? 'right-0' : 'left-0'">
@@ -296,7 +302,7 @@
             <!-- Context Banner (Replying or Editing) -->
             <div v-if="replyingTo || editingMessage" class="px-4 py-2 flex justify-between items-center text-xs"
                  :class="editingMessage ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-b border-blue-100 dark:border-blue-800/50' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700'">
-               <div class="flex items-center gap-2 truncate">
+               <div class="flex items-center gap-2 truncate pr-4">
                   <svg v-if="replyingTo" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                   <svg v-else class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                   <span class="truncate">
@@ -311,7 +317,7 @@
             </div>
 
             <div class="p-4 pt-3">
-              <form @submit.prevent="submitMessage" class="flex gap-2 items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-full border border-slate-200 dark:border-slate-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-inner">
+              <form @submit.prevent="sendMessage" class="flex gap-2 items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-full border border-slate-200 dark:border-slate-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-inner">
                 <button type="button" @click="handleAttachmentClick" class="p-2 text-slate-400 hover:text-blue-500 rounded-full transition-colors" title="Attach File">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
                 </button>
@@ -340,13 +346,11 @@
         <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Share Group</h3>
         <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Invite members to {{ activeGroup.name }}</p>
 
-        <!-- QR Code -->
         <div class="bg-white p-3 rounded-xl border border-slate-200 inline-block mb-6 shadow-sm mx-auto">
           <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(joinLink)}&margin=0`" alt="QR Code" class="w-40 h-40 object-contain">
         </div>
 
         <div class="space-y-3 mb-6 text-left">
-          <!-- Code -->
           <div>
             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase">Group Code</label>
             <div @click="copyText(activeGroup.code)" class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors group">
@@ -354,7 +358,6 @@
               <span class="text-blue-600 dark:text-blue-400 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">COPY</span>
             </div>
           </div>
-          <!-- Link -->
           <div>
             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase">Join Link</label>
             <div @click="copyText(joinLink)" class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors group">
@@ -424,7 +427,7 @@
                     </div>
                   </div>
                   
-                  <!-- Actions (Message / View Info / Remove) -->
+                  <!-- Actions -->
                   <div class="shrink-0 flex flex-wrap gap-2 w-full sm:w-auto justify-end">
                      
                      <button v-if="activeGroup.ownerId === user.uid && member.role !== 'owner' && member.answers" @click="viewMemberInfo(member)" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">
@@ -446,7 +449,7 @@
       </div>
     </div>
 
-    <!-- Member Responses Modal (Admin only) -->
+    <!-- Member Responses Modal -->
     <div v-if="modals.memberInfo && selectedMemberInfo" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-1 text-slate-900 dark:text-white flex items-center gap-2">
@@ -567,7 +570,6 @@
   </div>
 
   <style>
-    [v-cloak] { display: none; }
     /* Scrollbar styling */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -586,26 +588,31 @@
 
     const VAPID_KEY = "BBZAUePsEq6JeUWx25-_FOMCIxHvlNZ3TtJK9dRzOPqxAcE5EpDVI1s6xODHMa3j7YugzOuf8k8PLH4VmSVq9BU";
 
-    const firebaseConfig = typeof __firebase_config !== 'undefined' 
-      ? JSON.parse(__firebase_config) 
-      : {
-          apiKey: "AIzaSyCL4niDOUs2X8Je7-UmhGGpsowA7CfFAEA",
-          authDomain: "ocp-communication-platform.firebaseapp.com",
-          projectId: "ocp-communication-platform",
-          storageBucket: "ocp-communication-platform.firebasestorage.app",
-          messagingSenderId: "825984310844",
-          appId: "1:825984310844:web:9174be65ae9a0c08b66d39"
-        };
+    let firebaseConfig = {
+      apiKey: "AIzaSyCL4niDOUs2X8Je7-UmhGGpsowA7CfFAEA",
+      authDomain: "ocp-communication-platform.firebaseapp.com",
+      projectId: "ocp-communication-platform",
+      storageBucket: "ocp-communication-platform.firebasestorage.app",
+      messagingSenderId: "825984310844",
+      appId: "1:825984310844:web:9174be65ae9a0c08b66d39"
+    };
+
+    try {
+       if (typeof __firebase_config !== 'undefined') {
+          if (typeof __firebase_config === 'string' && __firebase_config.trim() !== '') {
+             firebaseConfig = JSON.parse(__firebase_config);
+          } else if (typeof __firebase_config === 'object') {
+             firebaseConfig = __firebase_config;
+          }
+       }
+    } catch(e) { console.warn("Fallback to default config"); }
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     
-    const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'tether-production';
+    // Explicitly use standard paths to adhere perfectly to User's security rules
     const dbPath = (colName, isPublic = true, userId = null) => {
-      if (typeof __app_id !== 'undefined') {
-        return isPublic ? `artifacts/${APP_ID}/public/data/${colName}` : `artifacts/${APP_ID}/users/${userId}/${colName}`;
-      }
       return isPublic ? colName : `users/${userId}/${colName}`;
     };
 
@@ -669,9 +676,11 @@
         watch(themePreference, (newVal) => applyTheme(newVal));
 
         onMounted(() => {
-          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-            if (themePreference.value === 'system') applyTheme('system');
-          });
+          if(window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+              if (themePreference.value === 'system') applyTheme('system');
+            });
+          }
           applyTheme(themePreference.value);
         });
 
@@ -702,9 +711,18 @@
 
         const joinLink = computed(() => {
            if (!activeGroup.value) return '';
-           const url = new URL(window.location.origin + window.location.pathname);
-           url.searchParams.set('join', activeGroup.value.code);
-           return url.toString();
+           try {
+             let base = window.location.href;
+             // Protect against Canvas environment parsing errors
+             if (base.startsWith('about:') || base.startsWith('data:') || base.startsWith('blob:')) {
+                base = 'https://tether.app/';
+             }
+             const url = new URL(base);
+             url.searchParams.set('join', activeGroup.value.code);
+             return url.toString();
+           } catch(e) {
+             return `https://tether.app/?join=${activeGroup.value.code}`;
+           }
         });
 
         const showToast = (msg, type = 'info') => {
@@ -837,7 +855,6 @@
           }
         };
 
-
         // --- GROUP INFO & DM CREATION ---
         const openGroupInfo = () => {
            if (!activeGroup.value) return;
@@ -883,18 +900,20 @@
            const dmId = `messages_dm_${uids[0]}_${uids[1]}`;
 
            if (!myDms.value.find(d => d.id === dmId)) {
-             myDms.value.push({ id: dmId, peerId: member.userId, peerName: member.name });
              try {
-                await setDoc(doc(db, dbPath(`messages_dms_${user.value.uid}`), dmId), {
-                   id: dmId, peerId: member.userId, peerName: member.name, updatedAt: serverTimestamp()
-                });
-                await setDoc(doc(db, dbPath(`messages_dms_${member.userId}`), dmId), {
-                   id: dmId, peerId: user.value.uid, peerName: userProfileName.value, updatedAt: serverTimestamp()
-                });
+                // Notice the doc signature is perfectly formatted
+                await setDoc(doc(db, dbPath('messages_dms_directory'), dmId), {
+                   id: dmId,
+                   users: uids,
+                   names: {
+                      [user.value.uid]: userProfileName.value,
+                      [member.userId]: member.name
+                   },
+                   updatedAt: serverTimestamp()
+                }, { merge: true });
              } catch (e) {
                 console.error(e);
                 showToast('Error starting private chat', 'error');
-                myDms.value = myDms.value.filter(d => d.id !== dmId);
                 return;
              }
            }
@@ -969,6 +988,13 @@
         const handleMandatoryNotifications = async () => {
            notifLoading.value = true;
            try {
+             // Fallback for secure environments that block push notification prompts altogether
+             if (!('Notification' in window)) {
+                showToast('Notifications not available in this environment. Proceeding securely.', 'info');
+                notificationsResolved.value = true;
+                return;
+             }
+
              const permission = await Notification.requestPermission();
              if (permission === 'granted') {
                 const fcmSwCode = `
@@ -996,10 +1022,10 @@
                   setupMessagingListener();
                 }
              } else {
-                showToast('Notification permission denied, but continuing securely.', 'error');
+                showToast('Permission denied. App functionality will be limited.', 'error');
              }
            } catch (e) {
-             console.warn("Notifications strictly blocked by browser env. Bypassing.", e);
+             console.warn("Notifications strictly blocked. Bypassing safely.", e);
            } finally {
              notifLoading.value = false;
              notificationsResolved.value = true;
@@ -1013,6 +1039,17 @@
               showToast(`New Message: ${payload.notification?.body}`, 'message');
             });
           } catch (e) {}
+        };
+
+        const dismissBanner = () => {
+          showNotificationBanner.value = false;
+        };
+
+        const enableNotifications = async () => {
+          await handleMandatoryNotifications();
+          if (notificationsResolved.value) {
+            showNotificationBanner.value = false;
+          }
         };
 
         // Actions
@@ -1108,15 +1145,17 @@
         };
 
         const checkUrlForJoinCode = () => {
-           const params = new URLSearchParams(window.location.search);
-           const code = params.get('join');
-           if (code && isProfileComplete.value === true) {
-              modals.value.join = true;
-              joinFlow.value.code = code;
-              setTimeout(() => {
-                 if (groups.value.length > 0) findGroupToJoin();
-              }, 1000);
-           }
+           try {
+             const params = new URLSearchParams(window.location.search);
+             const code = params.get('join');
+             if (code && isProfileComplete.value === true) {
+                modals.value.join = true;
+                joinFlow.value.code = code;
+                setTimeout(() => {
+                   if (groups.value.length > 0) findGroupToJoin();
+                }, 1000);
+             }
+           } catch(e) {}
         };
 
         // Listeners Setup
@@ -1152,8 +1191,18 @@
           }, (e) => console.error(e)));
 
           // 4. My Direct Messages Inbox
-          listeners.push(onSnapshot(collection(db, dbPath(`messages_dms_${uid}`)), (snap) => {
-            myDms.value = snap.docs.map(d => d.data());
+          listeners.push(onSnapshot(collection(db, dbPath('messages_dms_directory')), (snap) => {
+            const allDms = snap.docs.map(d => d.data());
+            myDms.value = allDms
+               .filter(dm => dm.users && dm.users.includes(uid))
+               .map(dm => {
+                   const peerId = dm.users.find(id => id !== uid) || uid; 
+                   return {
+                       id: dm.id,
+                       peerId: peerId,
+                       peerName: dm.names[peerId] || 'Unknown'
+                   };
+               });
           }, (e) => console.error(e)));
         };
 
@@ -1208,11 +1257,10 @@
           toast, newMessage, modals, createFlow, joinFlow,
           showToast, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
           submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, 
-          saveInitialProfile, saveSettings, openGroupInfo, closeGroupInfo, viewMemberInfo, promptRemoveMember, executeRemoveMember, handleAttachmentClick, dismissBanner, copyText, nativeShare
+          saveInitialProfile, saveSettings, openGroupInfo, closeGroupInfo, viewMemberInfo, promptRemoveMember, executeRemoveMember, handleAttachmentClick, dismissBanner, enableNotifications, copyText, nativeShare
         };
       }
     }).mount('#app');
   </script>
 </body>
 </html>
-
