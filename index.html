@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Tether - Class Communications</title>
   
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -13,8 +14,10 @@
     }
   </script>
   
+  <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
 
+  <!-- OneSignal Push Notifications -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -29,6 +32,7 @@
     });
   </script>
 
+  <!-- Import Maps for Vue and Firebase -->
   <script type="importmap">
     {
       "imports": {
@@ -45,11 +49,13 @@
   
   <div id="app" class="h-full w-full flex flex-col" v-cloak>
 
+    <!-- Offline Banner -->
     <div v-if="isOffline" class="bg-amber-500 text-amber-950 text-xs font-bold px-4 py-1.5 text-center shadow-md z-[400] flex justify-center items-center gap-2 shrink-0 transition-all">
        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243-4.243a5 5 0 000 7.072m0 0l-2.829 2.829m2.829-2.829L3 3"></path></svg>
        Offline Mode: Viewing cached data. Messages will send when reconnected.
     </div>
     
+    <!-- Toast Notification (OS Style) -->
     <transition name="toast">
       <div v-if="toast.show" 
            @click="handleToastClick"
@@ -85,6 +91,7 @@
       </div>
     </transition>
 
+    <!-- Custom Push Notification Banner -->
     <transition name="toast">
       <div v-if="showPushBanner" class="fixed bottom-24 left-0 right-0 md:bottom-24 md:left-1/2 md:-translate-x-1/2 md:max-w-md bg-white dark:bg-slate-800 border-t md:border border-slate-200 dark:border-slate-700 md:rounded-2xl p-4 shadow-2xl z-[150] flex items-center justify-between gap-4 transition-all pb-safe">
          <div class="flex items-center gap-3 overflow-hidden">
@@ -107,6 +114,7 @@
       </div>
     </transition>
 
+    <!-- Forced PWA Install Screen -->
     <transition name="fade">
       <div v-if="forceInstallScreen" class="fixed inset-0 bg-slate-50 dark:bg-slate-900 z-[150] flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
          <div class="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-3xl flex items-center justify-center mb-6 shadow-sm border border-blue-200 dark:border-blue-800">
@@ -129,11 +137,13 @@
       </div>
     </transition>
 
+    <!-- 0. Loading Screen -->
     <div v-if="loading || (user && isProfileComplete === null)" class="h-full w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 absolute inset-0 z-40 transition-colors duration-200">
       <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="mt-4 text-slate-500 dark:text-slate-400 font-medium">Connecting to Tether...</p>
     </div>
 
+    <!-- 1. Authentication Screen -->
     <div v-else-if="!user" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200 overflow-y-auto">
       <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md my-auto">
         <div class="flex items-center gap-2 justify-center text-blue-600 dark:text-blue-400 font-bold text-3xl tracking-tight mb-2">
@@ -183,6 +193,7 @@
       </div>
     </div>
 
+    <!-- 2. Profile Creation Screen -->
     <div v-else-if="user && isProfileComplete === false" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200">
       <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md text-center">
         <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -201,13 +212,17 @@
       </div>
     </div>
 
+    <!-- 4. Main Application -->
     <div v-else-if="user && isProfileComplete === true" class="h-full w-full flex flex-1 overflow-hidden">
       
+      <!-- Overlay for Notifications Dropdown -->
       <div v-if="showNotificationsDropdown" @click="showNotificationsDropdown = false" class="fixed inset-0 z-[80]"></div>
 
+      <!-- Sidebar / List -->
       <div :class="['w-full md:w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform z-10 shadow-sm', 
                     isMobileChatOpen ? 'hidden md:flex' : 'flex']">
         
+        <!-- Sidebar Header -->
         <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 transition-colors shrink-0">
           <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-2xl tracking-tight">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
@@ -215,11 +230,13 @@
           </div>
           
           <div class="flex gap-2 relative">
+            <!-- Notifications Bell -->
             <button @click="showNotificationsDropdown = !showNotificationsDropdown" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors relative" title="Notifications">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
               <span v-if="inAppNotifications.length > 0" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-slate-100 dark:border-slate-700"></span>
             </button>
 
+            <!-- Notifications Dropdown Panel -->
             <transition name="toast">
                <div v-if="showNotificationsDropdown" class="absolute top-12 left-0 sm:left-auto sm:right-0 w-72 sm:w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[100] flex flex-col max-h-[70vh]">
                   <div class="p-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 rounded-t-2xl">
@@ -688,6 +705,7 @@
       </div>
     </div>
 
+    <!-- Create Custom Group Chat Modal -->
     <div v-if="modals.newGroupChat" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[80vh]">
         <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">New Group Chat</h3>
@@ -858,6 +876,7 @@
       </div>
     </div>
 
+    <!-- Settings Modal -->
     <div v-if="modals.settings" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-6 text-slate-900 dark:text-white">Settings</h3>
@@ -871,7 +890,7 @@
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Appearance</label>
           <div class="grid grid-cols-3 gap-2">
             <button @click="settingsForm.theme = 'system'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'system' ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-500 text-blue-700 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">System</button>
-            <button @click="settingsForm.theme = 'light'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'light' ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-500 text-blue-700 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">Light</button>
+            <button @click="settingsForm.theme = 'light'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'light' ? 'bg-white dark:bg-slate-900/30 border-blue-500 text-blue-700 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">Light</button>
             <button @click="settingsForm.theme = 'dark'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'dark' ? 'bg-white dark:bg-slate-900/30 border-blue-500 text-blue-600 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">Dark</button>
           </div>
         </div>
@@ -1083,15 +1102,18 @@
 
         const checkForUpdate = () => {
            if ('serviceWorker' in navigator) {
-              navigator.serviceWorker.getRegistration().then(reg => {
+              navigator.serviceWorker.getRegistration('/sw.js').then(reg => {
                  if (reg) {
                     showToast('Checking for updates...', 'info');
                     reg.update().then(() => {
                        setTimeout(() => {
-                          if (!reg.installing) {
+                          if (reg.installing || reg.waiting) {
+                             showToast('App updated! Reloading...', 'success');
+                             setTimeout(() => window.location.reload(), 1500);
+                          } else {
                              showToast('App is already up to date!', 'success');
                           }
-                       }, 1000);
+                       }, 1500);
                     }).catch(() => showToast('Failed to check for updates.', 'error'));
                  } else {
                     showToast('Offline support not registered.', 'error');
@@ -1119,19 +1141,9 @@
              setTimeout(() => { forceInstallScreen.value = true; }, 500); 
           }
 
-          // Service Worker Auto-Update & Registration
+          // ONLY register the Service Worker. Global update listeners are removed to prevent infinite loops.
           if ('serviceWorker' in navigator) {
-             navigator.serviceWorker.register('/sw.js').then(reg => {
-                reg.addEventListener('updatefound', () => {
-                   const newWorker = reg.installing;
-                   newWorker.addEventListener('statechange', () => {
-                      if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                         showToast('App updated! Reloading...', 'success');
-                         setTimeout(() => window.location.reload(), 1500);
-                      }
-                   });
-                });
-             }).catch(err => console.log('SW registration failed: ', err));
+             navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed: ', err));
           }
 
           // Native Push Permission Check (Custom Prompt)
