@@ -8,7 +8,7 @@ importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
 // 2. OFFLINE CACHE CONFIGURATION
 // ==========================================================
 // CHANGE THIS VERSION NUMBER whenever you update your app's HTML/JS!
-const CACHE_NAME = 'tether-app-cache-v10'; 
+const CACHE_NAME = 'tether-app-cache-v11'; 
 
 const STATIC_ASSETS = [
   '/',
