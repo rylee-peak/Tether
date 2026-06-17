@@ -33,13 +33,13 @@
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 font-sans h-screen w-screen overflow-hidden antialiased select-none transition-colors duration-200">
   
   <div id="app" class="h-full w-full flex flex-col" v-cloak>
-    
+
     <!-- Offline Banner -->
     <div v-if="isOffline" class="bg-amber-500 text-amber-950 text-xs font-bold px-4 py-1.5 text-center shadow-md z-[400] flex justify-center items-center gap-2 shrink-0 transition-all">
        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243-4.243a5 5 0 000 7.072m0 0l-2.829 2.829m2.829-2.829L3 3"></path></svg>
        Offline Mode: Viewing cached data. Messages will send when reconnected.
     </div>
-
+    
     <!-- Toast Notification (OS Style) -->
     <transition name="toast">
       <div v-if="toast.show" 
@@ -285,7 +285,7 @@
             
             <div class="flex items-center gap-2 shrink-0">
                <!-- Class Settings Button (Owner Only) -->
-               <button v-if="currentChatType === 'group' && activeGroup.ownerId === user.uid" @click="openClassSettings" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-300 transition-colors border border-blue-200 dark:border-blue-800/50 shadow-sm">
+               <button v-if="currentChatType === 'group' && activeGroup.ownerId === user.uid" @click="openClassSettings" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-300 transition-colors border border-blue-200 dark:border-slate-700 shadow-sm">
                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                  <span class="hidden sm:inline">Settings</span>
                </button>
@@ -474,9 +474,7 @@
       </div>
     </div>
 
-    <!-- Modals -->
-    
-    <!-- Install Instructions Modal (Higher z-index to overlay Roadblock) -->
+    <!-- Install Instructions Modal -->
     <div v-if="modals.install" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[200] flex items-end sm:items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col overflow-hidden mb-6 sm:mb-0">
          <div class="p-6 text-center border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
@@ -491,15 +489,15 @@
                <ol class="space-y-4 text-sm text-slate-700 dark:text-slate-300">
                  <li class="flex gap-3 items-center">
                     <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">1</div>
-                    <div>Tap the <strong>Share</strong> button <svg class="inline w-5 h-5 mx-1 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> at the bottom.</div>
+                    <div>Tap <strong>Share</strong> <svg class="inline w-5 h-5 mx-1 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> at the bottom.</div>
                  </li>
                  <li class="flex gap-3 items-center">
                     <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">2</div>
-                    <div>Scroll down and tap <strong>Add to Home Screen</strong> <svg class="inline w-5 h-5 mx-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>.</div>
+                    <div>Select <strong>Add to Home Screen</strong> <svg class="inline w-5 h-5 mx-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>.</div>
                  </li>
                  <li class="flex gap-3 items-center">
                     <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">3</div>
-                    <div>Confirm by tapping <strong>Add</strong> in the top right.</div>
+                    <div>Confirm by tapping <strong>Add</strong>.</div>
                  </li>
                </ol>
             </template>
@@ -507,11 +505,11 @@
                <ol class="space-y-4 text-sm text-slate-700 dark:text-slate-300">
                  <li class="flex gap-3 items-center">
                     <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">1</div>
-                    <div>Tap the <strong>Menu</strong> button <svg class="inline w-5 h-5 mx-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg> in your browser.</div>
+                    <div>Tap <strong>Menu</strong> <svg class="inline w-5 h-5 mx-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>.</div>
                  </li>
                  <li class="flex gap-3 items-center">
                     <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">2</div>
-                    <div>Select <strong>Install App</strong> or <strong>Add to Home screen</strong>.</div>
+                    <div>Select <strong>Install App</strong>.</div>
                  </li>
                </ol>
             </template>
@@ -519,11 +517,11 @@
                <ol class="space-y-4 text-sm text-slate-700 dark:text-slate-300">
                  <li class="flex gap-3 items-center">
                     <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">1</div>
-                    <div>Look for the <strong>Install</strong> icon <svg class="inline w-5 h-5 mx-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> in the right side of your URL address bar.</div>
+                    <div>Look for <strong>Install</strong> <svg class="inline w-5 h-5 mx-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> in the URL bar.</div>
                  </li>
                  <li class="flex gap-3 items-center">
                     <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">2</div>
-                    <div>Click it and select <strong>Install</strong>.</div>
+                    <div>Click and select <strong>Install</strong>.</div>
                  </li>
                </ol>
             </template>
@@ -539,41 +537,31 @@
       <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         
         <div class="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-          <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            Class Settings
-          </h3>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">Class Settings</h3>
           <button @click="closeClassSettings" class="p-2 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
         </div>
 
-        <!-- Settings Tabs -->
         <div class="flex border-b border-slate-200 dark:border-slate-700 px-6 shrink-0 bg-white dark:bg-slate-800">
            <button @click="classSettingsTab = 'general'" :class="['py-3 px-4 text-sm font-bold border-b-2 transition-colors', classSettingsTab === 'general' ? 'border-blue-600 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200']">General</button>
            <button @click="classSettingsTab = 'requests'" :class="['py-3 px-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2', classSettingsTab === 'requests' ? 'border-blue-600 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200']">
-             Join Requests
-             <span v-if="pendingRequests.length > 0" class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{{ pendingRequests.length }}</span>
+             Join Requests <span v-if="pendingRequests.length > 0" class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{{ pendingRequests.length }}</span>
            </button>
            <button @click="classSettingsTab = 'members'" :class="['py-3 px-4 text-sm font-bold border-b-2 transition-colors', classSettingsTab === 'members' ? 'border-blue-600 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200']">Manage Members</button>
         </div>
 
         <div class="overflow-y-auto flex-1 p-6 space-y-6">
-          
-          <!-- GENERAL TAB -->
           <div v-if="classSettingsTab === 'general'" class="space-y-6">
-             <!-- Avatar Selection -->
              <div>
                 <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Class Icon</label>
                 <div class="flex gap-2 flex-wrap">
-                   <button v-for="iconKey in Object.keys(svgIcons).filter(k => k !== 'chat')" :key="iconKey" 
-                           @click="editGroupForm.avatar = iconKey"
-                           :class="['w-12 h-12 rounded-xl flex items-center justify-center border-2 transition-all p-2.5', editGroupForm.avatar === iconKey ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 scale-110 shadow-sm text-blue-600 dark:text-blue-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 text-slate-500']">
+                   <button v-for="iconKey in Object.keys(svgIcons).filter(k => k !== 'chat')" :key="iconKey" @click="editGroupForm.avatar = iconKey" :class="['w-12 h-12 rounded-xl flex items-center justify-center border-2 transition-all p-2.5', editGroupForm.avatar === iconKey ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 scale-110 shadow-sm text-blue-600 dark:text-blue-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 text-slate-500']">
                       <div class="w-full h-full pointer-events-none text-current" v-html="svgIcons[iconKey]"></div>
                    </button>
                 </div>
              </div>
 
-             <!-- Name & Code -->
              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                    <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Class Name</label>
@@ -585,11 +573,10 @@
                 </div>
              </div>
 
-             <!-- Approval Toggle -->
              <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-4 rounded-xl">
                 <div>
                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">Require Approval to Join</h4>
-                   <p class="text-xs text-slate-500 dark:text-slate-400">Users who join with the code must be approved by you before they can view messages.</p>
+                   <p class="text-xs text-slate-500 dark:text-slate-400">Users who join with the code must be approved.</p>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" v-model="editGroupForm.requireApproval" class="sr-only peer">
@@ -612,7 +599,6 @@
              </div>
           </div>
 
-          <!-- REQUESTS TAB -->
           <div v-else-if="classSettingsTab === 'requests'">
              <div v-if="pendingRequests.length === 0" class="text-sm text-slate-400 py-8 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl bg-slate-50 dark:bg-slate-900/50">
                 No pending requests.
@@ -629,7 +615,6 @@
                          <button @click="approveRequest(req)" class="px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors shadow-sm">Approve</button>
                       </div>
                    </div>
-                   <!-- View Answers -->
                    <div v-if="req.answers && Object.keys(req.answers).length > 0" class="bg-white dark:bg-slate-800 p-3 rounded-lg text-sm border border-slate-100 dark:border-slate-700/50">
                       <p class="font-bold text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Sign-up Responses:</p>
                       <ul class="space-y-1.5">
@@ -643,14 +628,11 @@
              </div>
           </div>
 
-          <!-- MEMBERS TAB -->
           <div v-else-if="classSettingsTab === 'members'">
             <div class="space-y-3">
                <div v-for="member in activeGroupMembers" :key="member.userId" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 sm:p-4 rounded-xl flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-start sm:items-center">
                   <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-bold uppercase">
-                      {{ member.name.charAt(0) || '?' }}
-                    </div>
+                    <div class="w-10 h-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-bold uppercase">{{ member.name.charAt(0) || '?' }}</div>
                     <div>
                       <div class="flex items-center gap-2">
                          <span class="font-bold text-slate-900 dark:text-slate-100">{{ member.name }}</span>
@@ -658,19 +640,13 @@
                       </div>
                     </div>
                   </div>
-                  
                   <div class="shrink-0 flex flex-wrap gap-2 justify-end">
-                     <button v-if="member.role !== 'owner' && member.answers" @click="viewMemberInfo(member)" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-800 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">
-                       Info
-                     </button>
-                     <button v-if="member.userId !== user.uid" @click="promptRemoveMember(member)" class="text-red-500 hover:text-white border border-red-200 dark:border-red-900/50 hover:bg-red-500 hover:border-red-500 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">
-                       Remove
-                     </button>
+                     <button v-if="member.role !== 'owner' && member.answers" @click="viewMemberInfo(member)" class="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-600 hover:bg-white dark:hover:bg-slate-800 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">Info</button>
+                     <button v-if="member.userId !== user.uid" @click="promptRemoveMember(member)" class="text-red-500 hover:text-white border border-red-200 dark:border-red-900/50 hover:bg-red-500 hover:border-red-500 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wider">Remove</button>
                   </div>
                </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -684,9 +660,7 @@
         <div class="overflow-y-auto flex-1 border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-slate-50 dark:bg-slate-900/50 mb-4">
            <label v-for="member in activeGroupMembers.filter(m => m.userId !== user.uid)" :key="member.userId" class="flex items-center gap-3 p-2 hover:bg-white dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
               <input type="checkbox" :value="member" v-model="selectedMembersForChat" class="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600">
-              <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs font-bold uppercase shrink-0">
-                {{ member.name.charAt(0) }}
-              </div>
+              <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs font-bold uppercase shrink-0">{{ member.name.charAt(0) }}</div>
               <span class="font-medium text-sm text-slate-800 dark:text-slate-200">{{ member.name }}</span>
            </label>
            <div v-if="activeGroupMembers.length <= 1" class="text-xs text-center text-slate-500 py-4">No other members available to chat.</div>
@@ -740,9 +714,7 @@
     <!-- Member Responses Modal -->
     <div v-if="modals.memberInfo && selectedMemberInfo" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
-        <h3 class="font-bold text-xl mb-1 text-slate-900 dark:text-white flex items-center gap-2">
-          {{ selectedMemberInfo.name }}
-        </h3>
+        <h3 class="font-bold text-xl mb-1 text-slate-900 dark:text-white flex items-center gap-2">{{ selectedMemberInfo.name }}</h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 uppercase tracking-wider">Sign-up Responses</p>
         
         <div class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
@@ -750,11 +722,8 @@
               <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">{{ activeGroup.questions[idx] || `Question ${parseInt(idx)+1}` }}</p>
               <p class="text-sm font-medium text-slate-900 dark:text-slate-200">{{ answer || 'No response provided.' }}</p>
            </div>
-           <div v-if="!selectedMemberInfo.answers || Object.keys(selectedMemberInfo.answers).length === 0" class="text-sm text-slate-500 italic text-center">
-             No responses recorded.
-           </div>
+           <div v-if="!selectedMemberInfo.answers || Object.keys(selectedMemberInfo.answers).length === 0" class="text-sm text-slate-500 italic text-center">No responses recorded.</div>
         </div>
-
         <div class="flex justify-end">
           <button @click="modals.memberInfo = false" class="px-6 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-lg font-medium transition-colors shadow-sm">Close</button>
         </div>
@@ -828,9 +797,7 @@
            <div>
              <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Icon</label>
              <div class="flex gap-2 flex-wrap">
-                <button v-for="iconKey in Object.keys(svgIcons).filter(k => k !== 'chat')" :key="iconKey" 
-                        @click="createFlow.avatar = iconKey"
-                        :class="['w-10 h-10 rounded-lg flex items-center justify-center border-2 transition-all p-2', createFlow.avatar === iconKey ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 scale-110 shadow-sm text-blue-600 dark:text-blue-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 text-slate-500']">
+                <button v-for="iconKey in Object.keys(svgIcons).filter(k => k !== 'chat')" :key="iconKey" @click="createFlow.avatar = iconKey" :class="['w-10 h-10 rounded-lg flex items-center justify-center border-2 transition-all p-2', createFlow.avatar === iconKey ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 scale-110 shadow-sm text-blue-600 dark:text-blue-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 text-slate-500']">
                    <div class="w-full h-full pointer-events-none text-current" v-html="svgIcons[iconKey]"></div>
                 </button>
              </div>
@@ -864,19 +831,27 @@
     <div v-if="modals.settings" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-6 text-slate-900 dark:text-white">Settings</h3>
-
+        
         <div class="mb-6">
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Display Name</label>
           <input v-model="settingsForm.name" type="text" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm transition-all">
         </div>
-
-        <div class="mb-8">
+        
+        <div class="mb-6">
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Appearance</label>
           <div class="grid grid-cols-3 gap-2">
             <button @click="settingsForm.theme = 'system'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'system' ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-500 text-blue-700 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">System</button>
             <button @click="settingsForm.theme = 'light'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'light' ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-500 text-blue-700 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">Light</button>
             <button @click="settingsForm.theme = 'dark'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'dark' ? 'bg-white dark:bg-slate-900/30 border-blue-500 text-blue-600 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">Dark</button>
           </div>
+        </div>
+
+        <div class="mb-8 border-t border-slate-200 dark:border-slate-700 pt-6">
+          <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">App Version</label>
+          <button @click="checkForUpdate" class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white font-medium py-2 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm shadow-sm border border-slate-200 dark:border-slate-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            Check for Updates
+          </button>
         </div>
         
         <div class="flex flex-col gap-4 border-t border-slate-200 dark:border-slate-700 pt-4">
@@ -895,24 +870,17 @@
 
   <style>
     [v-cloak] { display: none !important; }
-    
-    /* OS-Style Toast Animation */
     .toast-enter-active, .toast-leave-active { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .toast-enter-from, .toast-leave-to { opacity: 0; transform: translate(-50%, -20px) scale(0.95); }
     .toast-enter-to, .toast-leave-from { opacity: 1; transform: translate(-50%, 0) scale(1); }
-
-    /* Fade for the Forced Install Screen */
     .fade-enter-active, .fade-leave-active { transition: opacity 0.4s ease; }
     .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-    /* Scrollbar styling */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     .dark ::-webkit-scrollbar-thumb { background: #334155; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
-
     @supports (padding-bottom: env(safe-area-inset-bottom)) {
        .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 1rem) !important; }
     }
@@ -955,41 +923,35 @@
          if (err.code == 'failed-precondition') {
              console.warn('Multiple tabs open, offline persistence can only be enabled in one tab at a time.');
          } else if (err.code == 'unimplemented') {
-             console.warn('The current browser does not support all features required to enable offline persistence.');
+             console.warn('The current browser does not support offline persistence.');
          }
       });
-    } catch(e) { console.warn("Persistence setup error:", e); }
+    } catch(e) { console.warn("Persistence error:", e); }
 
-    // Explicitly use standard paths to adhere perfectly to User's security rules
     const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'tether-production';
     const dbPath = (colName, isPublic = true, userId = null) => {
-      return isPublic 
-        ? `artifacts/${APP_ID}/public/data/${colName}` 
-        : `artifacts/${APP_ID}/users/${userId}/${colName}`;
+      return isPublic ? `artifacts/${APP_ID}/public/data/${colName}` : `artifacts/${APP_ID}/users/${userId}/${colName}`;
     };
 
     const svgIcons = {
-      school: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" /></svg>`,
-      book: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>`,
-      science: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg>`,
-      art: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.52m-3.388 1.52A8.966 8.966 0 0112 15a8.966 8.966 0 012.47-.354m0 0A5.25 5.25 0 0119.5 19.5a2.25 2.25 0 002.25-2.25 5.25 5.25 0 00-5.25-5.25c-.399 0-.78.078-1.128.22m0 0a15.998 15.998 0 00-3.388 1.52m0 0C13.064 12.83 12 11.233 12 9.5c0-1.733 1.064-3.33 2.852-4.042m0 0C16.48 4.746 18 3.513 18 2c0-.399-.078-.78-.22-1.128M14.852 5.458C13.23 6.17 12 7.767 12 9.5c0 1.733-1.064 3.33-2.852 4.042m0 0a15.998 15.998 0 01-3.388-1.52m0 0C4.168 11.23 3 9.633 3 7.8c0-1.733 1.064-3.33 2.852-4.042m0 0a15.998 15.998 0 013.388-1.52m0 0C10.936 1.517 12 3.114 12 4.85c0 1.733-1.064 3.33-2.852 4.042m0 0C7.52 8.154 6 9.387 6 10.88c0 .399.078.78.22 1.128" /></svg>`,
-      computer: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" /></svg>`,
-      music: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19.5V3m0 16.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm0-16.5h10.5V15m0-12v12m0 0c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm0-12H9" /></svg>`,
-      math: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V21m-7.5-5.25h15m-15-6h15m-15-6h7.5M4.5 9h7.5M12 3v6" /></svg>`,
-      globe: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" /></svg>`,
-      chat: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.84 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /></svg>`
+      school: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"/></svg>`,
+      book: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>`,
+      science: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>`,
+      art: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.52m-3.388 1.52A8.966 8.966 0 0112 15a8.966 8.966 0 012.47-.354m0 0A5.25 5.25 0 0119.5 19.5a2.25 2.25 0 002.25-2.25 5.25 5.25 0 00-5.25-5.25c-.399 0-.78.078-1.128.22m0 0a15.998 15.998 0 00-3.388 1.52m0 0C13.064 12.83 12 11.233 12 9.5c0-1.733 1.064-3.33 2.852-4.042m0 0C16.48 4.746 18 3.513 18 2c0-.399-.078-.78-.22-1.128M14.852 5.458C13.23 6.17 12 7.767 12 9.5c0 1.733-1.064 3.33-2.852 4.042m0 0a15.998 15.998 0 01-3.388-1.52m0 0C4.168 11.23 3 9.633 3 7.8c0-1.733 1.064-3.33 2.852-4.042m0 0a15.998 15.998 0 013.388-1.52m0 0C10.936 1.517 12 3.114 12 4.85c0 1.733-1.064 3.33-2.852 4.042m0 0C7.52 8.154 6 9.387 6 10.88c0 .399.078.78.22 1.128"/></svg>`,
+      computer: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/></svg>`,
+      music: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19.5V3m0 16.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm0-16.5h10.5V15m0-12v12m0 0c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm0-12H9"/></svg>`,
+      math: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V21m-7.5-5.25h15m-15-6h15m-15-6h7.5M4.5 9h7.5M12 3v6"/></svg>`,
+      globe: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/></svg>`,
+      chat: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.84 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>`
     };
 
     createApp({
       setup() {
         const loading = ref(true);
         const user = ref(null);
-        
         const authForm = ref({ email: '', password: '', isLogin: true, loading: false, error: '' });
         const hasCanvasToken = typeof __initial_auth_token !== 'undefined' && __initial_auth_token;
-        
         const isProfileComplete = ref(null);
-
         const userProfileName = ref('');
         const themePreference = ref('system');
         const setupFlowName = ref('');
@@ -1000,7 +962,6 @@
         const myDms = ref([]);
         const allMessages = ref({}); 
         const unreadCounts = ref({});
-        const appInitTime = Date.now();
         let messageListeners = {}; 
         
         const activeGroupMembers = ref([]);
@@ -1011,24 +972,20 @@
         let rosterUnsub = null;
         let requestsUnsub = null;
         
-        // Chat Action State
         const activeMessageMenuId = ref(null);
         const replyingTo = ref(null);
         const editingMessage = ref(null);
-        
-        // Attachment State
         const selectedFile = ref(null);
         const uploadingAttachment = ref(false);
         const fileInputRef = ref(null);
 
         const currentChatId = ref(null);
-        const currentChatType = ref('group'); // 'group' or 'dm'
-        const classTab = ref('announcements'); // 'announcements' or 'people'
+        const currentChatType = ref('group'); 
+        const classTab = ref('announcements'); 
         const isMobileChatOpen = ref(false);
         
         const toast = ref({ show: false, title: '', msg: '', type: 'info', chatId: null });
         let toastTimeout = null;
-        
         const newMessage = ref('');
         
         const modals = ref({ 
@@ -1037,11 +994,8 @@
         const classSettingsTab = ref('general');
         const editGroupForm = ref({ name: '', code: '', avatar: 'school', requireApproval: false });
         const savingGroup = ref(false);
-
         const createFlow = ref({ name: '', questions: '', avatar: 'school', requireApproval: false });
         const joinFlow = ref({ code: '', group: null, answers: {} });
-        
-        // New Group Chat State
         const selectedMembersForChat = ref([]);
 
         // PWA Installation State
@@ -1054,25 +1008,40 @@
 
         let listeners = [];
 
-        // --- Theme Engine ---
         const applyTheme = (pref) => {
           const isDark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-          if (isDark) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
+          if (isDark) document.documentElement.classList.add('dark');
+          else document.documentElement.classList.remove('dark');
         };
 
         watch(themePreference, (newVal) => applyTheme(newVal));
 
-        // --- Device OS Detection ---
         const getMobileOperatingSystem = () => {
           const userAgent = navigator.userAgent || navigator.vendor || window.opera;
           if (/android/i.test(userAgent)) return 'Android';
-          // iPad on iOS 13+ sets platform to MacIntel but has touch points
           if (/iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'iOS';
           return 'Desktop';
+        };
+
+        const checkForUpdate = () => {
+           if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistration().then(reg => {
+                 if (reg) {
+                    showToast('Checking for updates...', 'info');
+                    reg.update().then(() => {
+                       setTimeout(() => {
+                          if (!reg.installing) {
+                             showToast('App is already up to date!', 'success');
+                          }
+                       }, 1000);
+                    }).catch(() => showToast('Failed to check for updates.', 'error'));
+                 } else {
+                    showToast('Offline support not registered.', 'error');
+                 }
+              });
+           } else {
+              showToast('Service workers not supported.', 'error');
+           }
         };
 
         onMounted(() => {
@@ -1083,7 +1052,7 @@
           }
           applyTheme(themePreference.value);
 
-          // --- PWA Setup ---
+          // PWA Checks
           deviceType.value = getMobileOperatingSystem();
           isStandalone.value = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || document.referrer.includes('android-app://');
           
@@ -1091,12 +1060,21 @@
              setTimeout(() => { forceInstallScreen.value = true; }, 500); 
           }
 
-          // Register Service Worker for Offline App Shell
+          // Service Worker Auto-Update & Registration
           if ('serviceWorker' in navigator) {
-             navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed: ', err));
+             navigator.serviceWorker.register('/sw.js').then(reg => {
+                reg.addEventListener('updatefound', () => {
+                   const newWorker = reg.installing;
+                   newWorker.addEventListener('statechange', () => {
+                      if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                         showToast('App updated! Reloading...', 'success');
+                         setTimeout(() => window.location.reload(), 1500);
+                      }
+                   });
+                });
+             }).catch(err => console.log('SW registration failed: ', err));
           }
 
-          // Offline / Online Status Listeners
           window.addEventListener('online', () => { 
              isOffline.value = false; 
              showToast('Back online! Live syncing restored.', 'success'); 
@@ -1106,7 +1084,6 @@
              showToast('You are offline. Working from cached data.', 'info'); 
           });
 
-          // Catch native prompt (Chrome/Android/Edge)
           window.addEventListener('beforeinstallprompt', (e) => {
              e.preventDefault();
              deferredPrompt.value = e;
@@ -1115,39 +1092,33 @@
              }
           });
 
-          // Listen for successful install
           window.addEventListener('appinstalled', () => {
              forceInstallScreen.value = false;
              isStandalone.value = true;
           });
         });
 
-        // --- PWA Actions ---
         const bypassInstall = () => {
            forceInstallScreen.value = false;
            localStorage.setItem('bypassedInstall', 'true');
         };
 
         const triggerInstall = async () => {
-           hasAttemptedInstall.value = true; // Unlock the bypass button
+           hasAttemptedInstall.value = true; 
            if (deferredPrompt.value) {
-              // Trigger the native OS popup
               deferredPrompt.value.prompt();
               const { outcome } = await deferredPrompt.value.userChoice;
               if (outcome === 'accepted') {
                  forceInstallScreen.value = false;
               }
-              deferredPrompt.value = null; // Can only be used once
+              deferredPrompt.value = null; 
            } else {
-              // Fallback to manual instructions for iOS and unsupported browsers
               modals.value.install = true;
            }
         };
 
         watch(() => modals.value.settings, (isOpen) => {
-          if (isOpen) {
-            settingsForm.value = { name: userProfileName.value, theme: themePreference.value };
-          }
+          if (isOpen) settingsForm.value = { name: userProfileName.value, theme: themePreference.value };
         });
 
         const myGroups = computed(() => {
@@ -1161,25 +1132,20 @@
         });
 
         const activeChat = computed(() => {
-          if (currentChatType.value === 'group') {
-             return groups.value.find(g => g.id === currentChatId.value);
-          } else {
+          if (currentChatType.value === 'group') return groups.value.find(g => g.id === currentChatId.value);
+          else {
              const dm = myDms.value.find(d => d.id === currentChatId.value);
              return dm ? { id: dm.id, name: dm.peerName, isDM: true, isGroupChat: dm.isGroupChat } : null;
           }
         });
 
-        const messages = computed(() => {
-           return allMessages.value[currentChatId.value] || [];
-        });
+        const messages = computed(() => allMessages.value[currentChatId.value] || []);
 
         const joinLink = computed(() => {
            if (!activeGroup.value) return '';
            try {
              let base = window.location.href;
-             if (base.startsWith('about:') || base.startsWith('data:') || base.startsWith('blob:')) {
-                base = 'https://tether.app/';
-             }
+             if (base.startsWith('about:') || base.startsWith('data:') || base.startsWith('blob:')) base = 'https://tether.app/';
              const url = new URL(base);
              url.searchParams.set('join', activeGroup.value.code);
              return url.toString();
@@ -1188,7 +1154,6 @@
            }
         });
 
-        // --- OS-STYLE NOTIFICATION HANDLER ---
         const showToast = (msg, type = 'info', title = '', chatId = null) => {
           toast.value = { show: true, msg, type, title, chatId };
           if (toastTimeout) clearTimeout(toastTimeout);
@@ -1211,7 +1176,6 @@
           if (container) container.scrollTop = container.scrollHeight;
         };
 
-        // --- CLIPBOARD & SHARE ---
         const copyText = (text) => {
            const el = document.createElement('textarea');
            el.value = text;
@@ -1234,22 +1198,16 @@
            }
         };
 
-        // --- ATTACHMENTS ---
         const handleFileSelect = (event) => {
            const file = event.target.files[0];
            if (!file) return;
-           if (file.size > 5 * 1024 * 1024) {
-              return showToast('File too large (Max 5MB).', 'error');
-           }
+           if (file.size > 5 * 1024 * 1024) return showToast('File too large (Max 5MB).', 'error');
            selectedFile.value = file;
         };
 
         const handleAttachmentClick = () => {
-           if (fileInputRef.value) {
-              fileInputRef.value.click();
-           } else {
-              showToast('Security Alert: File uploads are disabled in this prototype.', 'error');
-           }
+           if (fileInputRef.value) fileInputRef.value.click();
+           else showToast('Security Alert: File uploads are disabled in this prototype.', 'error');
         };
 
         const markAsRead = (id) => {
@@ -1266,13 +1224,9 @@
           markAsRead(id);
           cancelInputContext();
           scrollToBottom();
-          
-          if (type === 'group') {
-             loadActiveGroupRoster();
-          }
+          if (type === 'group') loadActiveGroupRoster();
         };
 
-        // --- CHAT ACTIONS (Edit / Reply / Delete) ---
         const toggleMessageMenu = (id) => {
            if (activeMessageMenuId.value === id) activeMessageMenuId.value = null;
            else activeMessageMenuId.value = id;
@@ -1311,20 +1265,14 @@
            activeMessageMenuId.value = null;
            try {
               await updateDoc(doc(db, dbPath(`messages_${currentChatId.value}`), msg.id), {
-                 isDeleted: true,
-                 text: "",
-                 attachmentUrl: null,
-                 updatedAt: serverTimestamp()
+                 isDeleted: true, text: "", attachmentUrl: null, updatedAt: serverTimestamp()
               });
-           } catch (e) {
-              showToast('Failed to delete message', 'error');
-           }
+           } catch (e) { showToast('Failed to delete message', 'error'); }
         };
 
         const sendMessage = async () => {
           if (!newMessage.value.trim() && !selectedFile.value) return;
           if (!currentChatId.value) return;
-          
           if (currentChatType.value === 'group' && !myMemberships.value.some(m => m.groupId === currentChatId.value)) {
              return showToast('You are no longer a member of this class.', 'error');
           }
@@ -1341,13 +1289,12 @@
              replyToSender: replyingTo.value.senderName
           } : {};
 
-          cancelInputContext(); // Optimistic clear
+          cancelInputContext(); 
 
           let attachmentUrl = null;
           if (fileToUpload && !isEdit) {
              uploadingAttachment.value = true;
              try {
-                // Prefix with app ID dynamically to avoid clashes if user hosts this somewhere global
                 const sRef = storageRef(storage, `artifacts/${APP_ID}/attachments/${Date.now()}_${fileToUpload.name}`);
                 await uploadBytesResumable(sRef, fileToUpload);
                 attachmentUrl = await getDownloadURL(sRef);
@@ -1362,42 +1309,28 @@
           try {
             if (isEdit) {
                await updateDoc(doc(db, dbPath(`messages_${currentChatId.value}`), editId), {
-                  text,
-                  isEdited: true,
-                  updatedAt: serverTimestamp()
+                  text, isEdited: true, updatedAt: serverTimestamp()
                });
             } else {
                const messageRef = doc(collection(db, dbPath(`messages_${currentChatId.value}`)));
                const payload = {
-                 id: messageRef.id,
-                 text,
-                 senderId: user.value.uid,
-                 senderName: userProfileName.value || 'Anonymous',
-                 timestamp: serverTimestamp(),
-                 ...replyData
+                 id: messageRef.id, text, senderId: user.value.uid, senderName: userProfileName.value || 'Anonymous', timestamp: serverTimestamp(), ...replyData
                };
                if (attachmentUrl) payload.attachmentUrl = attachmentUrl;
-               
                await setDoc(messageRef, payload);
             }
-          } catch (e) {
-            showToast('Failed to send', 'error');
-          }
+          } catch (e) { showToast('Failed to send', 'error'); }
         };
 
-        // --- REPLY TO OWNER LOGIC ---
         const replyToOwnerDirectly = async () => {
-           if (!newMessage.value.trim()) return;
-           if (!activeGroup.value || !activeGroup.value.ownerId) return;
+           if (!newMessage.value.trim() || !activeGroup.value || !activeGroup.value.ownerId) return;
 
            const text = newMessage.value;
            newMessage.value = '';
            
            const ownerId = activeGroup.value.ownerId;
-           // If somehow you are the owner and UI failed, don't DM yourself
            if (ownerId === user.value.uid) return;
 
-           // Find the owner's name from the roster
            const ownerObj = activeGroupMembers.value.find(m => m.userId === ownerId);
            const ownerName = ownerObj ? ownerObj.name : 'Teacher';
 
@@ -1405,41 +1338,24 @@
            const dmId = `messages_dm_${uids[0]}_${uids[1]}`;
 
            try {
-              // Ensure DM exists
               if (!myDms.value.find(d => d.id === dmId)) {
                   await setDoc(doc(db, dbPath('messages_dms_directory'), dmId), {
-                     id: dmId,
-                     users: uids,
-                     isGroupChat: false,
-                     names: {
-                        [user.value.uid]: userProfileName.value,
-                        [ownerId]: ownerName
-                     },
+                     id: dmId, users: uids, isGroupChat: false,
+                     names: { [user.value.uid]: userProfileName.value, [ownerId]: ownerName },
                      updatedAt: serverTimestamp()
                   }, { merge: true });
               }
               
-              // Post the message mentioning it's a reply to the class
               const messageRef = doc(collection(db, dbPath(`messages_${dmId}`)));
               await setDoc(messageRef, {
-                 id: messageRef.id,
-                 text,
-                 senderId: user.value.uid,
-                 senderName: userProfileName.value,
-                 timestamp: serverTimestamp(),
-                 replyToText: `Reply from ${activeGroup.value.name} feed`,
-                 replyToSender: 'System'
+                 id: messageRef.id, text, senderId: user.value.uid, senderName: userProfileName.value, timestamp: serverTimestamp(), replyToText: `Reply from ${activeGroup.value.name} feed`, replyToSender: 'System'
               });
 
               selectChat(dmId, 'dm');
               showToast('Reply sent directly to ' + ownerName, 'success');
-           } catch(e) {
-              console.error(e);
-              showToast('Failed to send reply to owner.', 'error');
-           }
+           } catch(e) { showToast('Failed to send reply to owner.', 'error'); }
         };
 
-        // --- ROSTER LOADING ---
         const loadActiveGroupRoster = () => {
            if (!currentChatId.value || currentChatType.value !== 'group') return;
            isLoadingMembers.value = true;
@@ -1456,26 +1372,16 @@
         };
 
         watch(classTab, (newTab) => {
-           if (newTab === 'people' && currentChatType.value === 'group') {
-              loadActiveGroupRoster();
-           }
+           if (newTab === 'people' && currentChatType.value === 'group') loadActiveGroupRoster();
         });
 
-        // --- CLASS SETTINGS (OWNER) ---
         const openClassSettings = () => {
            if (!activeGroup.value || activeGroup.value.ownerId !== user.value.uid) return;
-           
-           editGroupForm.value = {
-              name: activeGroup.value.name,
-              code: activeGroup.value.code,
-              avatar: activeGroup.value.avatar || 'school',
-              requireApproval: activeGroup.value.requireApproval || false
-           };
+           editGroupForm.value = { name: activeGroup.value.name, code: activeGroup.value.code, avatar: activeGroup.value.avatar || 'school', requireApproval: activeGroup.value.requireApproval || false };
            classSettingsTab.value = 'general';
            modals.value.classSettings = true;
            loadActiveGroupRoster();
 
-           // Load Pending Requests
            if (requestsUnsub) requestsUnsub();
            requestsUnsub = onSnapshot(collection(db, dbPath(`joinRequests_${currentChatId.value}`)), (snap) => {
               pendingRequests.value = snap.docs.map(d => d.data());
@@ -1492,44 +1398,27 @@
            savingGroup.value = true;
            try {
               await updateDoc(doc(db, dbPath('groups'), currentChatId.value), {
-                 name: editGroupForm.value.name,
-                 code: editGroupForm.value.code.toUpperCase(),
-                 avatar: editGroupForm.value.avatar,
-                 requireApproval: editGroupForm.value.requireApproval
+                 name: editGroupForm.value.name, code: editGroupForm.value.code.toUpperCase(), avatar: editGroupForm.value.avatar, requireApproval: editGroupForm.value.requireApproval
               });
               showToast('Class settings updated!', 'success');
-           } catch(e) {
-              showToast('Failed to update class settings.', 'error');
-           } finally {
-              savingGroup.value = false;
-           }
+           } catch(e) { showToast('Failed to update class settings.', 'error'); } 
+           finally { savingGroup.value = false; }
         };
 
         const approveRequest = async (req) => {
            try {
-              // 1. Add to memberships
-              await setDoc(doc(db, dbPath('memberships', false, req.userId), currentChatId.value), {
-                 groupId: currentChatId.value, role: 'member', answers: req.answers || {}, joinedAt: serverTimestamp()
-              });
-              // 2. Add to roster
-              await setDoc(doc(db, dbPath(`messages_roster_${currentChatId.value}`), req.userId), {
-                 userId: req.userId, role: 'member', name: req.name, answers: req.answers || {}, joinedAt: serverTimestamp()
-              });
-              // 3. Remove from requests
+              await setDoc(doc(db, dbPath('memberships', false, req.userId), currentChatId.value), { groupId: currentChatId.value, role: 'member', answers: req.answers || {}, joinedAt: serverTimestamp() });
+              await setDoc(doc(db, dbPath(`messages_roster_${currentChatId.value}`), req.userId), { userId: req.userId, role: 'member', name: req.name, answers: req.answers || {}, joinedAt: serverTimestamp() });
               await deleteDoc(doc(db, dbPath(`joinRequests_${currentChatId.value}`), req.userId));
               showToast(`${req.name} approved.`, 'success');
-           } catch(e) {
-              showToast('Failed to approve request', 'error');
-           }
+           } catch(e) { showToast('Failed to approve request', 'error'); }
         };
 
         const denyRequest = async (req) => {
            try {
               await deleteDoc(doc(db, dbPath(`joinRequests_${currentChatId.value}`), req.userId));
               showToast(`${req.name} denied.`, 'info');
-           } catch(e) {
-              showToast('Failed to deny request', 'error');
-           }
+           } catch(e) { showToast('Failed to deny request', 'error'); }
         };
 
         const viewMemberInfo = (member) => {
@@ -1537,9 +1426,7 @@
            modals.value.memberInfo = true;
         };
 
-        const promptRemoveMember = (member) => {
-           memberToRemove.value = member;
-        };
+        const promptRemoveMember = (member) => { memberToRemove.value = member; };
 
         const executeRemoveMember = async () => {
            if (!memberToRemove.value || !currentChatId.value) return;
@@ -1547,9 +1434,7 @@
               await deleteDoc(doc(db, dbPath(`messages_roster_${currentChatId.value}`), memberToRemove.value.userId));
               showToast(`${memberToRemove.value.name} removed from the class.`, 'success');
               memberToRemove.value = null;
-           } catch (e) {
-              showToast('Error removing member', 'error');
-           }
+           } catch (e) { showToast('Error removing member', 'error'); }
         };
 
         const executeDeleteGroup = async () => {
@@ -1560,12 +1445,9 @@
               modals.value.classSettings = false;
               showToast('Class deleted successfully.', 'success');
               currentChatId.value = null;
-           } catch (e) {
-              showToast('Error deleting class. Check permissions.', 'error');
-           }
+           } catch (e) { showToast('Error deleting class. Check permissions.', 'error'); }
         };
 
-        // --- DM AND MULTI-USER CHATS ---
         const startDM = async (member) => {
            modals.value.groupInfo = false; 
            const uids = [user.value.uid, member.userId].sort();
@@ -1574,19 +1456,11 @@
            if (!myDms.value.find(d => d.id === dmId)) {
              try {
                 await setDoc(doc(db, dbPath('messages_dms_directory'), dmId), {
-                   id: dmId,
-                   users: uids,
-                   isGroupChat: false,
-                   names: {
-                      [user.value.uid]: userProfileName.value,
-                      [member.userId]: member.name
-                   },
+                   id: dmId, users: uids, isGroupChat: false,
+                   names: { [user.value.uid]: userProfileName.value, [member.userId]: member.name },
                    updatedAt: serverTimestamp()
                 }, { merge: true });
-             } catch (e) {
-                showToast('Error starting private chat', 'error');
-                return;
-             }
+             } catch (e) { showToast('Error starting private chat', 'error'); return; }
            }
            selectChat(dmId, 'dm');
         };
@@ -1605,44 +1479,29 @@
 
            const uids = [user.value.uid, ...selectedMembersForChat.value.map(m => m.userId)].sort();
            const dmId = `messages_groupchat_${Date.now()}_${Math.random().toString(36).substr(2,5)}`;
-           
            const namesMap = { [user.value.uid]: userProfileName.value };
            selectedMembersForChat.value.forEach(m => namesMap[m.userId] = m.name);
 
            try {
-              await setDoc(doc(db, dbPath('messages_dms_directory'), dmId), {
-                 id: dmId,
-                 users: uids,
-                 isGroupChat: true,
-                 names: namesMap,
-                 updatedAt: serverTimestamp()
-              });
+              await setDoc(doc(db, dbPath('messages_dms_directory'), dmId), { id: dmId, users: uids, isGroupChat: true, names: namesMap, updatedAt: serverTimestamp() });
               modals.value.newGroupChat = false;
               selectChat(dmId, 'dm');
               showToast('Group chat created!', 'success');
-           } catch (e) {
-              showToast('Error creating group chat', 'error');
-           }
+           } catch (e) { showToast('Error creating group chat', 'error'); }
         };
 
-        // --- AUTHENTICATION ---
         const submitAuth = async () => {
           authForm.value.error = '';
           authForm.value.loading = true;
           try {
-            if (authForm.value.isLogin) {
-              await signInWithEmailAndPassword(auth, authForm.value.email, authForm.value.password);
-            } else {
-              await createUserWithEmailAndPassword(auth, authForm.value.email, authForm.value.password);
-            }
+            if (authForm.value.isLogin) await signInWithEmailAndPassword(auth, authForm.value.email, authForm.value.password);
+            else await createUserWithEmailAndPassword(auth, authForm.value.email, authForm.value.password);
           } catch (e) {
             if (e.code === 'auth/invalid-credential') authForm.value.error = 'Invalid email or password.';
             else if (e.code === 'auth/email-already-in-use') authForm.value.error = 'Email is already in use.';
             else if (e.code === 'auth/weak-password') authForm.value.error = 'Password should be at least 6 characters.';
             else authForm.value.error = e.message;
-          } finally {
-            authForm.value.loading = false;
-          }
+          } finally { authForm.value.loading = false; }
         };
 
         const loginWithGoogle = async () => {
@@ -1652,21 +1511,14 @@
             const provider = new GoogleAuthProvider();
             await signInWithPopup(auth, provider);
           } catch (e) {
-            if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
-              authForm.value.error = 'Google sign-in failed: ' + e.message;
-            }
-          } finally {
-            authForm.value.loading = false;
-          }
+            if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') authForm.value.error = 'Google sign-in failed: ' + e.message;
+          } finally { authForm.value.loading = false; }
         };
 
         const loginWithCanvas = async () => {
            if (hasCanvasToken) {
-               try {
-                  await signInWithCustomToken(auth, __initial_auth_token);
-               } catch (e) {
-                  showToast('Canvas auto-login failed.', 'error');
-               }
+               try { await signInWithCustomToken(auth, __initial_auth_token); } 
+               catch (e) { showToast('Canvas auto-login failed.', 'error'); }
            }
         };
 
@@ -1684,40 +1536,25 @@
             allMessages.value = {};
             currentChatId.value = null;
             showToast('Signed out safely.', 'success');
-          } catch (e) {
-            showToast('Failed to sign out.', 'error');
-          }
+          } catch (e) { showToast('Failed to sign out.', 'error'); }
         };
 
-        // Actions
         const saveInitialProfile = async () => {
           if (!setupFlowName.value.trim()) return;
           try {
-            await setDoc(doc(db, dbPath('profile', false, user.value.uid), 'data'), {
-              name: setupFlowName.value,
-              theme: 'system',
-              createdAt: serverTimestamp()
-            }, { merge: true });
+            await setDoc(doc(db, dbPath('profile', false, user.value.uid), 'data'), { name: setupFlowName.value, theme: 'system', createdAt: serverTimestamp() }, { merge: true });
             checkUrlForJoinCode(); 
-          } catch (e) {
-            showToast('Failed to save profile', 'error');
-          }
+          } catch (e) { showToast('Failed to save profile', 'error'); }
         };
 
         const saveSettings = async () => {
           if (!settingsForm.value.name.trim()) return;
           try {
-            await setDoc(doc(db, dbPath('profile', false, user.value.uid), 'data'), {
-              name: settingsForm.value.name,
-              theme: settingsForm.value.theme
-            }, { merge: true });
-            
+            await setDoc(doc(db, dbPath('profile', false, user.value.uid), 'data'), { name: settingsForm.value.name, theme: settingsForm.value.theme }, { merge: true });
             themePreference.value = settingsForm.value.theme;
             modals.value.settings = false;
             showToast('Settings saved', 'success');
-          } catch (e) {
-            showToast('Failed to save settings', 'error');
-          }
+          } catch (e) { showToast('Failed to save settings', 'error'); }
         };
 
         const submitCreate = async () => {
@@ -1727,32 +1564,15 @@
             const code = generateCode();
             const questions = createFlow.value.questions.split(',').map(q => q.trim()).filter(Boolean);
             
-            await setDoc(doc(db, dbPath('groups'), groupId), {
-              id: groupId, 
-              name: createFlow.value.name, 
-              code, 
-              ownerId: user.value.uid, 
-              questions, 
-              avatar: createFlow.value.avatar,
-              requireApproval: createFlow.value.requireApproval,
-              createdAt: serverTimestamp()
-            });
-
-            await setDoc(doc(db, dbPath('memberships', false, user.value.uid), groupId), {
-              groupId, role: 'owner', joinedAt: serverTimestamp()
-            });
-
-            await setDoc(doc(db, dbPath(`messages_roster_${groupId}`), user.value.uid), {
-              userId: user.value.uid, role: 'owner', name: userProfileName.value, joinedAt: serverTimestamp()
-            });
+            await setDoc(doc(db, dbPath('groups'), groupId), { id: groupId, name: createFlow.value.name, code, ownerId: user.value.uid, questions, avatar: createFlow.value.avatar, requireApproval: createFlow.value.requireApproval, createdAt: serverTimestamp() });
+            await setDoc(doc(db, dbPath('memberships', false, user.value.uid), groupId), { groupId, role: 'owner', joinedAt: serverTimestamp() });
+            await setDoc(doc(db, dbPath(`messages_roster_${groupId}`), user.value.uid), { userId: user.value.uid, role: 'owner', name: userProfileName.value, joinedAt: serverTimestamp() });
 
             modals.value.create = false;
             createFlow.value = { name: '', questions: '', avatar: 'school', requireApproval: false };
             selectChat(groupId, 'group');
             showToast('Class created!', 'success');
-          } catch (e) {
-            showToast('Error creating class', 'error');
-          }
+          } catch (e) { showToast('Error creating class', 'error'); }
         };
 
         const findGroupToJoin = () => {
@@ -1760,7 +1580,6 @@
           const found = groups.value.find(g => g.code === code);
           if (!found) return showToast('Invalid Code', 'error');
           if (myMemberships.value.some(m => m.groupId === found.id)) return showToast('Already a member', 'error');
-          
           joinFlow.value.group = found;
           joinFlow.value.answers = {};
         };
@@ -1768,39 +1587,23 @@
         const submitJoin = async () => {
           try {
             const groupId = joinFlow.value.group.id;
-            
             if (joinFlow.value.group.requireApproval) {
-               // Send Join Request instead of directly adding
-               await setDoc(doc(db, dbPath(`joinRequests_${groupId}`), user.value.uid), {
-                 userId: user.value.uid,
-                 name: userProfileName.value,
-                 answers: joinFlow.value.answers,
-                 requestedAt: serverTimestamp()
-               });
+               await setDoc(doc(db, dbPath(`joinRequests_${groupId}`), user.value.uid), { userId: user.value.uid, name: userProfileName.value, answers: joinFlow.value.answers, requestedAt: serverTimestamp() });
                modals.value.join = false;
                joinFlow.value = { code: '', group: null, answers: {} };
                showToast('Request sent! Waiting for teacher approval.', 'success');
                return;
             }
 
-            // Normal Join
-            await setDoc(doc(db, dbPath('memberships', false, user.value.uid), groupId), {
-              groupId, role: 'member', answers: joinFlow.value.answers, joinedAt: serverTimestamp()
-            });
-
-            await setDoc(doc(db, dbPath(`messages_roster_${groupId}`), user.value.uid), {
-              userId: user.value.uid, role: 'member', name: userProfileName.value, answers: joinFlow.value.answers, joinedAt: serverTimestamp()
-            });
+            await setDoc(doc(db, dbPath('memberships', false, user.value.uid), groupId), { groupId, role: 'member', answers: joinFlow.value.answers, joinedAt: serverTimestamp() });
+            await setDoc(doc(db, dbPath(`messages_roster_${groupId}`), user.value.uid), { userId: user.value.uid, role: 'member', name: userProfileName.value, answers: joinFlow.value.answers, joinedAt: serverTimestamp() });
 
             modals.value.join = false;
             joinFlow.value = { code: '', group: null, answers: {} };
-            
             window.history.replaceState({}, document.title, window.location.pathname);
             selectChat(groupId, 'group');
             showToast('Successfully joined class!', 'success');
-          } catch (e) {
-            showToast('Error joining class', 'error');
-          }
+          } catch (e) { showToast('Error joining class', 'error'); }
         };
 
         const checkUrlForJoinCode = () => {
@@ -1810,52 +1613,38 @@
              if (code && isProfileComplete.value === true) {
                 modals.value.join = true;
                 joinFlow.value.code = code;
-                setTimeout(() => {
-                   if (groups.value.length > 0) findGroupToJoin();
-                }, 1000);
+                setTimeout(() => { if (groups.value.length > 0) findGroupToJoin(); }, 1000);
              }
            } catch(e) {}
         };
 
-        // Listeners Setup
         const setupDataListeners = () => {
           listeners.forEach(unsub => unsub());
           listeners = [];
-
           const uid = user.value.uid;
 
-          // 1. Profile
           listeners.push(onSnapshot(doc(db, dbPath('profile', false, uid), 'data'), (docSnap) => {
             if (docSnap.exists() && docSnap.data().name) {
               userProfileName.value = docSnap.data().name;
               themePreference.value = docSnap.data().theme || 'system';
               isProfileComplete.value = true;
               checkUrlForJoinCode(); 
-            } else {
-              isProfileComplete.value = false;
-            }
-          }, (e) => {
-            console.error(e);
-            loading.value = false;
-          }));
+            } else { isProfileComplete.value = false; }
+          }, (e) => { loading.value = false; }));
 
-          // 2. Global Groups List
           listeners.push(onSnapshot(collection(db, dbPath('groups')), (snap) => {
             groups.value = snap.docs.map(d => d.data());
-          }, (e) => console.error(e)));
+          }));
 
-          // 3. My Group Memberships
           listeners.push(onSnapshot(collection(db, dbPath('memberships', false, uid)), (snap) => {
             myMemberships.value = snap.docs.map(d => d.data());
-          }, (e) => console.error(e)));
+          }));
 
-          // 4. My Direct Messages Inbox
           listeners.push(onSnapshot(collection(db, dbPath('messages_dms_directory')), (snap) => {
             const allDms = snap.docs.map(d => d.data());
             myDms.value = allDms
                .filter(dm => dm.users && dm.users.includes(uid))
                .map(dm => {
-                   // Generate aggregate name for group chats
                    let peerName = 'Unknown';
                    if (dm.isGroupChat) {
                       const otherNames = Object.keys(dm.names).filter(id => id !== uid).map(id => dm.names[id]);
@@ -1864,25 +1653,16 @@
                       const peerId = dm.users.find(id => id !== uid) || uid; 
                       peerName = dm.names[peerId] || 'Unknown';
                    }
-                   return {
-                       id: dm.id,
-                       peerName: peerName,
-                       isGroupChat: dm.isGroupChat || false
-                   };
+                   return { id: dm.id, peerName: peerName, isGroupChat: dm.isGroupChat || false };
                });
-          }, (e) => console.error(e)));
+          }));
         };
 
         const syncChatListeners = () => {
            const allChatIds = [...myGroups.value.map(g => g.id), ...myDms.value.map(d => d.id)];
-           
            for(let id in messageListeners) {
-              if(!allChatIds.includes(id)) {
-                 messageListeners[id]();
-                 delete messageListeners[id];
-              }
+              if(!allChatIds.includes(id)) { messageListeners[id](); delete messageListeners[id]; }
            }
-
            allChatIds.forEach(id => {
               if(!messageListeners[id]) {
                  messageListeners[id] = onSnapshot(collection(db, dbPath(`messages_${id}`)), (snap) => {
@@ -1895,41 +1675,28 @@
                           const msg = change.doc.data();
                           const msgTime = msg.timestamp?.toMillis() || Date.now();
                           const lastRead = Number(localStorage.getItem(`lastRead_${id}`) || 0);
-
-                          if (msg.senderId !== user.value?.uid) {
-                             if (msgTime > lastRead && id !== currentChatId.value) {
-                                unreadCounts.value[id] = (unreadCounts.value[id] || 0) + 1;
-                             }
+                          if (msg.senderId !== user.value?.uid && msgTime > lastRead && id !== currentChatId.value) {
+                             unreadCounts.value[id] = (unreadCounts.value[id] || 0) + 1;
                           }
                        }
                     });
-
-                    if (id === currentChatId.value) {
-                       markAsRead(id);
-                       scrollToBottom();
-                    }
-                 }, (e) => console.error('Chat connection error', e));
+                    if (id === currentChatId.value) { markAsRead(id); scrollToBottom(); }
+                 });
               }
            });
         };
 
-        watch(() => [myGroups.value.length, myDms.value.length], () => {
-           syncChatListeners();
-        });
-
+        watch(() => [myGroups.value.length, myDms.value.length], () => syncChatListeners());
         watch(currentChatId, (newId) => {
           if (!newId) return;
           markAsRead(newId);
           scrollToBottom();
         });
 
-        // Initialize App State based on Auth
         onAuthStateChanged(auth, (u) => {
           user.value = u;
           if (u) {
-            if (u.displayName && !isProfileComplete.value) {
-              setupFlowName.value = u.displayName;
-            }
+            if (u.displayName && !isProfileComplete.value) setupFlowName.value = u.displayName;
             setupDataListeners();
           } else {
             listeners.forEach(unsub => unsub());
@@ -1941,18 +1708,7 @@
         });
 
         return {
-          loading, user, isProfileComplete, userProfileName, svgIcons,
-          authForm, hasCanvasToken, setupFlowName, settingsForm,
-          groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo, unreadCounts,
-          currentChatId, currentChatType, classTab, classSettingsTab, activeGroup, activeChat, isMobileChatOpen, joinLink,
-          activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, isReplyDeleted, initReply, initEdit, cancelInputContext, deleteMessage,
-          selectedFile, fileInputRef, handleFileSelect, uploadingAttachment,
-          toast, newMessage, modals, createFlow, joinFlow, editGroupForm, savingGroup, pendingRequests, isLoadingMembers,
-          selectedMembersForChat, initiateGroupChatModal, createGroupChat,
-          showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
-          submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly,
-          saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare,
-          isStandalone, deviceType, forceInstallScreen, hasAttemptedInstall, triggerInstall, bypassInstall, isOffline
+          loading, user, isProfileComplete, userProfileName, svgIcons, authForm, hasCanvasToken, setupFlowName, settingsForm, groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo, unreadCounts, currentChatId, currentChatType, classTab, classSettingsTab, activeGroup, activeChat, isMobileChatOpen, joinLink, activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, isReplyDeleted, initReply, initEdit, cancelInputContext, deleteMessage, selectedFile, fileInputRef, handleFileSelect, uploadingAttachment, toast, newMessage, modals, createFlow, joinFlow, editGroupForm, savingGroup, pendingRequests, isLoadingMembers, selectedMembersForChat, initiateGroupChatModal, createGroupChat, showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly, saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare, isStandalone, deviceType, forceInstallScreen, hasAttemptedInstall, triggerInstall, bypassInstall, isOffline, checkForUpdate
         };
       }
     }).mount('#app');
