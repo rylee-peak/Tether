@@ -1,5 +1,5 @@
-// Change this version number to force an update for all users! Current Version: 4
-const CACHE_NAME = 'tether-app-cache-vTest2'; 
+// Change this version number to force an update for all users!
+const CACHE_NAME = 'tether-app-cache-v5'; 
 
 const STATIC_ASSETS = [
   '/',
