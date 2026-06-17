@@ -1,4 +1,6 @@
-const CACHE_NAME = 'tether-app-cache-v1';
+// Change this version number to force an update for all users!
+const CACHE_NAME = 'tether-app-cache-v2'; 
+
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -7,7 +9,6 @@ const STATIC_ASSETS = [
 
 // Install Event - Pre-cache the main files
 self.addEventListener('install', event => {
-  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(STATIC_ASSETS);
@@ -15,7 +16,7 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate Event - Clean up old caches if we ever update the CACHE_NAME
+// Activate Event - Clean up old caches when the new version takes over
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -35,7 +36,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   
-  // Skip caching Firebase API calls (Firestore handles its own offline cache)
+  // Skip caching Firebase API calls
   if (event.request.url.includes('firestore.googleapis.com') || 
       event.request.url.includes('firebasestorage.googleapis.com') ||
       event.request.url.includes('identitytoolkit.googleapis.com')) {
@@ -45,14 +46,19 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        // Clone and cache the successful response dynamically
         const resClone = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, resClone));
         return response;
       })
       .catch(() => {
-        // If network fails (Offline mode), fall back to the cache
         return caches.match(event.request);
       })
   );
+});
+
+// Listen for the "Force Update" command from the frontend
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
