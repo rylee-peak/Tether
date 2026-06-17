@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Tether - Class Communications</title>
   
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -13,8 +14,25 @@
     }
   </script>
   
+  <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
 
+  <!-- OneSignal Push Notifications -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "37b029b3-4997-45dc-a802-cd867e04b5ed",
+        safari_web_id: "web.onesignal.auto.3d5e9a66-9429-4fce-a7e3-61aa58d6c253",
+        notifyButton: {
+          enable: false, // Disabled as requested so we can use a custom prompt!
+        },
+      });
+    });
+  </script>
+
+  <!-- Import Maps for Vue and Firebase -->
   <script type="importmap">
     {
       "imports": {
@@ -31,15 +49,17 @@
   
   <div id="app" class="h-full w-full flex flex-col" v-cloak>
 
+    <!-- Offline Banner -->
     <div v-if="isOffline" class="bg-amber-500 text-amber-950 text-xs font-bold px-4 py-1.5 text-center shadow-md z-[400] flex justify-center items-center gap-2 shrink-0 transition-all">
        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243-4.243a5 5 0 000 7.072m0 0l-2.829 2.829m2.829-2.829L3 3"></path></svg>
        Offline Mode: Viewing cached data. Messages will send when reconnected.
     </div>
     
+    <!-- Toast Notification (OS Style) -->
     <transition name="toast">
       <div v-if="toast.show" 
            @click="handleToastClick"
-           class="fixed top-4 left-1/2 -translate-x-1/2 z-[300] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
+           class="fixed top-4 left-1/2 -translate-x-1/2 z-[500] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
            :class="toast.type === 'error' ? 'bg-red-50/95 dark:bg-red-900/90 border-red-200 dark:border-red-800' : 'bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700'">
         <div class="flex items-center justify-between px-4 py-2 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5">
           <div class="flex items-center gap-2">
@@ -71,6 +91,30 @@
       </div>
     </transition>
 
+    <!-- Custom Push Notification Banner -->
+    <transition name="toast">
+      <div v-if="showPushBanner" class="fixed bottom-24 left-0 right-0 md:bottom-24 md:left-1/2 md:-translate-x-1/2 md:max-w-md bg-white dark:bg-slate-800 border-t md:border border-slate-200 dark:border-slate-700 md:rounded-2xl p-4 shadow-2xl z-[150] flex items-center justify-between gap-4 transition-all pb-safe">
+         <div class="flex items-center gap-3 overflow-hidden">
+           <div class="w-10 h-10 shrink-0 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center border border-indigo-200 dark:border-indigo-800">
+             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+           </div>
+           <div class="flex-1 truncate">
+              <p class="font-bold text-sm text-slate-900 dark:text-white truncate">Enable Notifications</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">Never miss an important message.</p>
+           </div>
+         </div>
+         <div class="flex items-center gap-1.5 shrink-0">
+           <button @click="dismissPushBanner" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-full transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+           </button>
+           <button @click="triggerPushEnable" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-sm transition-colors tracking-wide">
+              Enable
+           </button>
+         </div>
+      </div>
+    </transition>
+
+    <!-- Forced PWA Install Screen -->
     <transition name="fade">
       <div v-if="forceInstallScreen" class="fixed inset-0 bg-slate-50 dark:bg-slate-900 z-[150] flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
          <div class="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-3xl flex items-center justify-center mb-6 shadow-sm border border-blue-200 dark:border-blue-800">
@@ -93,11 +137,13 @@
       </div>
     </transition>
 
+    <!-- 0. Loading Screen -->
     <div v-if="loading || (user && isProfileComplete === null)" class="h-full w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 absolute inset-0 z-40 transition-colors duration-200">
       <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="mt-4 text-slate-500 dark:text-slate-400 font-medium">Connecting to Tether...</p>
     </div>
 
+    <!-- 1. Authentication Screen -->
     <div v-else-if="!user" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200 overflow-y-auto">
       <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md my-auto">
         <div class="flex items-center gap-2 justify-center text-blue-600 dark:text-blue-400 font-bold text-3xl tracking-tight mb-2">
@@ -147,6 +193,7 @@
       </div>
     </div>
 
+    <!-- 2. Profile Creation Screen -->
     <div v-else-if="user && isProfileComplete === false" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200">
       <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md text-center">
         <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -165,17 +212,54 @@
       </div>
     </div>
 
+    <!-- 4. Main Application -->
     <div v-else-if="user && isProfileComplete === true" class="h-full w-full flex flex-1 overflow-hidden">
       
+      <!-- Overlay for Notifications Dropdown -->
+      <div v-if="showNotificationsDropdown" @click="showNotificationsDropdown = false" class="fixed inset-0 z-[80]"></div>
+
+      <!-- Sidebar / List -->
       <div :class="['w-full md:w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform z-10 shadow-sm', 
                     isMobileChatOpen ? 'hidden md:flex' : 'flex']">
         
+        <!-- Sidebar Header -->
         <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 transition-colors shrink-0">
           <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-2xl tracking-tight">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
             Tether
           </div>
-          <div class="flex gap-2">
+          
+          <div class="flex gap-2 relative">
+            <!-- Notifications Bell -->
+            <button @click="showNotificationsDropdown = !showNotificationsDropdown" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors relative" title="Notifications">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+              <span v-if="inAppNotifications.length > 0" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-slate-100 dark:border-slate-700"></span>
+            </button>
+
+            <!-- Notifications Dropdown Panel -->
+            <transition name="toast">
+               <div v-if="showNotificationsDropdown" class="absolute top-12 left-0 sm:left-auto sm:right-0 w-72 sm:w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[100] flex flex-col max-h-[70vh]">
+                  <div class="p-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 rounded-t-2xl">
+                     <span class="font-bold text-sm text-slate-800 dark:text-slate-200">Notifications</span>
+                     <button @click.stop="inAppNotifications = []" class="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">Clear all</button>
+                  </div>
+                  <div class="overflow-y-auto p-2">
+                     <div v-if="inAppNotifications.length === 0" class="text-center text-sm text-slate-500 py-6">You're all caught up!</div>
+                     <button v-for="notif in inAppNotifications" :key="notif.msgId" @click="openNotification(notif)" class="w-full text-left p-2.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl flex items-start gap-3 transition-colors mb-1 border border-transparent hover:border-slate-200 dark:hover:border-slate-600">
+                        <div class="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm shrink-0 uppercase border border-blue-200 dark:border-blue-800/50">{{ notif.senderName.charAt(0) }}</div>
+                        <div class="flex-1 min-w-0">
+                           <p class="font-bold text-sm text-slate-900 dark:text-white truncate flex justify-between items-center">
+                              <span class="truncate">{{ notif.senderName }}</span>
+                              <span class="font-bold text-[9px] uppercase tracking-wider text-blue-500 bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5 rounded ml-2 shrink-0">New</span>
+                           </p>
+                           <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mb-0.5">in {{ notif.chatName }}</p>
+                           <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-snug">{{ notif.text || 'Sent an attachment' }}</p>
+                        </div>
+                     </button>
+                  </div>
+               </div>
+            </transition>
+
             <button @click="modals.settings = true" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors" title="Settings">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             </button>
@@ -446,6 +530,7 @@
       </div>
     </div>
 
+    <!-- Install Instructions Modal -->
     <div v-if="modals.install" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[200] flex items-end sm:items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col overflow-hidden mb-6 sm:mb-0">
          <div class="p-6 text-center border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
@@ -503,6 +588,7 @@
       </div>
     </div>
 
+    <!-- Class Settings Modal (For Owners) -->
     <div v-if="modals.classSettings && activeGroup && activeGroup.ownerId === user.uid" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         
@@ -621,6 +707,7 @@
       </div>
     </div>
 
+    <!-- Create Custom Group Chat Modal -->
     <div v-if="modals.newGroupChat" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[80vh]">
         <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">New Group Chat</h3>
@@ -643,6 +730,7 @@
     </div>
 
 
+    <!-- Group Share Modal -->
     <div v-if="modals.shareCode && activeGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl text-center">
         <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Invite Students</h3>
@@ -679,6 +767,7 @@
       </div>
     </div>
 
+    <!-- Member Responses Modal -->
     <div v-if="modals.memberInfo && selectedMemberInfo" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-1 text-slate-900 dark:text-white flex items-center gap-2">{{ selectedMemberInfo.name }}</h3>
@@ -697,6 +786,7 @@
       </div>
     </div>
 
+    <!-- Confirm Member Removal Modal -->
     <div v-if="memberToRemove" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-2 text-slate-900 dark:text-white">Remove {{ memberToRemove.name }}?</h3>
@@ -708,6 +798,7 @@
       </div>
     </div>
 
+    <!-- Join Group Modal -->
     <div v-if="modals.join" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Join a Class</h3>
@@ -752,6 +843,7 @@
       </div>
     </div>
 
+    <!-- Create Group Modal -->
     <div v-if="modals.create" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh]">
         <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Create a Class</h3>
@@ -791,6 +883,7 @@
       </div>
     </div>
 
+    <!-- Settings Modal -->
     <div v-if="modals.settings" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-6 text-slate-900 dark:text-white">Settings</h3>
@@ -967,13 +1060,16 @@
         // App Version State
         const appVersion = ref('Loading...');
 
-        // PWA Installation State
+        // Custom Notification & PWA State
         const isStandalone = ref(true);
         const deviceType = ref('Desktop');
         const deferredPrompt = ref(null);
         const forceInstallScreen = ref(false);
         const hasAttemptedInstall = ref(false);
         const isOffline = ref(!navigator.onLine);
+        const showPushBanner = ref(false);
+        const inAppNotifications = ref([]);
+        const showNotificationsDropdown = ref(false);
 
         let listeners = [];
 
@@ -1064,6 +1160,13 @@
              }).catch(err => console.log('SW registration failed: ', err));
           }
 
+          // Native Push Permission Check (Custom Prompt)
+          setTimeout(() => {
+             if ('Notification' in window && Notification.permission !== 'granted' && !localStorage.getItem('bypassedPush')) {
+                 showPushBanner.value = true;
+             }
+          }, 3500);
+
           window.addEventListener('online', () => { 
              isOffline.value = false; 
              showToast('Back online! Live syncing restored.', 'success'); 
@@ -1086,6 +1189,22 @@
              isStandalone.value = true;
           });
         });
+
+        // Push Notifications Configuration
+        const dismissPushBanner = () => {
+           showPushBanner.value = false;
+           localStorage.setItem('bypassedPush', 'true');
+        };
+
+        const triggerPushEnable = () => {
+           window.OneSignalDeferred.push(async function(OneSignal) {
+               await OneSignal.Notifications.requestPermission();
+               showPushBanner.value = false;
+               if (OneSignal.Notifications.permission) {
+                  showToast('Push notifications enabled!', 'success');
+               }
+           });
+        };
 
         const bypassInstall = () => {
            forceInstallScreen.value = false;
@@ -1204,6 +1323,14 @@
            unreadCounts.value[id] = 0;
         };
 
+        const getChatName = (id) => {
+           const group = groups.value.find(g => g.id === id);
+           if (group) return group.name;
+           const dm = myDms.value.find(d => d.id === id);
+           if (dm) return dm.peerName;
+           return 'Chat';
+        };
+
         const selectChat = (id, type) => {
           currentChatId.value = id;
           currentChatType.value = type;
@@ -1213,7 +1340,16 @@
           markAsRead(id);
           cancelInputContext();
           scrollToBottom();
+
+          // Clear notifications logic for this chat
+          inAppNotifications.value = inAppNotifications.value.filter(n => n.chatId !== id);
+
           if (type === 'group') loadActiveGroupRoster();
+        };
+
+        const openNotification = (notif) => {
+           selectChat(notif.chatId, notif.chatType);
+           showNotificationsDropdown.value = false;
         };
 
         const toggleMessageMenu = (id) => {
@@ -1524,6 +1660,11 @@
             myDms.value = [];
             allMessages.value = {};
             currentChatId.value = null;
+            
+            window.OneSignalDeferred.push(function(OneSignal) {
+               OneSignal.logout();
+            });
+
             showToast('Signed out safely.', 'success');
           } catch (e) { showToast('Failed to sign out.', 'error'); }
         };
@@ -1664,8 +1805,26 @@
                           const msg = change.doc.data();
                           const msgTime = msg.timestamp?.toMillis() || Date.now();
                           const lastRead = Number(localStorage.getItem(`lastRead_${id}`) || 0);
+                          
                           if (msg.senderId !== user.value?.uid && msgTime > lastRead && id !== currentChatId.value) {
                              unreadCounts.value[id] = (unreadCounts.value[id] || 0) + 1;
+
+                             // Catch in-app notification
+                             if (!inAppNotifications.value.some(n => n.msgId === msg.id)) {
+                                 const cName = getChatName(id);
+                                 const cType = myGroups.value.some(g => g.id === id) ? 'group' : 'dm';
+                                 inAppNotifications.value.unshift({
+                                     msgId: msg.id,
+                                     chatId: id,
+                                     chatType: cType,
+                                     chatName: cName,
+                                     senderName: msg.senderName || 'Anonymous',
+                                     text: msg.text,
+                                     time: msgTime
+                                 });
+                                 // Cap it at 30 recent notifications
+                                 if (inAppNotifications.value.length > 30) inAppNotifications.value.pop();
+                             }
                           }
                        }
                     });
@@ -1687,6 +1846,11 @@
           if (u) {
             if (u.displayName && !isProfileComplete.value) setupFlowName.value = u.displayName;
             setupDataListeners();
+            
+            // Connect OneSignal User
+            window.OneSignalDeferred.push(function(OneSignal) {
+               OneSignal.login(u.uid);
+            });
           } else {
             listeners.forEach(unsub => unsub());
             listeners = [];
@@ -1697,7 +1861,7 @@
         });
 
         return {
-          loading, user, isProfileComplete, userProfileName, svgIcons, authForm, hasCanvasToken, setupFlowName, settingsForm, groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo, unreadCounts, currentChatId, currentChatType, classTab, classSettingsTab, activeGroup, activeChat, isMobileChatOpen, joinLink, activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, isReplyDeleted, initReply, initEdit, cancelInputContext, deleteMessage, selectedFile, fileInputRef, handleFileSelect, uploadingAttachment, toast, newMessage, modals, createFlow, joinFlow, editGroupForm, savingGroup, pendingRequests, isLoadingMembers, selectedMembersForChat, initiateGroupChatModal, createGroupChat, showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly, saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare, isStandalone, deviceType, forceInstallScreen, hasAttemptedInstall, triggerInstall, bypassInstall, isOffline, fetchAppVersion, checkForUpdate, appVersion
+          loading, user, isProfileComplete, userProfileName, svgIcons, authForm, hasCanvasToken, setupFlowName, settingsForm, groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo, unreadCounts, currentChatId, currentChatType, classTab, classSettingsTab, activeGroup, activeChat, isMobileChatOpen, joinLink, activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, isReplyDeleted, initReply, initEdit, cancelInputContext, deleteMessage, selectedFile, fileInputRef, handleFileSelect, uploadingAttachment, toast, newMessage, modals, createFlow, joinFlow, editGroupForm, savingGroup, pendingRequests, isLoadingMembers, selectedMembersForChat, initiateGroupChatModal, createGroupChat, showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly, saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare, isStandalone, deviceType, forceInstallScreen, hasAttemptedInstall, triggerInstall, bypassInstall, isOffline, fetchAppVersion, checkForUpdate, appVersion, showPushBanner, triggerPushEnable, dismissPushBanner, showNotificationsDropdown, inAppNotifications, openNotification
         };
       }
     }).mount('#app');
