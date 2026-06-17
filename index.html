@@ -14,8 +14,13 @@
     }
   </script>
   
-  <!-- PWA Manifest -->
+  <!-- PWA Manifest & Essential Meta Tags -->
   <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Tether">
+  <link rel="apple-touch-icon" href="https://oouxkyuexvzylckxeeks.supabase.co/storage/v1/object/public/pgsstoragebucket/9EwctgpUA9VUjyL65DkV/mJMUNAnkwOkiTIk.png">
 
   <!-- OneSignal Push Notifications -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -26,7 +31,7 @@
         appId: "37b029b3-4997-45dc-a802-cd867e04b5ed",
         safari_web_id: "web.onesignal.auto.3d5e9a66-9429-4fce-a7e3-61aa58d6c253",
         notifyButton: {
-          enable: false, // Disabled as requested so we can use a custom prompt!
+          enable: false, // Disabled to use custom prompt
         },
       });
     });
@@ -59,7 +64,7 @@
     <transition name="toast">
       <div v-if="toast.show" 
            @click="handleToastClick"
-           class="fixed top-4 left-1/2 -translate-x-1/2 z-[500] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
+           class="fixed top-4 left-1/2 -translate-x-1/2 z-[300] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
            :class="toast.type === 'error' ? 'bg-red-50/95 dark:bg-red-900/90 border-red-200 dark:border-red-800' : 'bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700'">
         <div class="flex items-center justify-between px-4 py-2 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5">
           <div class="flex items-center gap-2">
@@ -530,6 +535,7 @@
       </div>
     </div>
 
+    <!-- Install Instructions Modal -->
     <div v-if="modals.install" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[200] flex items-end sm:items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col overflow-hidden mb-6 sm:mb-0">
          <div class="p-6 text-center border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
@@ -587,6 +593,7 @@
       </div>
     </div>
 
+    <!-- Class Settings Modal (For Owners) -->
     <div v-if="modals.classSettings && activeGroup && activeGroup.ownerId === user.uid" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         
@@ -728,6 +735,7 @@
     </div>
 
 
+    <!-- Group Share Modal -->
     <div v-if="modals.shareCode && activeGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl text-center">
         <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Invite Students</h3>
@@ -764,6 +772,7 @@
       </div>
     </div>
 
+    <!-- Member Responses Modal -->
     <div v-if="modals.memberInfo && selectedMemberInfo" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-1 text-slate-900 dark:text-white flex items-center gap-2">{{ selectedMemberInfo.name }}</h3>
@@ -782,6 +791,7 @@
       </div>
     </div>
 
+    <!-- Confirm Member Removal Modal -->
     <div v-if="memberToRemove" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-2 text-slate-900 dark:text-white">Remove {{ memberToRemove.name }}?</h3>
@@ -793,6 +803,7 @@
       </div>
     </div>
 
+    <!-- Join Group Modal -->
     <div v-if="modals.join" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Join a Class</h3>
@@ -837,6 +848,7 @@
       </div>
     </div>
 
+    <!-- Create Group Modal -->
     <div v-if="modals.create" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh]">
         <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Create a Class</h3>
@@ -997,6 +1009,9 @@
       chat: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.84 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>`
     };
 
+    // HARDCODED APP VERSION - Change this when you push an update!
+    const CURRENT_APP_VERSION = 'v1.0.1';
+
     createApp({
       setup() {
         const loading = ref(true);
@@ -1051,7 +1066,7 @@
         const selectedMembersForChat = ref([]);
 
         // App Version State
-        const appVersion = ref('Loading...');
+        const appVersion = ref(CURRENT_APP_VERSION);
 
         // Custom Notification & PWA State
         const isStandalone = ref(true);
@@ -1081,46 +1096,28 @@
           return 'Desktop';
         };
 
-        const fetchAppVersion = async () => {
+        const checkForUpdate = async () => {
+           showToast('Checking for updates...', 'info');
            try {
-              const res = await fetch('/sw.js?_cb=' + Date.now());
+              // Only checks the tiny static JSON file to prevent CDN timestamp misreads
+              const res = await fetch('/version.json?_cb=' + Date.now());
               if (res.ok) {
-                 const text = await res.text();
-                 const match = text.match(/CACHE_NAME\s*=\s*['"][^'"]*(v[a-zA-Z0-9.-]+)['"]/);
-                 if (match && match[1]) {
-                    appVersion.value = match[1];
+                 const data = await res.json();
+                 if (data.version && data.version !== CURRENT_APP_VERSION) {
+                    if ('serviceWorker' in navigator) {
+                       const reg = await navigator.serviceWorker.getRegistration('/sw.js');
+                       if (reg) await reg.update();
+                    }
+                    showToast('App updated! Reloading...', 'success');
+                    setTimeout(() => window.location.reload(true), 1500);
                  } else {
-                    appVersion.value = 'v5';
+                    showToast('App is already up to date!', 'success');
                  }
               } else {
-                 appVersion.value = 'v5';
+                 showToast('Could not reach update server.', 'error');
               }
            } catch(e) {
-              appVersion.value = 'v5';
-           }
-        };
-
-        const checkForUpdate = () => {
-           if ('serviceWorker' in navigator) {
-              navigator.serviceWorker.getRegistration('/sw.js').then(reg => {
-                 if (reg) {
-                    showToast('Checking for updates...', 'info');
-                    reg.update().then(() => {
-                       setTimeout(() => {
-                          if (reg.installing || reg.waiting) {
-                             showToast('App updated! Reloading...', 'success');
-                             setTimeout(() => window.location.reload(), 1500);
-                          } else {
-                             showToast('App is already up to date!', 'success');
-                          }
-                       }, 1500);
-                    }).catch(() => showToast('Failed to check for updates.', 'error'));
-                 } else {
-                    showToast('Offline support not registered.', 'error');
-                 }
-              });
-           } else {
-              showToast('Service workers not supported.', 'error');
+              showToast('Failed to check for updates.', 'error');
            }
         };
 
@@ -1131,7 +1128,6 @@
             });
           }
           applyTheme(themePreference.value);
-          fetchAppVersion();
 
           // PWA Checks
           deviceType.value = getMobileOperatingSystem();
@@ -1141,7 +1137,7 @@
              setTimeout(() => { forceInstallScreen.value = true; }, 500); 
           }
 
-          // ONLY register the Service Worker. Global update listeners are removed to prevent infinite loops.
+          // Simple Service Worker Registration
           if ('serviceWorker' in navigator) {
              navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed: ', err));
           }
@@ -1176,7 +1172,40 @@
           });
         });
 
-        // Push Notifications Configuration
+        // -------------------------------------------------------------
+        // ONE SIGNAL PUSH NOTIFICATION SENDER
+        // -------------------------------------------------------------
+        const sendPushNotification = async (title, message, targetUids) => {
+           if (!targetUids || targetUids.length === 0) return;
+           
+           // Never send a push notification to yourself
+           const filteredUids = targetUids.filter(uid => uid !== user.value?.uid);
+           if (filteredUids.length === 0) return;
+
+           const payload = {
+              app_id: "37b029b3-4997-45dc-a802-cd867e04b5ed",
+              include_aliases: {
+                 "external_id": filteredUids
+              },
+              target_channel: "push",
+              headings: { "en": title },
+              contents: { "en": message }
+           };
+
+           try {
+              await fetch('https://api.onesignal.com/notifications', {
+                 method: 'POST',
+                 headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic os_v2_app_g6yctm2js5c5zkaczwdh4bfv5xz4op22u4xeftm7rjlajel4ibd5cmzk3fngpqoctvnwun4hh6zvt3eyfwy63eu2y4cwggkbaz76jdy'
+                 },
+                 body: JSON.stringify(payload)
+              });
+           } catch (e) {
+              console.error("Error sending push notification:", e);
+           }
+        };
+
         const dismissPushBanner = () => {
            showPushBanner.value = false;
            localStorage.setItem('bypassedPush', 'true');
@@ -1229,7 +1258,7 @@
           if (currentChatType.value === 'group') return groups.value.find(g => g.id === currentChatId.value);
           else {
              const dm = myDms.value.find(d => d.id === currentChatId.value);
-             return dm ? { id: dm.id, name: dm.peerName, isDM: true, isGroupChat: dm.isGroupChat } : null;
+             return dm ? { id: dm.id, name: dm.peerName, isDM: true, isGroupChat: dm.isGroupChat, users: dm.users } : null;
           }
         });
 
@@ -1429,6 +1458,23 @@
                };
                if (attachmentUrl) payload.attachmentUrl = attachmentUrl;
                await setDoc(messageRef, payload);
+
+               // SEND PUSH NOTIFICATION ALERTS
+               let targetUids = [];
+               let pushTitle = '';
+               
+               if (currentChatType.value === 'group') {
+                  // Only owner can currently send to groups, but grab all members just in case
+                  targetUids = activeGroupMembers.value.map(m => m.userId);
+                  pushTitle = activeGroup.value ? activeGroup.value.name : 'Class Announcement';
+               } else {
+                  const dm = myDms.value.find(d => d.id === currentChatId.value);
+                  if (dm && dm.users) targetUids = dm.users;
+                  pushTitle = userProfileName.value || 'New Message'; // Message is from ME
+               }
+
+               const pushMsg = text || (attachmentUrl ? 'Sent an attachment' : 'New message');
+               sendPushNotification(pushTitle, pushMsg, targetUids);
             }
           } catch (e) { showToast('Failed to send', 'error'); }
         };
@@ -1461,6 +1507,9 @@
               await setDoc(messageRef, {
                  id: messageRef.id, text, senderId: user.value.uid, senderName: userProfileName.value, timestamp: serverTimestamp(), replyToText: `Reply from ${activeGroup.value.name} feed`, replyToSender: 'System'
               });
+
+              // Push Notify the Teacher
+              sendPushNotification(userProfileName.value, text, [ownerId]);
 
               selectChat(dmId, 'dm');
               showToast('Reply sent directly to ' + ownerName, 'success');
@@ -1521,6 +1570,10 @@
               await setDoc(doc(db, dbPath('memberships', false, req.userId), currentChatId.value), { groupId: currentChatId.value, role: 'member', answers: req.answers || {}, joinedAt: serverTimestamp() });
               await setDoc(doc(db, dbPath(`messages_roster_${currentChatId.value}`), req.userId), { userId: req.userId, role: 'member', name: req.name, answers: req.answers || {}, joinedAt: serverTimestamp() });
               await deleteDoc(doc(db, dbPath(`joinRequests_${currentChatId.value}`), req.userId));
+              
+              // Push Notify the user they were approved
+              sendPushNotification(activeGroup.value.name, `Your request to join was approved!`, [req.userId]);
+
               showToast(`${req.name} approved.`, 'success');
            } catch(e) { showToast('Failed to approve request', 'error'); }
         };
@@ -1705,6 +1758,10 @@
             const groupId = joinFlow.value.group.id;
             if (joinFlow.value.group.requireApproval) {
                await setDoc(doc(db, dbPath(`joinRequests_${groupId}`), user.value.uid), { userId: user.value.uid, name: userProfileName.value, answers: joinFlow.value.answers, requestedAt: serverTimestamp() });
+               
+               // Push notify the owner of the request
+               sendPushNotification(joinFlow.value.group.name, `${userProfileName.value} requested to join.`, [joinFlow.value.group.ownerId]);
+
                modals.value.join = false;
                joinFlow.value = { code: '', group: null, answers: {} };
                showToast('Request sent! Waiting for teacher approval.', 'success');
@@ -1713,6 +1770,9 @@
 
             await setDoc(doc(db, dbPath('memberships', false, user.value.uid), groupId), { groupId, role: 'member', answers: joinFlow.value.answers, joinedAt: serverTimestamp() });
             await setDoc(doc(db, dbPath(`messages_roster_${groupId}`), user.value.uid), { userId: user.value.uid, role: 'member', name: userProfileName.value, answers: joinFlow.value.answers, joinedAt: serverTimestamp() });
+
+            // Push notify the owner of the new join
+            sendPushNotification(joinFlow.value.group.name, `${userProfileName.value} joined the class!`, [joinFlow.value.group.ownerId]);
 
             modals.value.join = false;
             joinFlow.value = { code: '', group: null, answers: {} };
@@ -1769,7 +1829,7 @@
                       const peerId = dm.users.find(id => id !== uid) || uid; 
                       peerName = dm.names[peerId] || 'Unknown';
                    }
-                   return { id: dm.id, peerName: peerName, isGroupChat: dm.isGroupChat || false };
+                   return { id: dm.id, peerName: peerName, isGroupChat: dm.isGroupChat || false, users: dm.users };
                });
           }));
         };
