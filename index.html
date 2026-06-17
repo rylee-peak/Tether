@@ -34,6 +34,12 @@
   
   <div id="app" class="h-full w-full flex flex-col" v-cloak>
     
+    <!-- Offline Banner -->
+    <div v-if="isOffline" class="bg-amber-500 text-amber-950 text-xs font-bold px-4 py-1.5 text-center shadow-md z-[400] flex justify-center items-center gap-2 shrink-0 transition-all">
+       <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243-4.243a5 5 0 000 7.072m0 0l-2.829 2.829m2.829-2.829L3 3"></path></svg>
+       Offline Mode: Viewing cached data. Messages will send when reconnected.
+    </div>
+
     <!-- Toast Notification (OS Style) -->
     <transition name="toast">
       <div v-if="toast.show" 
@@ -916,7 +922,7 @@
     import { createApp, ref, computed, watch, nextTick, onMounted } from 'vue';
     import { initializeApp } from 'firebase/app';
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-    import { getFirestore, collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+    import { getFirestore, collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp, enableIndexedDbPersistence } from 'firebase/firestore';
     import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
     let firebaseConfig = {
@@ -943,6 +949,17 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
     
+    // --- ENABLE OFFLINE PERSISTENCE ---
+    try {
+      enableIndexedDbPersistence(db).catch((err) => {
+         if (err.code == 'failed-precondition') {
+             console.warn('Multiple tabs open, offline persistence can only be enabled in one tab at a time.');
+         } else if (err.code == 'unimplemented') {
+             console.warn('The current browser does not support all features required to enable offline persistence.');
+         }
+      });
+    } catch(e) { console.warn("Persistence setup error:", e); }
+
     // Explicitly use standard paths to adhere perfectly to User's security rules
     const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'tether-production';
     const dbPath = (colName, isPublic = true, userId = null) => {
@@ -1033,6 +1050,7 @@
         const deferredPrompt = ref(null);
         const forceInstallScreen = ref(false);
         const hasAttemptedInstall = ref(false);
+        const isOffline = ref(!navigator.onLine);
 
         let listeners = [];
 
@@ -1072,6 +1090,21 @@
           if (!isStandalone.value && !localStorage.getItem('bypassedInstall')) {
              setTimeout(() => { forceInstallScreen.value = true; }, 500); 
           }
+
+          // Register Service Worker for Offline App Shell
+          if ('serviceWorker' in navigator) {
+             navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed: ', err));
+          }
+
+          // Offline / Online Status Listeners
+          window.addEventListener('online', () => { 
+             isOffline.value = false; 
+             showToast('Back online! Live syncing restored.', 'success'); 
+          });
+          window.addEventListener('offline', () => { 
+             isOffline.value = true; 
+             showToast('You are offline. Working from cached data.', 'info'); 
+          });
 
           // Catch native prompt (Chrome/Android/Edge)
           window.addEventListener('beforeinstallprompt', (e) => {
@@ -1919,7 +1952,7 @@
           showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
           submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly,
           saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare,
-          isStandalone, deviceType, forceInstallScreen, hasAttemptedInstall, triggerInstall, bypassInstall
+          isStandalone, deviceType, forceInstallScreen, hasAttemptedInstall, triggerInstall, bypassInstall, isOffline
         };
       }
     }).mount('#app');
