@@ -38,7 +38,7 @@
     <transition name="toast">
       <div v-if="toast.show" 
            @click="handleToastClick"
-           class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
+           class="fixed top-4 left-1/2 -translate-x-1/2 z-[300] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
            :class="toast.type === 'error' ? 'bg-red-50/95 dark:bg-red-900/90 border-red-200 dark:border-red-800' : 'bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700'">
         <div class="flex items-center justify-between px-4 py-2 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5">
           <div class="flex items-center gap-2">
@@ -70,25 +70,25 @@
       </div>
     </transition>
 
-    <!-- Install PWA Banner -->
-    <transition name="toast">
-      <div v-if="showInstallBanner" class="fixed bottom-0 left-0 right-0 md:bottom-6 md:left-1/2 md:-translate-x-1/2 md:max-w-md bg-white dark:bg-slate-800 border-t md:border border-slate-200 dark:border-slate-700 md:rounded-2xl p-4 shadow-2xl z-[90] flex items-center justify-between gap-4 transition-all pb-safe">
-         <div class="flex items-center gap-3 overflow-hidden">
-           <div class="w-10 h-10 shrink-0 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center border border-blue-200 dark:border-blue-800">
-             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-           </div>
-           <div class="flex-1 truncate">
-              <p class="font-bold text-sm text-slate-900 dark:text-white truncate">Install Tether App</p>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">Add to home screen for the best experience.</p>
-           </div>
+    <!-- Forced PWA Install Screen -->
+    <transition name="fade">
+      <div v-if="forceInstallScreen" class="fixed inset-0 bg-slate-50 dark:bg-slate-900 z-[150] flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
+         <div class="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-3xl flex items-center justify-center mb-6 shadow-sm border border-blue-200 dark:border-blue-800">
+           <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
          </div>
-         <div class="flex items-center gap-1.5 shrink-0">
-           <button @click="dismissInstallBanner" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-full transition-colors">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-           </button>
-           <button @click="triggerInstall" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-sm transition-colors tracking-wide">
-              Install
-           </button>
+         <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-3">Install Tether</h1>
+         <p class="text-slate-500 dark:text-slate-400 mb-10 max-w-sm leading-relaxed">For the best experience, push notifications, and offline access, please install the Tether app to your device.</p>
+         
+         <button @click="triggerInstall" class="w-full max-w-xs bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg transition-transform active:scale-95 mb-6 text-lg">
+            Install App
+         </button>
+
+         <div class="h-10">
+           <transition name="fade">
+             <button v-if="hasAttemptedInstall" @click="bypassInstall" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold uppercase tracking-wider underline transition-colors">
+                Continue in browser
+             </button>
+           </transition>
          </div>
       </div>
     </transition>
@@ -470,8 +470,8 @@
 
     <!-- Modals -->
     
-    <!-- Install Instructions Modal -->
-    <div v-if="modals.install" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-4 transition-all">
+    <!-- Install Instructions Modal (Higher z-index to overlay Roadblock) -->
+    <div v-if="modals.install" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[200] flex items-end sm:items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col overflow-hidden mb-6 sm:mb-0">
          <div class="p-6 text-center border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
            <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-200 dark:border-blue-800/50 shadow-sm">
@@ -895,6 +895,10 @@
     .toast-enter-from, .toast-leave-to { opacity: 0; transform: translate(-50%, -20px) scale(0.95); }
     .toast-enter-to, .toast-leave-from { opacity: 1; transform: translate(-50%, 0) scale(1); }
 
+    /* Fade for the Forced Install Screen */
+    .fade-enter-active, .fade-leave-active { transition: opacity 0.4s ease; }
+    .fade-enter-from, .fade-leave-to { opacity: 0; }
+
     /* Scrollbar styling */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -1027,7 +1031,8 @@
         const isStandalone = ref(true);
         const deviceType = ref('Desktop');
         const deferredPrompt = ref(null);
-        const showInstallBanner = ref(false);
+        const forceInstallScreen = ref(false);
+        const hasAttemptedInstall = ref(false);
 
         let listeners = [];
 
@@ -1064,44 +1069,44 @@
           deviceType.value = getMobileOperatingSystem();
           isStandalone.value = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || document.referrer.includes('android-app://');
           
-          if (!isStandalone.value && !localStorage.getItem('hideInstallBanner')) {
-             setTimeout(() => { showInstallBanner.value = true; }, 1500); // Slight delay so it doesn't pop aggressively immediately
+          if (!isStandalone.value && !localStorage.getItem('bypassedInstall')) {
+             setTimeout(() => { forceInstallScreen.value = true; }, 500); 
           }
 
           // Catch native prompt (Chrome/Android/Edge)
           window.addEventListener('beforeinstallprompt', (e) => {
              e.preventDefault();
              deferredPrompt.value = e;
-             if (!isStandalone.value && !localStorage.getItem('hideInstallBanner')) {
-                showInstallBanner.value = true;
+             if (!isStandalone.value && !localStorage.getItem('bypassedInstall')) {
+                forceInstallScreen.value = true;
              }
           });
 
           // Listen for successful install
           window.addEventListener('appinstalled', () => {
-             showInstallBanner.value = false;
+             forceInstallScreen.value = false;
              isStandalone.value = true;
           });
         });
 
         // --- PWA Actions ---
-        const dismissInstallBanner = () => {
-           showInstallBanner.value = false;
-           localStorage.setItem('hideInstallBanner', 'true');
+        const bypassInstall = () => {
+           forceInstallScreen.value = false;
+           localStorage.setItem('bypassedInstall', 'true');
         };
 
         const triggerInstall = async () => {
+           hasAttemptedInstall.value = true; // Unlock the bypass button
            if (deferredPrompt.value) {
               // Trigger the native OS popup
               deferredPrompt.value.prompt();
               const { outcome } = await deferredPrompt.value.userChoice;
               if (outcome === 'accepted') {
-                 showInstallBanner.value = false;
+                 forceInstallScreen.value = false;
               }
               deferredPrompt.value = null; // Can only be used once
            } else {
               // Fallback to manual instructions for iOS and unsupported browsers
-              showInstallBanner.value = false;
               modals.value.install = true;
            }
         };
@@ -1914,7 +1919,7 @@
           showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
           submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly,
           saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare,
-          isStandalone, deviceType, showInstallBanner, triggerInstall, dismissInstallBanner
+          isStandalone, deviceType, forceInstallScreen, hasAttemptedInstall, triggerInstall, bypassInstall
         };
       }
     }).mount('#app');
