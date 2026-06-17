@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Tether - Class Communications</title>
   
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -14,10 +13,8 @@
     }
   </script>
   
-  <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
 
-  <!-- Import Maps for Vue and Firebase -->
   <script type="importmap">
     {
       "imports": {
@@ -34,13 +31,11 @@
   
   <div id="app" class="h-full w-full flex flex-col" v-cloak>
 
-    <!-- Offline Banner -->
     <div v-if="isOffline" class="bg-amber-500 text-amber-950 text-xs font-bold px-4 py-1.5 text-center shadow-md z-[400] flex justify-center items-center gap-2 shrink-0 transition-all">
        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243-4.243a5 5 0 000 7.072m0 0l-2.829 2.829m2.829-2.829L3 3"></path></svg>
        Offline Mode: Viewing cached data. Messages will send when reconnected.
     </div>
     
-    <!-- Toast Notification (OS Style) -->
     <transition name="toast">
       <div v-if="toast.show" 
            @click="handleToastClick"
@@ -76,7 +71,6 @@
       </div>
     </transition>
 
-    <!-- Forced PWA Install Screen -->
     <transition name="fade">
       <div v-if="forceInstallScreen" class="fixed inset-0 bg-slate-50 dark:bg-slate-900 z-[150] flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
          <div class="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-3xl flex items-center justify-center mb-6 shadow-sm border border-blue-200 dark:border-blue-800">
@@ -99,13 +93,11 @@
       </div>
     </transition>
 
-    <!-- 0. Loading Screen -->
     <div v-if="loading || (user && isProfileComplete === null)" class="h-full w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 absolute inset-0 z-40 transition-colors duration-200">
       <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="mt-4 text-slate-500 dark:text-slate-400 font-medium">Connecting to Tether...</p>
     </div>
 
-    <!-- 1. Authentication Screen -->
     <div v-else-if="!user" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200 overflow-y-auto">
       <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md my-auto">
         <div class="flex items-center gap-2 justify-center text-blue-600 dark:text-blue-400 font-bold text-3xl tracking-tight mb-2">
@@ -155,7 +147,6 @@
       </div>
     </div>
 
-    <!-- 2. Profile Creation Screen -->
     <div v-else-if="user && isProfileComplete === false" class="h-full w-full flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 absolute inset-0 z-30 transition-colors duration-200">
       <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-md text-center">
         <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -174,14 +165,11 @@
       </div>
     </div>
 
-    <!-- 4. Main Application -->
     <div v-else-if="user && isProfileComplete === true" class="h-full w-full flex flex-1 overflow-hidden">
       
-      <!-- Sidebar / List -->
       <div :class="['w-full md:w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform z-10 shadow-sm', 
                     isMobileChatOpen ? 'hidden md:flex' : 'flex']">
         
-        <!-- Sidebar Header -->
         <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 transition-colors shrink-0">
           <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-2xl tracking-tight">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
@@ -199,7 +187,6 @@
 
         <div class="flex-1 overflow-y-auto pb-24 md:pb-4 flex flex-col bg-slate-50 dark:bg-slate-900/50">
           
-          <!-- Classes Section -->
           <div class="px-5 pt-4 pb-2 flex justify-between items-center">
             <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Classes</span>
             <div class="flex gap-1">
@@ -226,7 +213,6 @@
             </button>
           </div>
 
-          <!-- Direct Messages Section -->
           <div class="px-5 pt-2 pb-2 flex justify-between items-center">
             <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Conversations</span>
           </div>
@@ -253,13 +239,11 @@
         </div>
       </div>
 
-      <!-- Main Chat Area -->
       <div :class="['flex-1 bg-white dark:bg-slate-900 flex flex-col relative transition-colors', 
                     !isMobileChatOpen ? 'hidden md:flex' : 'flex']"
            @click="activeMessageMenuId = null">
         
         <template v-if="activeChat">
-          <!-- Chat Header -->
           <div class="h-16 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 justify-between bg-white dark:bg-slate-900 shrink-0 z-10 transition-colors shadow-sm">
             <div class="flex items-center gap-3 overflow-hidden">
               <button @click="isMobileChatOpen = false" class="md:hidden p-2 -ml-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white">
@@ -284,7 +268,6 @@
             </div>
             
             <div class="flex items-center gap-2 shrink-0">
-               <!-- Class Settings Button (Owner Only) -->
                <button v-if="currentChatType === 'group' && activeGroup.ownerId === user.uid" @click="openClassSettings" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-300 transition-colors border border-blue-200 dark:border-slate-700 shadow-sm">
                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                  <span class="hidden sm:inline">Settings</span>
@@ -292,7 +275,6 @@
             </div>
           </div>
 
-          <!-- Class Navigation Tabs -->
           <div v-if="currentChatType === 'group'" class="flex border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0 px-4">
              <button @click="classTab = 'announcements'" :class="['py-3 px-4 text-sm font-bold border-b-2 transition-colors', classTab === 'announcements' ? 'border-blue-600 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200']">
                Announcements
@@ -302,7 +284,6 @@
              </button>
           </div>
 
-          <!-- Content Area: Announcements OR DM Messages -->
           <div v-if="currentChatType === 'dm' || (currentChatType === 'group' && classTab === 'announcements')" id="messages-container" class="flex-1 overflow-y-auto p-4 flex flex-col bg-slate-50/50 dark:bg-slate-900/50 relative pb-16">
             <div v-if="messages.length === 0" class="m-auto text-slate-400 dark:text-slate-500 text-sm text-center">
               <span v-if="currentChatType === 'group'">No announcements yet.</span>
@@ -313,7 +294,6 @@
               </button>
             </div>
 
-            <!-- Messages Loop -->
             <div v-for="msg in messages" :key="msg.id" 
                  class="max-w-[90%] md:max-w-[75%] rounded-2xl px-4 py-3 flex flex-col shadow-sm mb-4 cursor-pointer relative group/msg transition-all"
                  :class="[
@@ -322,7 +302,6 @@
                  ]"
                  @click.stop="toggleMessageMenu(msg.id)">
               
-              <!-- Reply Reference Bubble -->
               <div v-if="msg.replyToId" class="text-xs mb-2 p-2 rounded-lg bg-black/10 dark:bg-white/10 border-l-4 border-white/50 dark:border-slate-400 flex flex-col overflow-hidden max-w-full text-ellipsis whitespace-nowrap">
                  <template v-if="isReplyDeleted(msg.replyToId)">
                    <span class="italic opacity-60 flex items-center gap-1 text-[11px]">
@@ -343,7 +322,6 @@
                  This message was deleted.
               </span>
               <div v-else class="flex flex-col gap-2">
-                 <!-- Attachment Rendering -->
                  <div v-if="msg.attachmentUrl" class="rounded-xl overflow-hidden bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 max-w-sm">
                     <img v-if="msg.attachmentUrl.match(/\.(jpeg|jpg|gif|png|webp|webp\?.*)$/i) || msg.attachmentUrl.includes('firebasestorage')" :src="msg.attachmentUrl" alt="Attachment" class="w-full h-auto max-h-64 object-cover" @click.stop="window.open(msg.attachmentUrl, '_blank')">
                     <a v-else :href="msg.attachmentUrl" target="_blank" class="flex items-center gap-2 p-3 hover:bg-black/5 dark:hover:bg-white/5 transition-colors" @click.stop>
@@ -358,7 +336,6 @@
                  </span>
               </div>
 
-              <!-- Action Menu -->
               <div v-if="activeMessageMenuId === msg.id && !msg.isDeleted" 
                    class="absolute top-full mt-2 flex flex-col sm:flex-row gap-1 bg-slate-800 dark:bg-slate-700 text-white rounded-xl shadow-2xl p-1.5 text-xs font-bold border border-slate-700 dark:border-slate-600 min-w-[120px]"
                    :class="msg.senderId === user.uid ? 'right-0' : 'left-0'">
@@ -371,7 +348,6 @@
             </div>
           </div>
 
-          <!-- Content Area: People Tab (Only in Groups) -->
           <div v-if="currentChatType === 'group' && classTab === 'people'" class="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900/50 p-4">
              <div class="max-w-3xl mx-auto">
                
@@ -412,7 +388,6 @@
              </div>
           </div>
 
-          <!-- Input Area (Only visible in DMs, or in Announcements if you are owner, or for members to reply to owner) -->
           <div v-if="currentChatType === 'dm' || (currentChatType === 'group' && classTab === 'announcements')" class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-colors shrink-0">
             
             <div v-if="uploadingAttachment" class="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 flex items-center gap-3 border-b border-blue-100 dark:border-blue-800/50 text-xs font-bold text-blue-700 dark:text-blue-400">
@@ -420,7 +395,6 @@
                Uploading attachment...
             </div>
 
-            <!-- Context Banner -->
             <div v-if="replyingTo || editingMessage || selectedFile" class="px-4 py-2 flex justify-between items-center text-xs border-b"
                  :class="editingMessage ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800/50' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'">
                <div class="flex items-center gap-2 truncate pr-4">
@@ -440,7 +414,6 @@
             </div>
 
             <div class="p-4 pt-3">
-              <!-- Regular Broadcast / DM Input -->
               <form v-if="currentChatType === 'dm' || activeGroup.ownerId === user.uid" @submit.prevent="sendMessage" class="flex gap-2 items-end bg-slate-100 dark:bg-slate-800 p-1.5 rounded-full border border-slate-200 dark:border-slate-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-inner">
                 <input type="file" ref="fileInputRef" @change="handleFileSelect" class="hidden">
                 <button type="button" @click="$refs.fileInputRef.click()" class="p-2.5 text-slate-400 hover:text-blue-500 rounded-xl transition-colors shrink-0" title="Attach File">
@@ -453,7 +426,6 @@
                 </button>
               </form>
 
-              <!-- Member Reply-To-Owner Input -->
               <form v-else @submit.prevent="replyToOwnerDirectly" class="flex gap-2 items-center bg-blue-50 dark:bg-slate-800 p-1.5 rounded-full border border-blue-200 dark:border-slate-700 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all shadow-inner">
                  <div class="pl-4 pr-2 text-blue-500 shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
@@ -474,7 +446,6 @@
       </div>
     </div>
 
-    <!-- Install Instructions Modal -->
     <div v-if="modals.install" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[200] flex items-end sm:items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col overflow-hidden mb-6 sm:mb-0">
          <div class="p-6 text-center border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
@@ -532,7 +503,6 @@
       </div>
     </div>
 
-    <!-- Class Settings Modal (For Owners) -->
     <div v-if="modals.classSettings && activeGroup && activeGroup.ownerId === user.uid" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         
@@ -651,7 +621,6 @@
       </div>
     </div>
 
-    <!-- Create Custom Group Chat Modal -->
     <div v-if="modals.newGroupChat" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[80vh]">
         <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">New Group Chat</h3>
@@ -674,7 +643,6 @@
     </div>
 
 
-    <!-- Group Share Modal -->
     <div v-if="modals.shareCode && activeGroup" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl text-center">
         <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Invite Students</h3>
@@ -711,7 +679,6 @@
       </div>
     </div>
 
-    <!-- Member Responses Modal -->
     <div v-if="modals.memberInfo && selectedMemberInfo" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-1 text-slate-900 dark:text-white flex items-center gap-2">{{ selectedMemberInfo.name }}</h3>
@@ -730,7 +697,6 @@
       </div>
     </div>
 
-    <!-- Confirm Member Removal Modal -->
     <div v-if="memberToRemove" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="font-bold text-xl mb-2 text-slate-900 dark:text-white">Remove {{ memberToRemove.name }}?</h3>
@@ -742,7 +708,6 @@
       </div>
     </div>
 
-    <!-- Join Group Modal -->
     <div v-if="modals.join" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Join a Class</h3>
@@ -787,7 +752,6 @@
       </div>
     </div>
 
-    <!-- Create Group Modal -->
     <div v-if="modals.create" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[90vh]">
         <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Create a Class</h3>
@@ -827,7 +791,6 @@
       </div>
     </div>
 
-    <!-- Settings Modal -->
     <div v-if="modals.settings" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[45] flex items-center justify-center p-4 transition-all">
       <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl">
         <h3 class="text-xl font-bold mb-6 text-slate-900 dark:text-white">Settings</h3>
@@ -841,7 +804,7 @@
           <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Appearance</label>
           <div class="grid grid-cols-3 gap-2">
             <button @click="settingsForm.theme = 'system'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'system' ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-500 text-blue-700 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">System</button>
-            <button @click="settingsForm.theme = 'light'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'light' ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-500 text-blue-700 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">Light</button>
+            <button @click="settingsForm.theme = 'light'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'light' ? 'bg-white dark:bg-slate-900/30 border-blue-500 text-blue-700 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">Light</button>
             <button @click="settingsForm.theme = 'dark'" :class="['py-2 px-1 text-sm rounded-lg border transition-all', settingsForm.theme === 'dark' ? 'bg-white dark:bg-slate-900/30 border-blue-500 text-blue-600 dark:text-blue-400 font-bold' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400']">Dark</button>
           </div>
         </div>
@@ -849,7 +812,7 @@
         <div class="mb-8 border-t border-slate-200 dark:border-slate-700 pt-6">
           <div class="flex justify-between items-center mb-3">
             <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">App Version</label>
-            <span class="text-xs font-mono font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">v{{ appVersion }}</span>
+            <span class="text-xs font-mono font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">{{ appVersion }}</span>
           </div>
           <button @click="checkForUpdate" class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white font-medium py-2 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm shadow-sm border border-slate-200 dark:border-slate-600">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -1002,7 +965,7 @@
         const selectedMembersForChat = ref([]);
 
         // App Version State
-        const appVersion = ref('1.0.0');
+        const appVersion = ref('Loading...');
 
         // PWA Installation State
         const isStandalone = ref(true);
@@ -1027,6 +990,25 @@
           if (/android/i.test(userAgent)) return 'Android';
           if (/iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'iOS';
           return 'Desktop';
+        };
+
+        const fetchAppVersion = async () => {
+           try {
+              const res = await fetch('/sw.js?_cb=' + Date.now());
+              if (res.ok) {
+                 const text = await res.text();
+                 const match = text.match(/CACHE_NAME\s*=\s*['"][^'"]*(v[a-zA-Z0-9.-]+)['"]/);
+                 if (match && match[1]) {
+                    appVersion.value = match[1];
+                 } else {
+                    appVersion.value = 'v5';
+                 }
+              } else {
+                 appVersion.value = 'v5';
+              }
+           } catch(e) {
+              appVersion.value = 'v5';
+           }
         };
 
         const checkForUpdate = () => {
@@ -1057,6 +1039,7 @@
             });
           }
           applyTheme(themePreference.value);
+          fetchAppVersion();
 
           // PWA Checks
           deviceType.value = getMobileOperatingSystem();
@@ -1714,7 +1697,7 @@
         });
 
         return {
-          loading, user, isProfileComplete, userProfileName, svgIcons, authForm, hasCanvasToken, setupFlowName, settingsForm, groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo, unreadCounts, currentChatId, currentChatType, classTab, classSettingsTab, activeGroup, activeChat, isMobileChatOpen, joinLink, activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, isReplyDeleted, initReply, initEdit, cancelInputContext, deleteMessage, selectedFile, fileInputRef, handleFileSelect, uploadingAttachment, toast, newMessage, modals, createFlow, joinFlow, editGroupForm, savingGroup, pendingRequests, isLoadingMembers, selectedMembersForChat, initiateGroupChatModal, createGroupChat, showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly, saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare, isStandalone, deviceType, forceInstallScreen, hasAttemptedInstall, triggerInstall, bypassInstall, isOffline, checkForUpdate, appVersion
+          loading, user, isProfileComplete, userProfileName, svgIcons, authForm, hasCanvasToken, setupFlowName, settingsForm, groups, myGroups, myMemberships, myDms, messages, activeGroupMembers, memberToRemove, selectedMemberInfo, unreadCounts, currentChatId, currentChatType, classTab, classSettingsTab, activeGroup, activeChat, isMobileChatOpen, joinLink, activeMessageMenuId, replyingTo, editingMessage, toggleMessageMenu, isReplyDeleted, initReply, initEdit, cancelInputContext, deleteMessage, selectedFile, fileInputRef, handleFileSelect, uploadingAttachment, toast, newMessage, modals, createFlow, joinFlow, editGroupForm, savingGroup, pendingRequests, isLoadingMembers, selectedMembersForChat, initiateGroupChatModal, createGroupChat, showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly, saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare, isStandalone, deviceType, forceInstallScreen, hasAttemptedInstall, triggerInstall, bypassInstall, isOffline, fetchAppVersion, checkForUpdate, appVersion
         };
       }
     }).mount('#app');
