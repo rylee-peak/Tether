@@ -70,6 +70,29 @@
       </div>
     </transition>
 
+    <!-- Install PWA Banner -->
+    <transition name="toast">
+      <div v-if="showInstallBanner" class="fixed bottom-0 left-0 right-0 md:bottom-6 md:left-1/2 md:-translate-x-1/2 md:max-w-md bg-white dark:bg-slate-800 border-t md:border border-slate-200 dark:border-slate-700 md:rounded-2xl p-4 shadow-2xl z-[90] flex items-center justify-between gap-4 transition-all pb-safe">
+         <div class="flex items-center gap-3 overflow-hidden">
+           <div class="w-10 h-10 shrink-0 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center border border-blue-200 dark:border-blue-800">
+             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+           </div>
+           <div class="flex-1 truncate">
+              <p class="font-bold text-sm text-slate-900 dark:text-white truncate">Install Tether App</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">Add to home screen for the best experience.</p>
+           </div>
+         </div>
+         <div class="flex items-center gap-1.5 shrink-0">
+           <button @click="dismissInstallBanner" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-full transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+           </button>
+           <button @click="triggerInstall" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-sm transition-colors tracking-wide">
+              Install
+           </button>
+         </div>
+      </div>
+    </transition>
+
     <!-- 0. Loading Screen -->
     <div v-if="loading || (user && isProfileComplete === null)" class="h-full w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 absolute inset-0 z-40 transition-colors duration-200">
       <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -168,7 +191,7 @@
           </div>
         </div>
 
-        <div class="flex-1 overflow-y-auto pb-4 flex flex-col bg-slate-50 dark:bg-slate-900/50">
+        <div class="flex-1 overflow-y-auto pb-24 md:pb-4 flex flex-col bg-slate-50 dark:bg-slate-900/50">
           
           <!-- Classes Section -->
           <div class="px-5 pt-4 pb-2 flex justify-between items-center">
@@ -446,6 +469,64 @@
     </div>
 
     <!-- Modals -->
+    
+    <!-- Install Instructions Modal -->
+    <div v-if="modals.install" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-4 transition-all">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col overflow-hidden mb-6 sm:mb-0">
+         <div class="p-6 text-center border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+           <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-200 dark:border-blue-800/50 shadow-sm">
+             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+           </div>
+           <h3 class="text-xl font-bold text-slate-900 dark:text-white">Install Tether</h3>
+           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Get the native app experience.</p>
+         </div>
+         <div class="p-6 bg-white dark:bg-slate-800">
+            <template v-if="deviceType === 'iOS'">
+               <ol class="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                 <li class="flex gap-3 items-center">
+                    <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">1</div>
+                    <div>Tap the <strong>Share</strong> button <svg class="inline w-5 h-5 mx-1 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> at the bottom.</div>
+                 </li>
+                 <li class="flex gap-3 items-center">
+                    <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">2</div>
+                    <div>Scroll down and tap <strong>Add to Home Screen</strong> <svg class="inline w-5 h-5 mx-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>.</div>
+                 </li>
+                 <li class="flex gap-3 items-center">
+                    <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">3</div>
+                    <div>Confirm by tapping <strong>Add</strong> in the top right.</div>
+                 </li>
+               </ol>
+            </template>
+            <template v-else-if="deviceType === 'Android'">
+               <ol class="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                 <li class="flex gap-3 items-center">
+                    <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">1</div>
+                    <div>Tap the <strong>Menu</strong> button <svg class="inline w-5 h-5 mx-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg> in your browser.</div>
+                 </li>
+                 <li class="flex gap-3 items-center">
+                    <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">2</div>
+                    <div>Select <strong>Install App</strong> or <strong>Add to Home screen</strong>.</div>
+                 </li>
+               </ol>
+            </template>
+            <template v-else>
+               <ol class="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                 <li class="flex gap-3 items-center">
+                    <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">1</div>
+                    <div>Look for the <strong>Install</strong> icon <svg class="inline w-5 h-5 mx-1 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> in the right side of your URL address bar.</div>
+                 </li>
+                 <li class="flex gap-3 items-center">
+                    <div class="w-6 h-6 shrink-0 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center font-bold text-xs">2</div>
+                    <div>Click it and select <strong>Install</strong>.</div>
+                 </li>
+               </ol>
+            </template>
+         </div>
+         <div class="p-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+           <button @click="modals.install = false" class="w-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white font-bold py-3 px-4 rounded-xl transition-colors">Close</button>
+         </div>
+      </div>
+    </div>
 
     <!-- Class Settings Modal (For Owners) -->
     <div v-if="modals.classSettings && activeGroup && activeGroup.ownerId === user.uid" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4 transition-all">
@@ -821,6 +902,10 @@
     .dark ::-webkit-scrollbar-thumb { background: #334155; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+       .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 1rem) !important; }
+    }
   </style>
 
   <script type="module">
@@ -926,7 +1011,7 @@
         const newMessage = ref('');
         
         const modals = ref({ 
-          join: false, create: false, settings: false, shareCode: false, memberInfo: false, confirmDeleteGroup: false, classSettings: false, newGroupChat: false
+          join: false, create: false, settings: false, shareCode: false, memberInfo: false, confirmDeleteGroup: false, classSettings: false, newGroupChat: false, install: false
         });
         const classSettingsTab = ref('general');
         const editGroupForm = ref({ name: '', code: '', avatar: 'school', requireApproval: false });
@@ -937,6 +1022,12 @@
         
         // New Group Chat State
         const selectedMembersForChat = ref([]);
+
+        // PWA Installation State
+        const isStandalone = ref(true);
+        const deviceType = ref('Desktop');
+        const deferredPrompt = ref(null);
+        const showInstallBanner = ref(false);
 
         let listeners = [];
 
@@ -952,6 +1043,15 @@
 
         watch(themePreference, (newVal) => applyTheme(newVal));
 
+        // --- Device OS Detection ---
+        const getMobileOperatingSystem = () => {
+          const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+          if (/android/i.test(userAgent)) return 'Android';
+          // iPad on iOS 13+ sets platform to MacIntel but has touch points
+          if (/iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'iOS';
+          return 'Desktop';
+        };
+
         onMounted(() => {
           if(window.matchMedia) {
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
@@ -959,7 +1059,52 @@
             });
           }
           applyTheme(themePreference.value);
+
+          // --- PWA Setup ---
+          deviceType.value = getMobileOperatingSystem();
+          isStandalone.value = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || document.referrer.includes('android-app://');
+          
+          if (!isStandalone.value && !localStorage.getItem('hideInstallBanner')) {
+             setTimeout(() => { showInstallBanner.value = true; }, 1500); // Slight delay so it doesn't pop aggressively immediately
+          }
+
+          // Catch native prompt (Chrome/Android/Edge)
+          window.addEventListener('beforeinstallprompt', (e) => {
+             e.preventDefault();
+             deferredPrompt.value = e;
+             if (!isStandalone.value && !localStorage.getItem('hideInstallBanner')) {
+                showInstallBanner.value = true;
+             }
+          });
+
+          // Listen for successful install
+          window.addEventListener('appinstalled', () => {
+             showInstallBanner.value = false;
+             isStandalone.value = true;
+          });
         });
+
+        // --- PWA Actions ---
+        const dismissInstallBanner = () => {
+           showInstallBanner.value = false;
+           localStorage.setItem('hideInstallBanner', 'true');
+        };
+
+        const triggerInstall = async () => {
+           if (deferredPrompt.value) {
+              // Trigger the native OS popup
+              deferredPrompt.value.prompt();
+              const { outcome } = await deferredPrompt.value.userChoice;
+              if (outcome === 'accepted') {
+                 showInstallBanner.value = false;
+              }
+              deferredPrompt.value = null; // Can only be used once
+           } else {
+              // Fallback to manual instructions for iOS and unsupported browsers
+              showInstallBanner.value = false;
+              modals.value.install = true;
+           }
+        };
 
         watch(() => modals.value.settings, (isOpen) => {
           if (isOpen) {
@@ -1768,7 +1913,8 @@
           selectedMembersForChat, initiateGroupChatModal, createGroupChat,
           showToast, handleToastClick, submitAuth, loginWithGoogle, loginWithCanvas, handleSignOut, 
           submitCreate, submitJoin, findGroupToJoin, selectChat, startDM, sendMessage, replyToOwnerDirectly,
-          saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare
+          saveInitialProfile, saveSettings, openClassSettings, closeClassSettings, saveGroupSettings, viewMemberInfo, promptRemoveMember, executeRemoveMember, executeDeleteGroup, approveRequest, denyRequest, handleAttachmentClick, copyText, nativeShare,
+          isStandalone, deviceType, showInstallBanner, triggerInstall, dismissInstallBanner
         };
       }
     }).mount('#app');
