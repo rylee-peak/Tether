@@ -32,7 +32,8 @@
         safari_web_id: "web.onesignal.auto.3d5e9a66-9429-4fce-a7e3-61aa58d6c253",
         notifyButton: {
           enable: false, // Disabled to use custom prompt
-        },
+        }
+        // Removed custom serviceWorker overrides to allow OneSignal to use its default
       });
     });
   </script>
@@ -64,7 +65,7 @@
     <transition name="toast">
       <div v-if="toast.show" 
            @click="handleToastClick"
-           class="fixed top-4 left-1/2 -translate-x-1/2 z-[300] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
+           class="fixed top-4 left-1/2 -translate-x-1/2 z-[500] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
            :class="toast.type === 'error' ? 'bg-red-50/95 dark:bg-red-900/90 border-red-200 dark:border-red-800' : 'bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700'">
         <div class="flex items-center justify-between px-4 py-2 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5">
           <div class="flex items-center gap-2">
@@ -1096,6 +1097,24 @@
           return 'Desktop';
         };
 
+        const fetchAppVersion = async () => {
+           try {
+              const res = await fetch('/version.json?_cb=' + Date.now());
+              if (res.ok) {
+                 const data = await res.json();
+                 if (data.version) {
+                    appVersion.value = data.version;
+                 } else {
+                    appVersion.value = CURRENT_APP_VERSION;
+                 }
+              } else {
+                 appVersion.value = CURRENT_APP_VERSION;
+              }
+           } catch(e) {
+              appVersion.value = CURRENT_APP_VERSION;
+           }
+        };
+
         const checkForUpdate = async () => {
            showToast('Checking for updates...', 'info');
            try {
@@ -1105,7 +1124,7 @@
                  const data = await res.json();
                  if (data.version && data.version !== CURRENT_APP_VERSION) {
                     if ('serviceWorker' in navigator) {
-                       const reg = await navigator.serviceWorker.getRegistration('/sw.js');
+                       const reg = await navigator.serviceWorker.getRegistration('/OneSignalSDKWorker.js');
                        if (reg) await reg.update();
                     }
                     showToast('App updated! Reloading...', 'success');
@@ -1128,6 +1147,7 @@
             });
           }
           applyTheme(themePreference.value);
+          fetchAppVersion();
 
           // PWA Checks
           deviceType.value = getMobileOperatingSystem();
@@ -1137,9 +1157,9 @@
              setTimeout(() => { forceInstallScreen.value = true; }, 500); 
           }
 
-          // Simple Service Worker Registration
+          // ONLY register the Service Worker. Global update listeners are removed to prevent infinite loops.
           if ('serviceWorker' in navigator) {
-             navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed: ', err));
+             navigator.serviceWorker.register('/OneSignalSDKWorker.js').catch(err => console.log('SW registration failed: ', err));
           }
 
           // Native Push Permission Check (Custom Prompt)
