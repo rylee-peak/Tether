@@ -32,8 +32,10 @@
         safari_web_id: "web.onesignal.auto.3d5e9a66-9429-4fce-a7e3-61aa58d6c253",
         notifyButton: {
           enable: false, // Disabled to use custom prompt
-        }
-        // Removed custom serviceWorker overrides to allow OneSignal to use its default
+        },
+        // Tell OneSignal to use our custom sw.js instead of its default
+        serviceWorkerParam: { scope: "/" },
+        serviceWorkerPath: "OneSignalSDKWorker.js"
       });
     });
   </script>
@@ -65,7 +67,7 @@
     <transition name="toast">
       <div v-if="toast.show" 
            @click="handleToastClick"
-           class="fixed top-4 left-1/2 -translate-x-1/2 z-[500] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
+           class="fixed top-4 left-1/2 -translate-x-1/2 z-[300] w-11/12 max-w-sm rounded-2xl shadow-2xl border backdrop-blur-2xl transition-all cursor-pointer overflow-hidden flex flex-col"
            :class="toast.type === 'error' ? 'bg-red-50/95 dark:bg-red-900/90 border-red-200 dark:border-red-800' : 'bg-white/95 dark:bg-slate-800/95 border-slate-200 dark:border-slate-700'">
         <div class="flex items-center justify-between px-4 py-2 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5">
           <div class="flex items-center gap-2">
@@ -113,7 +115,7 @@
            <button @click="dismissPushBanner" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-full transition-colors">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
            </button>
-           <button @click="triggerPushEnable" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-sm transition-colors tracking-wide">
+           <button @click="triggerPushEnable" class="bg-indigo-600 hover:bg-indigo-50 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-sm transition-colors tracking-wide">
               Enable
            </button>
          </div>
@@ -1099,7 +1101,7 @@
 
         const fetchAppVersion = async () => {
            try {
-              const res = await fetch('/version.json?_cb=' + Date.now());
+              const res = await fetch('version.json?_cb=' + Date.now());
               if (res.ok) {
                  const data = await res.json();
                  if (data.version) {
@@ -1119,7 +1121,7 @@
            showToast('Checking for updates...', 'info');
            try {
               // Only checks the tiny static JSON file to prevent CDN timestamp misreads
-              const res = await fetch('/version.json?_cb=' + Date.now());
+              const res = await fetch('version.json?_cb=' + Date.now());
               if (res.ok) {
                  const data = await res.json();
                  if (data.version && data.version !== CURRENT_APP_VERSION) {
@@ -1132,6 +1134,8 @@
                  } else {
                     showToast('App is already up to date!', 'success');
                  }
+              } else if (res.status === 404) {
+                 showToast('version.json file not found on server.', 'error');
               } else {
                  showToast('Could not reach update server.', 'error');
               }
