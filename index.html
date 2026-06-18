@@ -227,7 +227,7 @@
       <div v-if="showNotificationsDropdown" @click="showNotificationsDropdown = false" class="fixed inset-0 z-[80]"></div>
 
       <!-- Sidebar / List -->
-      <div :class="['w-full md:w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform shadow-sm', 
+      <div :class="['w-full md:w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col transition-transform shadow-sm relative', 
                     isMobileChatOpen ? 'hidden md:flex' : 'flex', showNotificationsDropdown ? 'z-[90]' : 'z-10']">
         
         <!-- Sidebar Header -->
@@ -244,9 +244,9 @@
               <span v-if="inAppNotifications.length > 0" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-slate-100 dark:border-slate-700"></span>
             </button>
 
-            <!-- Notifications Dropdown Panel (Fixed to break out of all clips) -->
+            <!-- Notifications Dropdown Panel -->
             <transition name="toast">
-               <div v-if="showNotificationsDropdown" class="fixed sm:absolute top-16 sm:top-12 right-4 sm:right-0 left-4 sm:left-auto sm:w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[100] flex flex-col max-h-[70vh]">
+               <div v-if="showNotificationsDropdown" class="absolute top-12 right-0 w-[280px] bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[100] flex flex-col max-h-[70vh] origin-top-right">
                   <div class="p-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 rounded-t-2xl">
                      <span class="font-bold text-sm text-slate-800 dark:text-slate-200">Notifications</span>
                      <button @click.stop="inAppNotifications = []" class="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">Clear all</button>
@@ -1101,7 +1101,7 @@
 
         const fetchAppVersion = async () => {
            try {
-              const res = await fetch('version.json?_cb=' + Date.now());
+              const res = await fetch('/version.json?_cb=' + Date.now());
               if (res.ok) {
                  const data = await res.json();
                  if (data.version) {
@@ -1121,7 +1121,7 @@
            showToast('Checking for updates...', 'info');
            try {
               // Only checks the tiny static JSON file to prevent CDN timestamp misreads
-              const res = await fetch('version.json?_cb=' + Date.now());
+              const res = await fetch('/version.json?_cb=' + Date.now());
               if (res.ok) {
                  const data = await res.json();
                  if (data.version && data.version !== CURRENT_APP_VERSION) {
@@ -1463,13 +1463,13 @@
           if (fileToUpload && !isEdit) {
              uploadingAttachment.value = true;
              try {
-                const sRef = storageRef(storage, `artifacts/${APP_ID}/attachments/${Date.now()}_${fileToUpload.name}`);
-                await uploadBytesResumable(sRef, fileToUpload);
-                attachmentUrl = await getDownloadURL(sRef);
+                 const sRef = storageRef(storage, `artifacts/${APP_ID}/attachments/${Date.now()}_${fileToUpload.name}`);
+                 await uploadBytesResumable(sRef, fileToUpload);
+                 attachmentUrl = await getDownloadURL(sRef);
              } catch(e) {
-                console.error(e);
-                uploadingAttachment.value = false;
-                return showToast('Failed to upload file.', 'error');
+                 console.error(e);
+                 uploadingAttachment.value = false;
+                 return showToast('Failed to upload file.', 'error');
              }
              uploadingAttachment.value = false;
           }
